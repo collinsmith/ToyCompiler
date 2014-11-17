@@ -7,10 +7,6 @@ package com.gmail.collinsmith70.toycompiler;
  * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
  */
 public interface Lexer {
-	/**
-	 * Returns a
-	 * @return
-	 */
 	boolean hasNext();
 	Token peek();
 	Token next();
