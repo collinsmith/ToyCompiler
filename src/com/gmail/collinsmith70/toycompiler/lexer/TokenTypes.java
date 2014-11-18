@@ -93,6 +93,12 @@ public enum TokenTypes implements TokenType {
 	private final boolean IS_LITERAL;
 
 	/**
+	 * Many token types do not have values, so this variable will maintain
+	 * a static copy of those that can be used throughout the stack.
+	 */
+	private final Token STATIC_TOKEN;
+
+	/**
 	 * Constructs a token type using the name of the token retrieved by
 	 * invoking {@link Enum#name()}. This is usually used to represent
 	 * keywords.
@@ -130,6 +136,7 @@ public enum TokenTypes implements TokenType {
 		}
 
 		this.IS_LITERAL = isLiteral;
+		this.STATIC_TOKEN = new Token(this, null);
 	}
 
 	/**
@@ -154,5 +161,13 @@ public enum TokenTypes implements TokenType {
 	@Override
 	public int getId() {
 		return DefaultTokenType.length + ordinal();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Token getStaticToken() {
+		return STATIC_TOKEN;
 	}
 }

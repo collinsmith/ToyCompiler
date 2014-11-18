@@ -34,6 +34,13 @@ public interface TokenType {
 		private final boolean IS_LITERAL;
 
 		/**
+		 * Many token types do not have values, so this variable will
+		 * maintain a static copy of those that can be used throughout the
+		 * stack.
+		 */
+		private final Token STATIC_TOKEN;
+
+		/**
 		 * Constructs a default type token using the specified regular
 		 * expression and interprets it literally.
 		 *
@@ -60,6 +67,7 @@ public interface TokenType {
 			}
 
 			this.IS_LITERAL = isLiteral;
+			this.STATIC_TOKEN = new Token(this, null);
 		}
 
 		/**
@@ -84,6 +92,14 @@ public interface TokenType {
 		@Override
 		public int getId() {
 			return ordinal();
+		}
+
+		/**
+		 * {@inheritDoc}
+		 */
+		@Override
+		public Token getStaticToken() {
+			return STATIC_TOKEN;
 		}
 	}
 
@@ -110,4 +126,13 @@ public interface TokenType {
 	 * @return the unique identifier associated with this token type
 	 */
 	int getId();
+
+	/**
+	 * Returns a version of this token with no associated value. Literal
+	 * values store their value, however lexemes such as a comma have no
+	 * value.
+	 *
+	 * @return statically allocated token of this type with no value
+	 */
+	Token getStaticToken();
 }

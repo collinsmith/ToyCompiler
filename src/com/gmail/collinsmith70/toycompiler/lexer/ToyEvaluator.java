@@ -1,7 +1,7 @@
 package com.gmail.collinsmith70.toycompiler.lexer;
 
-public class Evaluator {
-	private Evaluator() {
+public class ToyEvaluator {
+	private ToyEvaluator() {
 		//...
 	}
 
@@ -12,8 +12,17 @@ public class Evaluator {
 			case _integerliteral:	return Integer.valueOf(lexeme);
 			case _doubleliteral:	return Double.valueOf(lexeme);
 			case _stringliteral:	return lexeme;
-			case _nullliteral:		return null;
+			case _nullliteral:	return null;
+			case _id:			return lexeme;
 			default:			return null;
 		}
+	}
+
+	public static final Object evaluate(TokenTypes type, int val) {
+		if (type == TokenTypes._integerliteral) {
+			return val;
+		}
+
+		throw new IllegalArgumentException("Expected _integerliteral token type");
 	}
 }
