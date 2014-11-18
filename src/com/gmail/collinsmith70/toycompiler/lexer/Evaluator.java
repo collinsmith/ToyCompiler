@@ -12,7 +12,7 @@ public class Evaluator {
 			case _integerliteral:	return Integer.valueOf(lexeme);
 			case _doubleliteral:	return Double.valueOf(lexeme);
 			case _stringliteral:	return lexeme;
-			case _nullliteral:	return null;
+			case _nullliteral:		return null;
 			default:			return null;
 		}
 	}
