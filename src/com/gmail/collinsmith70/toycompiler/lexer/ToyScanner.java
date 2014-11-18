@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 
 public class ToyScanner implements Scanner {
-	private static final char ID_VALUE		= '\uFFFD';
 	private static final char KEYWORD_VALUE	= '\uFFFF';
+	private static final char ID_VALUE		= '\uFFFD';
 
 	private final Trie TRIE;
 
