@@ -71,6 +71,7 @@ public class ToyScanner implements Scanner {
 					}
 				} else if (Character.isDigit(i)) {
 					int intVal;
+					int origVal = i;
 					if (i == '0') {
 						r.mark(2);
 						i = r.read();
@@ -125,7 +126,7 @@ public class ToyScanner implements Scanner {
 					StringBuilder doubleBuilder = new StringBuilder();
 					doubleBuilder.appendCodePoint(i);
 
-					intVal = 0;
+					intVal = getIntVal(origVal);
 					Integer_Loop:
 					while (true) {
 						r.mark(1);
@@ -196,7 +197,7 @@ public class ToyScanner implements Scanner {
 							//assert stringValue.matches(TokenTypes._stringliteral.getRegex());
 							return new Token(
 								TokenTypes._stringliteral,
-								stringValue.toString()
+								stringValue
 							);
 						case '\'':
 							i = r.read();
