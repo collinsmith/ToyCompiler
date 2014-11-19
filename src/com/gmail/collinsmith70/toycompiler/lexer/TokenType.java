@@ -14,7 +14,7 @@ public interface TokenType {
 	 */
 	enum DefaultTokenType implements TokenType {
 		_eof("$"),
-		_eol("\n")
+		_eol("$", false)
 		;
 
 		/**

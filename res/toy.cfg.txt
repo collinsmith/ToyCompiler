@@ -1,0 +1,219 @@
+Program:
+DeclList
+
+DeclList:
+Decl
+DeclList Decl
+
+Decl:
+FieldDecl
+ClassDecl
+MethodDecl
+InterfaceDecl
+
+FieldDecl:
+TypeAndIdentifier ;
+
+TypeAndIdentifier:
+_id _id
+SimpleType _id
+_id ArrayType _id
+
+SimpleType:
+SimpleType [ ]
+BasicType
+
+ArrayType:
+ArrayType [ ]
+[ ]
+
+BasicType:
+int
+bool
+double
+string
+
+Name:
+SimpleName
+QualifiedName
+
+SimpleName:
+_id
+
+QualifiedName:
+Name . _id
+
+MethodDecl:
+Prototype Block
+
+Prototype:
+TypeAndIdentifier ( ArgumentListOpt
+void _id ( ArgumentListOpt
+
+ArgumentListOpt:
+)
+ArgumentList )
+
+ArgumentList:
+TypeAndIdentifier
+ArgumentList , TypeAndIdentifier
+
+Block:
+{ FieldDeclListOpt
+
+FieldDeclListOpt:
+StatementListOpt
+FieldDeclList StatementListOpt
+
+FieldDeclList:
+FieldDecl
+FieldDeclList FieldDecl
+
+StatementListOpt:
+}
+StatementList }
+
+StatementList:
+Statement
+StatementList Statement
+
+Statement:
+;
+Block
+break ;
+IfStatement
+Expression ;
+ForStatement
+WhileStatement
+return ReturnExpressionOpt
+println ( ExpressionList ) ;
+
+IfStatement:
+if ParExpression Statement
+if ParExpression Statement else Statement
+
+ParExpression:
+( Expression )
+
+ForStatement:
+for ( ForControl Statement
+
+ForControl:
+ForControl1
+Expression ForControl1
+
+ForControl1:
+; Expression ; )
+; Expression ; Expression )
+
+WhileStatement:
+while ParExpression Statement
+
+ReturnExpressionOpt:
+;
+Expression ;
+
+ExpressionList:
+Expression
+ExpressionList , Expression
+
+ClassDecl:
+class _id Super
+
+Super:
+Interfaces
+extends _id Interfaces
+
+Interfaces:
+{ ClassBodyOpt
+implements IdentifierList { ClassBodyOpt
+
+IdentifierList:
+_id
+IdentifierList , _id
+
+ClassBodyOpt:
+}
+MemberList }
+
+MemberList:
+Member
+MemberList Member
+
+Member:
+FieldDecl
+MethodDecl
+
+InterfaceDecl:
+interface _id { PrototypeListOpt
+
+PrototypeListOpt:
+}
+PrototypeList }
+
+PrototypeList:
+PrototypeDecl
+PrototypeList PrototypeDecl
+
+PrototypeDecl:
+Prototype ;
+
+Expression:
+Name = Expression
+Name IndexResolver = Expression
+BinaryExpression
+
+BinaryExpression:
+BinaryExpression InfixOperator UnaryExpression
+UnaryExpression
+
+UnaryExpression:
+PrefixOperator UnaryExpression
+Primary
+
+Primary:
+Name
+Name IndexResolver
+Literal
+MethodCall
+ParExpression
+readln ( )
+newarray ( _integerliteral , SimpleType )
+newarray ( _integerliteral , _id )
+newarray ( _integerliteral , _id ArrayType )
+
+PrefixOperator:
+!
+-
+
+InfixOperator:
+||
+&&
+==
+!=
+<
+>
+<=
+>=
++
+-
+*
+/
+
+Literal:
+_doubleliteral
+_stringliteral
+_integerliteral
+_booleanliteral
+
+MethodCall:
+MethodCall2
+_id . MethodCall2
+
+MethodCall2:
+_id ( )
+_id ( ExpressionList )
+
+IndexResolver:
+IndexResolver [ Expression ]
+[ Expression ]

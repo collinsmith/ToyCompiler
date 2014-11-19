@@ -1,11 +1,11 @@
 package com.gmail.collinsmith70.toycompiler;
 
 import com.gmail.collinsmith70.toycompiler.lexer.Scanner;
-import com.gmail.collinsmith70.toycompiler.lexer.Token;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
-import com.gmail.collinsmith70.toycompiler.lexer.TokenType;
-import com.gmail.collinsmith70.toycompiler.lexer.TokenTypes;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
+import com.gmail.collinsmith70.toycompiler.parser.Parser;
+import com.gmail.collinsmith70.toycompiler.parser.slr.SLRParser;
+import com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -21,7 +21,18 @@ public class Main {
 	private static final Path OUTPUT_PATH = Paths.get(".", "output");
 	private static final Scanner TOY_SCANNER = new ToyScanner();
 
+	private static Parser parser;
+
 	public static void main(String[] args) {
+		try {
+			SLRParserGenerator parserGenerator = new SLRParserGenerator(Paths.get(".", "res", "toy.cfg.txt"));
+			parserGenerator.outputCFG();
+			parserGenerator.outputTables();
+			parser = new SLRParser(parserGenerator.getGeneratedTables());
+		} catch (IOException e) {
+			System.out.println("Unable to open toy.cfg.txt");
+		}
+
 		Arrays.stream(args)
 			.forEach(arg -> {
 				try {
@@ -48,34 +59,34 @@ public class Main {
 				System.out.format("Analyzing %s...%n", fileName);
 				long dt = System.currentTimeMillis();
 				TokenStream tokenStream = new TokenStream(TOY_SCANNER, br);
-				Token next;
+				/*Token next;
 				while (tokenStream.hasNext()) {
 					next = tokenStream.next();
 					if (next.getTokenType() == TokenType.DefaultTokenType._eol) {
 						writer.append(String.format("%n"));
 						continue;
-					} else if (next.getTokenType() == TokenTypes._booleanliteral) {
-						writer.append(String.format("%s(%s)", TokenTypes._booleanliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == TokenTypes._characterliteral) {
-						writer.append(String.format("%s(%s)", TokenTypes._characterliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == TokenTypes._doubleliteral) {
-						writer.append(String.format("%s(%s)", TokenTypes._doubleliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == TokenTypes._integerliteral) {
-						writer.append(String.format("%s(%s)", TokenTypes._integerliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == TokenTypes._nullliteral) {
-						writer.append(String.format("%s(%s)", TokenTypes._nullliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == TokenTypes._stringliteral) {
-						writer.append(String.format("%s(%s)", TokenTypes._stringliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == TokenTypes._id) {
-						writer.append(String.format("%s(%s)", TokenTypes._id, next.getValue().toString()));
+					} else if (next.getTokenType() == ToyTokenTypes._booleanliteral) {
+						writer.append(String.format("%s(%s)", ToyTokenTypes._booleanliteral, next.getValue().toString()));
+					} else if (next.getTokenType() == ToyTokenTypes._characterliteral) {
+						writer.append(String.format("%s(%s)", ToyTokenTypes._characterliteral, next.getValue().toString()));
+					} else if (next.getTokenType() == ToyTokenTypes._doubleliteral) {
+						writer.append(String.format("%s(%s)", ToyTokenTypes._doubleliteral, next.getValue().toString()));
+					} else if (next.getTokenType() == ToyTokenTypes._integerliteral) {
+						writer.append(String.format("%s(%s)", ToyTokenTypes._integerliteral, next.getValue().toString()));
+					} else if (next.getTokenType() == ToyTokenTypes._nullliteral) {
+						writer.append(String.format("%s(%s)", ToyTokenTypes._nullliteral, next.getValue().toString()));
+					} else if (next.getTokenType() == ToyTokenTypes._stringliteral) {
+						writer.append(String.format("%s(%s)", ToyTokenTypes._stringliteral, next.getValue().toString()));
+					} else if (next.getTokenType() == ToyTokenTypes._id) {
+						writer.append(String.format("%s(%s)", ToyTokenTypes._id, next.getValue().toString()));
 					} else {
 						writer.append(next.getTokenType().toString());
 					}
 
 					writer.append(" ");
-				}
+				}*/
 
-				//parser.parse(lexer);
+				parser.parse(tokenStream, writer);
 				System.out.format("%s scanned and parsed in %dms%n", fileName, System.currentTimeMillis()-dt);
 			} catch (IOException e) {
 				e.printStackTrace();

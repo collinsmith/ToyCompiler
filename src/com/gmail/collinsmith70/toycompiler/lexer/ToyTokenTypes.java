@@ -10,7 +10,7 @@ import java.util.Set;
  *
  * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
  */
-public enum TokenTypes implements TokenType {
+public enum ToyTokenTypes implements TokenType {
 	// Keywords
 	_bool(),
 	_break(),
@@ -25,7 +25,6 @@ public enum TokenTypes implements TokenType {
 	_int(),
 	_interface(),
 	_newarray(),
-	_null(),
 	_println(),
 	_readln(),
 	_return(),
@@ -77,16 +76,16 @@ public enum TokenTypes implements TokenType {
 	_integerliteral("([+-]?(([0-9]+)|(0(x|X)[a-fA-F0-9]+)))", false),
 	_doubleliteral("([0-9]+\\.[0-9]*)", false),
 	_stringliteral("(\".*\")", false),
-	_nullliteral("null", false),
+	_nullliteral("null"),
 
 	// Identifiers
-	_id("([a-zA-Z][a-zA-Z0-9_]*)", true)
+	_id("([a-zA-Z][a-zA-Z0-9_]*)", false)
 	;
 
 	/**
 	 * Set containing the token types which are keywords.
 	 */
-	public static final Set<TokenTypes> KEYWORDS = Collections.unmodifiableSet(EnumSet.range(_bool, _while));
+	public static final Set<ToyTokenTypes> KEYWORDS = Collections.unmodifiableSet(EnumSet.range(_bool, _while));
 
 	/**
 	 * String representation of the regular expression representing this token
@@ -111,7 +110,7 @@ public enum TokenTypes implements TokenType {
 	 * invoking {@link Enum#name()}. This is usually used to represent
 	 * keywords.
 	 */
-	TokenTypes() {
+	ToyTokenTypes() {
 		this(null);
 	}
 
@@ -122,7 +121,7 @@ public enum TokenTypes implements TokenType {
 	 *
 	 * @param regex regular expression representing this token type
 	 */
-	TokenTypes(String regex) {
+	ToyTokenTypes(String regex) {
 		this(regex, true);
 	}
 
@@ -136,7 +135,7 @@ public enum TokenTypes implements TokenType {
 	 * @param isLiteral {@code true} to interpret the regular expression
 	 *	literally, otherwise {@code false}
 	 */
-	TokenTypes(String regex, boolean isLiteral) {
+	ToyTokenTypes(String regex, boolean isLiteral) {
 		if (regex != null) {
 			this.REGEX = regex;
 		} else {

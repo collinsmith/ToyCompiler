@@ -5,7 +5,7 @@ public class ToyEvaluator {
 		//...
 	}
 
-	public static final Object evaluate(TokenTypes type, String lexeme) {
+	public static final Object evaluate(ToyTokenTypes type, String lexeme) {
 		switch (type) {
 			case _characterliteral:	return lexeme.charAt(0);
 			case _booleanliteral:	return Boolean.valueOf(lexeme);
@@ -18,8 +18,8 @@ public class ToyEvaluator {
 		}
 	}
 
-	public static final Object evaluate(TokenTypes type, int val) {
-		if (type == TokenTypes._integerliteral) {
+	public static final Object evaluate(ToyTokenTypes type, int val) {
+		if (type == ToyTokenTypes._integerliteral) {
 			return val;
 		}
 

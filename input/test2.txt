@@ -1,49 +1,47 @@
 /**
- * Main class to run our program
+ * This is the main class for our test program.
  */
 class Main extends TestCase implements Test {
 	/**
 	 * This is the main loop
 	 */
 	void main(string[] args) {
+		int x;
+		bool b;
+		int i;
+		double d;
+		string s;
+		int[] array;
+
 		// Sample if statement
 		if (true && false) {
-		} else if (false || false) {
 		} else {
 		}
 
-		for (int i = 0; i < 10; i = i + 1) {
+		for (i = 0; i < 10; i = i + 1) {
 		}
 
-		int x = 10;
-		while (0 < x) {
-			x = x - 1;
+
+		x = 0;
+		while (x < 10) {
+			x = x + 1;
 		}
 
-		bool b = true;
 		b = false;
 
-		int i = 0xFFFF;
 		i = 1234;
 
-		double d = 12.00;
-		d = 12.E1;
-		d = 0.0E+0;
+		d = 12.1;
+		d = 0.0;
 
-		string s = "test";
 		s = "this is a test";
 
-		int[] array = newarray(8, int);
+		array = newarray(8, int);
 		array[0] = 1234;
 		array[1] = array[0];
 
 		println("Enter your name: ");
-		readln(s);
+		s = readln();
 		println("Hello ", s, "!");
-
-		int this;
-		int this01;
-		int this_01;
-		int this_is_a_variable;
 	}
 }

@@ -1,0 +1,6 @@
+class ClassName {
+}
+void function(int[] a, Type other) {
+	other = 1
+	a[0] = a[1];
+}

@@ -13,7 +13,7 @@ public class ToyScanner implements Scanner {
 
 	public ToyScanner() {
 		TRIE = new ArrayTrie<>();
-		TokenTypes.KEYWORDS.stream()
+		ToyTokenTypes.KEYWORDS.stream()
 			.forEach((t) -> TRIE.put(KEYWORD_VALUE, t.getRegex(), t.getStaticToken()));
 	}
 
@@ -52,25 +52,25 @@ public class ToyScanner implements Scanner {
 					String id = idBuilder.toString();
 					Token token = TRIE.get(KEYWORD_VALUE, id);
 					if (token != null) {
-						//return TokenTypes.valueOf('_' + id).getStaticToken();
+						//return ToyTokenTypes.valueOf('_' + id).getStaticToken();
 						return token;
-					} else if (id.matches(TokenTypes._booleanliteral.getRegex())) {
+					} else if (id.matches(ToyTokenTypes._booleanliteral.getRegex())) {
 						return new Token(
-							TokenTypes._booleanliteral,
+							ToyTokenTypes._booleanliteral,
 							ToyEvaluator.evaluate(
-								TokenTypes._booleanliteral,
+								ToyTokenTypes._booleanliteral,
 								id
 							)
 						);
-					} else if (id.matches(TokenTypes._nullliteral.getRegex())) {
-						return TokenTypes._nullliteral.getStaticToken();
+					} else if (id.matches(ToyTokenTypes._nullliteral.getRegex())) {
+						return ToyTokenTypes._nullliteral.getStaticToken();
 					} else {
-						assert id.matches(TokenTypes._id.getRegex());
+						assert id.matches(ToyTokenTypes._id.getRegex());
 						TRIE.put(ID_VALUE, id, null);
 						return new Token(
-							TokenTypes._id,
+							ToyTokenTypes._id,
 							ToyEvaluator.evaluate(
-								TokenTypes._id,
+								ToyTokenTypes._id,
 								id
 							)
 						);
@@ -103,11 +103,11 @@ public class ToyScanner implements Scanner {
 									break;
 								}
 
-								//assert hexBuilder.toString().matches(TokenTypes._integerliteral.getRegex());
+								//assert hexBuilder.toString().matches(ToyTokenTypes._integerliteral.getRegex());
 								return new Token(
-									TokenTypes._integerliteral,
+									ToyTokenTypes._integerliteral,
 									ToyEvaluator.evaluate(
-										TokenTypes._integerliteral,
+										ToyTokenTypes._integerliteral,
 										intVal
 									)
 								);
@@ -116,11 +116,11 @@ public class ToyScanner implements Scanner {
 							r.reset();
 
 							intVal = 0;
-							//assert intBuilder.toString().matches(TokenTypes._integerliteral.getRegex());
+							//assert intBuilder.toString().matches(ToyTokenTypes._integerliteral.getRegex());
 							return new Token(
-								TokenTypes._integerliteral,
+								ToyTokenTypes._integerliteral,
 								ToyEvaluator.evaluate(
-									TokenTypes._integerliteral,
+									ToyTokenTypes._integerliteral,
 									intVal
 								)
 							);
@@ -160,11 +160,11 @@ public class ToyScanner implements Scanner {
 								}
 
 								String doubleString = doubleBuilder.toString();
-								//assert doubleString.matches(TokenTypes._doubleliteral.getRegex());
+								//assert doubleString.matches(ToyTokenTypes._doubleliteral.getRegex());
 								return new Token(
-									TokenTypes._doubleliteral,
+									ToyTokenTypes._doubleliteral,
 									ToyEvaluator.evaluate(
-										TokenTypes._doubleliteral,
+										ToyTokenTypes._doubleliteral,
 										doubleString
 									)
 								);
@@ -174,11 +174,11 @@ public class ToyScanner implements Scanner {
 						}
 					}
 
-					//assert intBuilder.toString().matches(TokenTypes._integerliteral.getRegex());
+					//assert intBuilder.toString().matches(ToyTokenTypes._integerliteral.getRegex());
 					return new Token(
-						TokenTypes._integerliteral,
+						ToyTokenTypes._integerliteral,
 						ToyEvaluator.evaluate(
-							TokenTypes._integerliteral,
+							ToyTokenTypes._integerliteral,
 							intVal
 						)
 					);
@@ -200,9 +200,9 @@ public class ToyScanner implements Scanner {
 							}
 
 							String stringValue = stringBuilder.toString();
-							//assert stringValue.matches(TokenTypes._stringliteral.getRegex());
+							//assert stringValue.matches(ToyTokenTypes._stringliteral.getRegex());
 							return new Token(
-								TokenTypes._stringliteral,
+								ToyTokenTypes._stringliteral,
 								stringValue
 							);
 						case '\'':
@@ -212,9 +212,9 @@ public class ToyScanner implements Scanner {
 							switch (i) {
 								case '\'':
 									return new Token(
-										TokenTypes._characterliteral,
+										ToyTokenTypes._characterliteral,
 										ToyEvaluator.evaluate(
-											TokenTypes._characterliteral,
+											ToyTokenTypes._characterliteral,
 											Character.toString(charVal)
 										)
 									);
@@ -245,49 +245,49 @@ public class ToyScanner implements Scanner {
 									return next(r);
 								default:
 									r.reset();
-									return TokenTypes._division.getStaticToken();
+									return ToyTokenTypes._division.getStaticToken();
 							}
 						case '<':
 							r.mark(1);
 							i = r.read();
 							switch (i) {
-								case '=': return TokenTypes._lessequal.getStaticToken();
+								case '=': return ToyTokenTypes._lessequal.getStaticToken();
 								default:
 									r.reset();
-									return TokenTypes._less.getStaticToken();
+									return ToyTokenTypes._less.getStaticToken();
 							}
 						case '>':
 							r.mark(1);
 							i = r.read();
 							switch (i) {
-								case '=': return TokenTypes._greaterequal.getStaticToken();
+								case '=': return ToyTokenTypes._greaterequal.getStaticToken();
 								default:
 									r.reset();
-									return TokenTypes._greater.getStaticToken();
+									return ToyTokenTypes._greater.getStaticToken();
 							}
 						case '=':
 							r.mark(1);
 							i = r.read();
 							switch (i) {
-								case '=': return TokenTypes._equal.getStaticToken();
+								case '=': return ToyTokenTypes._equal.getStaticToken();
 								default:
 									r.reset();
-									return TokenTypes._assignop.getStaticToken();
+									return ToyTokenTypes._assignop.getStaticToken();
 							}
 						case '!':
 							r.mark(1);
 							i = r.read();
 							switch (i) {
-								case '=': return TokenTypes._notequal.getStaticToken();
+								case '=': return ToyTokenTypes._notequal.getStaticToken();
 								default:
 									r.reset();
-									return TokenTypes._not.getStaticToken();
+									return ToyTokenTypes._not.getStaticToken();
 							}
 						case '&':
 							r.mark(1);
 							i = r.read();
 							switch (i) {
-								case '&': return TokenTypes._and.getStaticToken();
+								case '&': return ToyTokenTypes._and.getStaticToken();
 								default:
 									r.reset();
 									throw new UnexpectedLexemeException(r.getLineNumber(), String.valueOf((char)i));
@@ -296,24 +296,24 @@ public class ToyScanner implements Scanner {
 							r.mark(1);
 							i = r.read();
 							switch (i) {
-								case '|': return TokenTypes._or.getStaticToken();
+								case '|': return ToyTokenTypes._or.getStaticToken();
 								default:
 									r.reset();
 									throw new UnexpectedLexemeException(r.getLineNumber(), String.valueOf((char)i));
 							}
-						case '+': return TokenTypes._plus.getStaticToken();
-						case '-': return TokenTypes._minus.getStaticToken();
-						case '*': return TokenTypes._multiplication.getStaticToken();
-						case '%': return TokenTypes._modulus.getStaticToken();
-						case ';': return TokenTypes._semicolon.getStaticToken();
-						case ',': return TokenTypes._comma.getStaticToken();
-						case '.': return TokenTypes._period.getStaticToken();
-						case '(': return TokenTypes._leftparen.getStaticToken();
-						case ')': return TokenTypes._rightparen.getStaticToken();
-						case '[': return TokenTypes._leftbracket.getStaticToken();
-						case ']': return TokenTypes._rightbracket.getStaticToken();
-						case '{': return TokenTypes._leftbrace.getStaticToken();
-						case '}': return TokenTypes._rightbrace.getStaticToken();
+						case '+': return ToyTokenTypes._plus.getStaticToken();
+						case '-': return ToyTokenTypes._minus.getStaticToken();
+						case '*': return ToyTokenTypes._multiplication.getStaticToken();
+						case '%': return ToyTokenTypes._modulus.getStaticToken();
+						case ';': return ToyTokenTypes._semicolon.getStaticToken();
+						case ',': return ToyTokenTypes._comma.getStaticToken();
+						case '.': return ToyTokenTypes._period.getStaticToken();
+						case '(': return ToyTokenTypes._leftparen.getStaticToken();
+						case ')': return ToyTokenTypes._rightparen.getStaticToken();
+						case '[': return ToyTokenTypes._leftbracket.getStaticToken();
+						case ']': return ToyTokenTypes._rightbracket.getStaticToken();
+						case '{': return ToyTokenTypes._leftbrace.getStaticToken();
+						case '}': return ToyTokenTypes._rightbrace.getStaticToken();
 					}
 				}
 			}
