@@ -1,1 +1,25 @@
-_int _id(fact) _leftparen _int _id(x) _rightparen _leftbrace _if _leftparen _id(x) _greater _integerliteral(1) _rightparen _return _id(x) _multiplication _id(fact) _leftparen _id(x) _minus _integerliteral(1) _rightparen _semicolon _else _return _integerliteral(1) _semicolon _rightbrace _void _id(main) _leftparen _rightparen _leftbrace _int _id(x) _semicolon _int _id(total) _semicolon _println _leftparen _stringliteral(factorial of 10 is ) _comma _id(fact) _leftparen _integerliteral(10) _rightparen _comma _stringliteral( from the recursive function) _rightparen _semicolon _id(total) _assignop _integerliteral(1) _semicolon _id(x) _assignop _integerliteral(1) _semicolon _for _leftparen _semicolon _id(x) _lessequal _integerliteral(10) _semicolon _rightparen _leftbrace _id(total) _assignop _id(total) _multiplication _id(x) _semicolon _id(x) _assignop _id(x) _plus _integerliteral(1) _semicolon _rightbrace _println _leftparen _stringliteral(iterative result of 10! is ) _comma _id(total) _rightparen _semicolon _rightbrace _class _id(cs411) _leftbrace _int _id(Funny) _semicolon _double _id(funny) _semicolon _bool _id(flag) _semicolon _string _id(s) _semicolon _int _leftbracket _rightbracket _id(a) _semicolon _id(flag) _assignop _booleanliteral(true) _semicolon _id(Funny) _assignop _integerliteral(35243) _semicolon _id(funny) _assignop _doubleliteral(1.234560123E9) _semicolon _id(s) _assignop _stringliteral(hello world) _semicolon _while _leftparen _id(x) _assignop _leftparen _id(Funny) _division _integerliteral(10) _rightparen _less _integerliteral(0) _rightparen _println _leftparen _id(s) _comma _stringliteral( have fun !) _rightparen _semicolon _id(a) _assignop _newarray _leftparen _integerliteral(20) _comma _int _rightparen _semicolon _rightbrace 
+_int _id(fact) _leftparen _int _id(x) _rightparen _leftbrace 
+_if _leftparen _id(x) _greater _integerliteral(1) _rightparen _return _id(x) _multiplication _id(fact) _leftparen _id(x) _minus _integerliteral(1) _rightparen _semicolon 
+_else _return _integerliteral(1) _semicolon 
+_rightbrace 
+_void _id(main) _leftparen _rightparen _leftbrace 
+
+_int _id(x) _semicolon 
+_int _id(total) _semicolon 
+_println _leftparen _stringliteral(factorial of 10 is ) _comma _id(fact) _leftparen _integerliteral(10) _rightparen _comma _stringliteral( from the recursive function) _rightparen _semicolon 
+_id(total) _assignop _integerliteral(1) _semicolon _id(x) _assignop _integerliteral(1) _semicolon 
+_for _leftparen _semicolon _id(x) _lessequal _integerliteral(10) _semicolon _rightparen _leftbrace _id(total) _assignop _id(total) _multiplication _id(x) _semicolon _id(x) _assignop _id(x) _plus _integerliteral(1) _semicolon _rightbrace 
+_println _leftparen _stringliteral(iterative result of 10! is ) _comma _id(total) _rightparen _semicolon 
+_rightbrace 
+_class _id(cs411) _leftbrace 
+_int _id(Funny) _semicolon 
+_double _id(funny) _semicolon 
+_bool _id(flag) _semicolon 
+_string _id(s) _semicolon 
+_int _leftbracket _rightbracket _id(a) _semicolon 
+_id(flag) _assignop _booleanliteral(true) _semicolon 
+_id(Funny) _assignop _integerliteral(35243) _semicolon _id(funny) _assignop _doubleliteral(1.234560123E9) _semicolon 
+_id(s) _assignop _stringliteral(hello world) _semicolon 
+_while _leftparen _id(x) _assignop _leftparen _id(Funny) _division _integerliteral(10) _rightparen _less _integerliteral(0) _rightparen _println _leftparen _id(s) _comma _stringliteral( have fun !) _rightparen _semicolon 
+_id(a) _assignop _newarray _leftparen _integerliteral(20) _comma _int _rightparen _semicolon 
+_rightbrace 

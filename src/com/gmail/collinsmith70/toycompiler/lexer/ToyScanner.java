@@ -27,6 +27,10 @@ public class ToyScanner implements Scanner {
 				if (i == -1) {
 					break Reader;
 				} else if (Character.isWhitespace(i)) {
+					if (i == '\n') {
+						return TokenType.DefaultTokenType._eol.getStaticToken();
+					}
+
 					continue Reader;
 				}
 

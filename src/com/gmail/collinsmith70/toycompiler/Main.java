@@ -3,6 +3,7 @@ package com.gmail.collinsmith70.toycompiler;
 import com.gmail.collinsmith70.toycompiler.lexer.Scanner;
 import com.gmail.collinsmith70.toycompiler.lexer.Token;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
+import com.gmail.collinsmith70.toycompiler.lexer.TokenType;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenTypes;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
 import java.io.BufferedReader;
@@ -50,7 +51,10 @@ public class Main {
 				Token next;
 				while (tokenStream.hasNext()) {
 					next = tokenStream.next();
-					if (next.getTokenType() == TokenTypes._booleanliteral) {
+					if (next.getTokenType() == TokenType.DefaultTokenType._eol) {
+						writer.append(String.format("%n"));
+						continue;
+					} else if (next.getTokenType() == TokenTypes._booleanliteral) {
 						writer.append(String.format("%s(%s)", TokenTypes._booleanliteral, next.getValue().toString()));
 					} else if (next.getTokenType() == TokenTypes._characterliteral) {
 						writer.append(String.format("%s(%s)", TokenTypes._characterliteral, next.getValue().toString()));

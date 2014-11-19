@@ -13,7 +13,8 @@ public interface TokenType {
 	 * language.
 	 */
 	enum DefaultTokenType implements TokenType {
-		_eof("$")
+		_eof("$"),
+		_eol("\n")
 		;
 
 		/**
