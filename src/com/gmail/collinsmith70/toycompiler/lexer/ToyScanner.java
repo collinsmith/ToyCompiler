@@ -9,12 +9,12 @@ public class ToyScanner implements Scanner {
 	private static final char KEYWORD_VALUE	= '\uFFFF';
 	private static final char ID_VALUE		= '\uFFFD';
 
-	private final Trie TRIE;
+	private final Trie<Token> TRIE;
 
 	public ToyScanner() {
-		TRIE = new ArrayTrie();
+		TRIE = new ArrayTrie<>();
 		TokenTypes.KEYWORDS.stream()
-			.forEach((t) -> TRIE.put(KEYWORD_VALUE, t.getRegex()));
+			.forEach((t) -> TRIE.put(KEYWORD_VALUE, t.getRegex(), t.getStaticToken()));
 	}
 
 	@Override
@@ -46,8 +46,10 @@ public class ToyScanner implements Scanner {
 					}
 
 					String id = idBuilder.toString();
-					if (TRIE.containsKey(KEYWORD_VALUE, id)) {
-						return TokenTypes.valueOf('_' + id).getStaticToken();
+					Token token = TRIE.get(KEYWORD_VALUE, id);
+					if (token != null) {
+						//return TokenTypes.valueOf('_' + id).getStaticToken();
+						return token;
 					} else if (id.matches(TokenTypes._booleanliteral.getRegex())) {
 						return new Token(
 							TokenTypes._booleanliteral,
@@ -60,7 +62,7 @@ public class ToyScanner implements Scanner {
 						return TokenTypes._nullliteral.getStaticToken();
 					} else {
 						assert id.matches(TokenTypes._id.getRegex());
-						TRIE.put(ID_VALUE, id);
+						TRIE.put(ID_VALUE, id, null);
 						return new Token(
 							TokenTypes._id,
 							ToyEvaluator.evaluate(

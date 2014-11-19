@@ -11,20 +11,20 @@ public class ArrayTrieTest {
 	@Test
 	public void testNumKeys() {
 		ArrayTrie trie = new ArrayTrie();
-		trie.put('!', "Collin");
-		trie.put('!', "Cars");
-		trie.put('@', "cars");
-		trie.put('!', "carson");
+		trie.put('!', "Collin", null);
+		trie.put('!', "Cars", null);
+		trie.put('@', "cars", null);
+		trie.put('!', "carson", null);
 		Assert.assertTrue(trie.numKeys() == 4);
 
 		trie = new ArrayTrie();
-		trie.put('^', "Collin");
-		trie.put('!', "Cars");
-		trie.put('@', "cars");
-		trie.put('@', "carson");
-		trie.put('!', "carson");
-		trie.put('!', "carson");
-		trie.put('!', "carson");
+		trie.put('^', "Collin", null);
+		trie.put('!', "Cars", null);
+		trie.put('@', "cars", null);
+		trie.put('@', "carson", null);
+		trie.put('!', "carson", null);
+		trie.put('!', "carson", null);
+		trie.put('!', "carson", null);
 		Assert.assertTrue(trie.numKeys() == 5);
 	}
 
@@ -34,24 +34,24 @@ public class ArrayTrieTest {
 		Assert.assertTrue(trie.isEmpty());
 
 		trie = new ArrayTrie();
-		trie.put('^', "Collin");
-		trie.put('!', "Cars");
-		trie.put('@', "cars");
-		trie.put('!', "carson");
-		trie.put('!', "carson");
-		trie.put('!', "carson");
+		trie.put('^', "Collin", null);
+		trie.put('!', "Cars", null);
+		trie.put('@', "cars", null);
+		trie.put('!', "carson", null);
+		trie.put('!', "carson", null);
+		trie.put('!', "carson", null);
 		Assert.assertTrue(!trie.isEmpty());
 	}
 
 	@Test
 	public void testContainsKey() {
 		ArrayTrie trie = new ArrayTrie();
-		trie.put('^', "Collin");
-		trie.put('!', "Cars");
-		trie.put('@', "Cars");
-		trie.put('@', "cars");
-		trie.put('!', "carson");
-		trie.put('!', "carson");
+		trie.put('^', "Collin", null);
+		trie.put('!', "Cars", null);
+		trie.put('@', "Cars", null);
+		trie.put('@', "cars", null);
+		trie.put('!', "carson", null);
+		trie.put('!', "carson", null);
 		Assert.assertFalse(trie.containsKey('!', "Collin"));
 		Assert.assertTrue(trie.containsKey('^', "Collin"));
 		Assert.assertFalse(trie.containsKey('^', ""));
@@ -63,17 +63,17 @@ public class ArrayTrieTest {
 	@Test
 	public void testPut() {
 		ArrayTrie trie = new ArrayTrie();
-		trie.put('^', "Collin");
+		trie.put('^', "Collin", null);
 		Assert.assertTrue(trie.containsKey('^', "Collin"));
-		trie.put('!', "Cars");
+		trie.put('!', "Cars", null);
 		Assert.assertTrue(trie.containsKey('!', "Cars"));
-		trie.put('@', "Cars");
+		trie.put('@', "Cars", null);
 		Assert.assertTrue(trie.containsKey('@', "Cars"));
-		trie.put('@', "cars");
+		trie.put('@', "cars", null);
 		Assert.assertTrue(trie.containsKey('@', "cars"));
-		trie.put('!', "carson");
+		trie.put('!', "carson", null);
 		Assert.assertTrue(trie.containsKey('!', "carson"));
-		trie.put('!', "carson");
+		trie.put('!', "carson", null);
 		Assert.assertTrue(trie.containsKey('!', "carson"));
 	}
 }

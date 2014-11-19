@@ -7,7 +7,7 @@ import java.util.Arrays;
  *
  * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
  */
-public class ArrayTrie implements Trie {
+public class ArrayTrie<E> implements Trie<E> {
 	/**
 	 * Defines the initial size of the trie table when there is no initial
 	 * size specified.
@@ -61,6 +61,12 @@ public class ArrayTrie implements Trie {
 	private char[] trie;
 
 	/**
+	 * Array which stores the data contained at that position in the trie.
+	 * Indexes should correspond with {@link #trie} array delimiters.
+	 */
+	private E[] data;
+
+	/**
 	 * Array whose indexes correspond with those of {@link #trie} and
 	 * represent pointers to the next index within the trie that contains the
 	 * next character. If the next value is undefined (not used yet), then
@@ -110,6 +116,13 @@ public class ArrayTrie implements Trie {
 		}
 
 		this.trie = newTrie;
+
+		E[] newData = (E[])new Object[newSize];
+		if (data != null) {
+			System.arraycopy(data, 0, newData, 0, tail);
+		}
+
+		this.data = newData;
 
 		int[] newNext = new int[newSize];
 		if (next != null) {
@@ -192,7 +205,7 @@ public class ArrayTrie implements Trie {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void put(char sentinel, String key) {
+	public E put(char sentinel, String key, E data) {
 		if (key == null) {
 			throw new NullPointerException("Key cannot be null");
 		} else if (key.isEmpty()) {
@@ -206,8 +219,8 @@ public class ArrayTrie implements Trie {
 
 		if (SWITCH[switchIndex] == -1) {
 			SWITCH[switchIndex] = tail;
-			insert(sentinel, key, 1);
-			return;
+			insert(sentinel, key, 1, data);
+			return null;
 		}
 
 		assert 0 <= SWITCH[switchIndex] : "Found a negative switch pointer";
@@ -224,27 +237,33 @@ public class ArrayTrie implements Trie {
 					continue nextIterator;
 				} else {
 					next[pos] = tail;
-					insert(sentinel, key, i);
-					return;
+					insert(sentinel, key, i, data);
+					return null;
 				}
 			}
 		}
 
 		if (trie[pos] == sentinel) {
-			return;
+			E oldData = this.data[pos];
+			this.data[tail] = data;
+			return oldData;
 		}
 
 		while (0 <= next[pos]) {
 			pos = next[pos];
 			if (trie[pos] == sentinel) {
-				return;
+				E oldData = this.data[pos];
+				this.data[pos] = data;
+				return oldData;
 			}
 		}
 
 		checkAndGrow(1);
 		next[pos] = tail;
+		this.data[tail] = data;
 		trie[tail++] = sentinel;
 		numKeys++;
+		return null;
 	}
 
 	/**
@@ -254,7 +273,7 @@ public class ArrayTrie implements Trie {
 	 * @param key string to append
 	 * @param pos offset within the key to start appending
 	 */
-	private void insert(char sentinel, String key, int pos) {
+	private void insert(char sentinel, String key, int pos, E data) {
 		assert key != null && !key.isEmpty();
 		assert 0 <= pos;
 		checkAndGrow(key.length()-pos+1);
@@ -262,6 +281,7 @@ public class ArrayTrie implements Trie {
 			trie[tail++] = key.charAt(i);
 		}
 
+		this.data[tail] = data;
 		trie[tail++] = sentinel;
 		numKeys++;
 	}
@@ -280,6 +300,58 @@ public class ArrayTrie implements Trie {
 
 		initialize(trie.length << 1);
 		checkAndGrow(numKeys);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public E get(char sentinel, String key) {
+		if (key == null) {
+			throw new NullPointerException("Key cannot be null");
+		} else if (key.isEmpty()) {
+			return null;
+		}
+
+		int switchIndex = charToSwitch(key.charAt(0));
+		if (switchIndex == -1) {
+			return null;
+		}
+
+		if (SWITCH[switchIndex] == -1) {
+			return null;
+		}
+
+		assert 0 <= SWITCH[switchIndex] : "Found a negative switch pointer";
+
+		int i;
+		int pos = SWITCH[switchIndex];
+		keyIterator: for (i = 1; i < key.length(); i++) {
+			nextIterator: while (true) {
+				if (trie[pos] == key.charAt(i)) {
+					pos++;
+					continue keyIterator;
+				} else if (0 <= next[pos]) {
+					pos = next[pos];
+					continue nextIterator;
+				} else {
+					return null;
+				}
+			}
+		}
+
+		if (trie[pos] == sentinel) {
+			return data[pos];
+		}
+
+		while (0 <= next[pos]) {
+			pos = next[pos];
+			if (trie[pos] == sentinel) {
+				return data[pos];
+			}
+		}
+
+		return null;
 	}
 
 	/**

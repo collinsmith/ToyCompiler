@@ -1,6 +1,6 @@
 package com.gmail.collinsmith70.toycompiler.utils;
 
-public interface Trie {
+public interface Trie<E> {
 	/**
 	 * Returns the number of keys inserted into this trie.
 	 *
@@ -29,9 +29,25 @@ public interface Trie {
 
 	/**
 	 * Inserts a new key into this trie using the given sentinel to mark it.
+	 * The key will then strongly reference  the specified object.
 	 *
 	 * @param sentinel marker to use to symbolize the key
 	 * @param key string to insert
+	 * @param data data the key will reference
+	 *
+	 * @return the old data references by the sentinel-key pair, or
+	 *	{@code null} if there was none or {@code null} is the current value
+	 *	of the stored data
 	 */
-	void put(char sentinel, String key);
+	E put(char sentinel, String key, E data);
+
+	/**
+	 * Returns the data stored with the specified sentinel-key pair.
+	 *
+	 * @param sentinel marker used to symbolize the key
+	 * @param key string to retrieve
+	 *
+	 * @return the data stored with the specified sentinel-key pair
+	 */
+	E get(char sentinel, String key);
 }
