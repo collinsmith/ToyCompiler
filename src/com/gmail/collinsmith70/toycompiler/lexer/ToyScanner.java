@@ -322,7 +322,7 @@ public class ToyScanner implements Scanner {
 			System.out.println(e.getMessage());
 		} finally {
 			if (i == -1) {
-				return TokenTypeDefaultTokenTypese._eof.getStaticToken();
+				return TokenType.DefaultTokenTypes._eof.getStaticToken();
 			}
 		}
 

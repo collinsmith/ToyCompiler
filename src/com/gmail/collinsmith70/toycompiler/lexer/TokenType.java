@@ -20,7 +20,7 @@ public interface TokenType {
 		/**
 		 * Represents the total number of default tokens types.
 		 */
-		public static final int length =DefaultTokenTypese.values().length;
+		public static final int length = values().length;
 
 		/**
 		 * String representation of the regular expression representing
@@ -47,7 +47,7 @@ public interface TokenType {
 		 *
 		 * @param regex regular expression representation of the token type
 		 */
-DefaultTokenTypespe(String regex) {
+		DefaultTokenTypes(String regex) {
 			this(regex, true);
 		}
 
@@ -59,7 +59,8 @@ DefaultTokenTypespe(String regex) {
 		 * @param regex regular expression representation of the token type
 		 * @param isLiteral {@true} if the regular expression should be
 		 *	interpreted literally, otherwise {@code false}
-		 */DefaultTokenTypesype(String regex, boolean isLiteral) {
+		 */
+		DefaultTokenTypes(String regex, boolean isLiteral) {
 			if (regex != null) {
 				this.REGEX = regex;
 			} else {

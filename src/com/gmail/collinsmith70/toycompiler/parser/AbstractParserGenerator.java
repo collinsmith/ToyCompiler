@@ -87,7 +87,7 @@ public abstract class AbstractParserGenerator {
 	private ImmutableBiMap<String, Integer> createSymbolsTable(Path p) throws IOException {
 		numTerminals = numNonterminals = 0;
 		BiMap<String, Integer> symbols = HashBiMap.create();
-		for (TokenType.DefaultTokenTypes k : TokenTypeDefaultTokenTypese.values()) {
+		for (TokenType.DefaultTokenTypes k : TokenType.DefaultTokenTypes.values()) {
 			symbols.put(k.name(), k.getId());
 			if (k.isLiteral()) {
 				symbols.put(k.getRegex(), Integer.MIN_VALUE+k.getId());
