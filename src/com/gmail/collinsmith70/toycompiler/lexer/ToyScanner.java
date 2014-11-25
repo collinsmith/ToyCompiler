@@ -28,7 +28,7 @@ public class ToyScanner implements Scanner {
 					break Reader;
 				} else if (Character.isWhitespace(i)) {
 					if (i == '\n') {
-						return TokenType.DefaultTokenType._eol.getStaticToken();
+						return TokenType.DefaultTokenTypes._eol.getStaticToken();
 					}
 
 					continue Reader;
@@ -322,7 +322,7 @@ public class ToyScanner implements Scanner {
 			System.out.println(e.getMessage());
 		} finally {
 			if (i == -1) {
-				return TokenType.DefaultTokenType._eof.getStaticToken();
+				return TokenTypeDefaultTokenTypese._eof.getStaticToken();
 			}
 		}
 

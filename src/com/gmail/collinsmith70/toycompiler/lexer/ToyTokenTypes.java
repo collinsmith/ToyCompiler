@@ -167,7 +167,7 @@ public enum ToyTokenTypes implements TokenType {
 	 */
 	@Override
 	public int getId() {
-		return DefaultTokenType.length + ordinal();
+		return DefaultTokenTypes.length + ordinal();
 	}
 
 	/**

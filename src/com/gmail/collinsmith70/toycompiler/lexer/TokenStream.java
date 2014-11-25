@@ -20,7 +20,7 @@ public class TokenStream {
 	}
 
 	public boolean hasNext() {
-		return peek().getTokenType() != TokenType.DefaultTokenType._eof;
+		return peek().getTokenType() != TokenType.DefaultTokenTypes._eof;
 	}
 
 	public Token peek() {

@@ -31,7 +31,7 @@ public class SLRParser implements Parser {
 		Get_Next_Token:
 		while (true) {
 			t = tokenStream.next();
-			if (t.getTokenType() == TokenType.DefaultTokenType._eol) {
+			if (t.getTokenType() == TokenType.DefaultTokenTypes._eol) {
 				continue;
 			}
 
@@ -65,7 +65,7 @@ public class SLRParser implements Parser {
 						break Get_Next_Token;
 					case 0:
 						// When current reduction is back to A0 because EOF is found, we're done
-						if (t == TokenType.DefaultTokenType._eof.getStaticToken()) {
+						if (t.getTokenType() == TokenType.DefaultTokenTypes._eof) {
 							accepted = true;
 							break Get_Next_Token;
 						}

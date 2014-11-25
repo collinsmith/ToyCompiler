@@ -12,7 +12,7 @@ public interface TokenType {
 	 * This class represents default tokens types which are inherited by every
 	 * language.
 	 */
-	enum DefaultTokenType implements TokenType {
+	enum DefaultTokenTypes implements TokenType {
 		_eof("$"),
 		_eol("$", false)
 		;
@@ -20,7 +20,7 @@ public interface TokenType {
 		/**
 		 * Represents the total number of default tokens types.
 		 */
-		public static final int length = DefaultTokenType.values().length;
+		public static final int length =DefaultTokenTypese.values().length;
 
 		/**
 		 * String representation of the regular expression representing
@@ -47,7 +47,7 @@ public interface TokenType {
 		 *
 		 * @param regex regular expression representation of the token type
 		 */
-		DefaultTokenType(String regex) {
+DefaultTokenTypespe(String regex) {
 			this(regex, true);
 		}
 
@@ -59,8 +59,7 @@ public interface TokenType {
 		 * @param regex regular expression representation of the token type
 		 * @param isLiteral {@true} if the regular expression should be
 		 *	interpreted literally, otherwise {@code false}
-		 */
-		DefaultTokenType(String regex, boolean isLiteral) {
+		 */DefaultTokenTypesype(String regex, boolean isLiteral) {
 			if (regex != null) {
 				this.REGEX = regex;
 			} else {
