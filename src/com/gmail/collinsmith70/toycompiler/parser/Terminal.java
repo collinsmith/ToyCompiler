@@ -1,4 +1,4 @@
-package com.gmail.collinsmith70.toycompiler.parser.adt;
+package com.gmail.collinsmith70.toycompiler.parser;
 
 public class Terminal extends Symbol {
 	public Terminal(int id) {
