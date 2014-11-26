@@ -1,21 +1,16 @@
-package com.gmail.collinsmith70.toycompiler.parser.slr;
+package com.gmail.collinsmith70.toycompiler.parser.lalr;
 
 import com.gmail.collinsmith70.toycompiler.lexer.Token;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenType;
-import com.gmail.collinsmith70.toycompiler.parser.Parser;
+import com.gmail.collinsmith70.toycompiler.parser.slr.SLRParser;
+import com.gmail.collinsmith70.toycompiler.parser.slr.SLRTables;
 import java.io.IOException;
 import java.io.Writer;
 
-public class SLRParser implements Parser {
-	private final SLRTables SLR_TABLES;
-
-	public SLRParser(SLRTables tables) {
-		this.SLR_TABLES = tables;
-	}
-
-	protected SLRTables getSLRTables() {
-		return SLR_TABLES;
+public class LALRParser extends SLRParser {
+	public LALRParser(SLRTables tables) {
+		super(tables);
 	}
 
 	@Override
@@ -39,7 +34,7 @@ public class SLRParser implements Parser {
 				continue;
 			}
 
-			symbol = SLR_TABLES.getTokenId(t);
+			symbol = getSLRTables().getTokenId(t);
 			if (writer != null && symbol != Integer.MIN_VALUE) {
 				String s;
 				if (t.getValue() != null) {
@@ -53,7 +48,7 @@ public class SLRParser implements Parser {
 
 			Shift_Handler:
 			while(true) {
-				shift = SLR_TABLES.shift(state, symbol);
+				shift = getSLRTables().shift(state, symbol);
 				if (shift != Integer.MIN_VALUE) {
 					if (writer != null) writer.write(String.format("[shift]%n"));
 					state = shift;
@@ -61,7 +56,7 @@ public class SLRParser implements Parser {
 					continue Get_Next_Token;
 				}
 
-				production = SLR_TABLES.reduce(state);
+				production = getSLRTables().reduce(state);
 				switch (production) {
 					case Integer.MIN_VALUE:
 						accepted = false;
@@ -75,8 +70,8 @@ public class SLRParser implements Parser {
 						}
 					default:
 						if (writer != null) writer.write(String.format("[reduce %d]", production));
-						top -= SLR_TABLES.getRHSSize(production);
-						state = SLR_TABLES.move(stack[top], SLR_TABLES.getNonterminalId(production));
+						top -= getSLRTables().getRHSSize(production);
+						state = getSLRTables().move(stack[top], getSLRTables().getNonterminalId(production));
 						stack[++top] = state;
 				}
 			}
