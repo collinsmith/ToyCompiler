@@ -49,12 +49,12 @@ public class ProductionRule implements Iterable<Symbol> {
 	private final ImmutableList<Symbol> RHS;
 
 	/**
-	 * Constructs a Production which given a NonterminalSymbol, will produce
-	 * the list of Symbols (referenced as the right-hand side).
+	 * Constructs a ProductionRule which given a NonterminalSymbol, will
+	 * produce the list of Symbols (referenced as the right-hand side).
 	 *
-	 * @param nonterminal NonterminalSymbol generating this Production rule
+	 * @param nonterminal NonterminalSymbol generating this ProductionRule
 	 * @param rhs Symbols that the NonterminalSymbol will generate according
-	 *	to this Production rule
+	 *	to this ProductionRule
 	 */
 	public ProductionRule(NonterminalSymbol nonterminal, ImmutableList<Symbol> rhs) {
 		this.ANCESTOR = this; // TODO: Fix leaking "this" in constructor
@@ -65,7 +65,7 @@ public class ProductionRule implements Iterable<Symbol> {
 
 	/**
 	 * Private constructor which is used to generate the succeeding generation
-	 * of this Production with {@link #POSITION} {@code = p.}
+	 * of this ProductionRule with {@link #POSITION} {@code = p.}
 	 * {@link #POSITION}{@code +1}.
 	 *
 	 * @param p parent ProductionRule to generate this successor from
@@ -79,9 +79,9 @@ public class ProductionRule implements Iterable<Symbol> {
 	}
 
 	/**
-	 * Returns the NonterminalSymbol which produces this production rule.
+	 * Returns the NonterminalSymbol which produces this ProductionRule.
 	 *
-	 * @return the NonterminalSymbol which produces this production rule
+	 * @return the NonterminalSymbol which produces this ProductionRule
 	 */
 	public NonterminalSymbol getNonterminalSymbol() {
 		return NONTERMINAL;
@@ -98,11 +98,11 @@ public class ProductionRule implements Iterable<Symbol> {
 	}
 
 	/**
-	 * Returns whether or not this ProductionRule rule can generate another
+	 * Returns whether or not this ProductionRule can generate another
 	 * generation. A ProductionRule can generate another generation if the
 	 * read position can advance past another symbol. I.e., a ProductionRule
-	 * rule can generate a succeeding generation if the current read position
-	 * is &lt; the number of Symbols on the right-hand side of this
+	 * can generate a succeeding generation if the current read position is
+	 * &lt; the number of Symbols on the right-hand side of this
 	 * ProductionRule.
 	 *
 	 * @return {@code true} if it is, otherwise {@code false}
@@ -115,7 +115,7 @@ public class ProductionRule implements Iterable<Symbol> {
 	 * Returns the successor to this ProductionRule with the read position
 	 * incremented by {@code 1}.
 	 *
-	 * @return the successor to this ProductionRule rule
+	 * @return the successor to this ProductionRule
 	 */
 	public ProductionRule next() {
 		assert hasNext() : "The succeeding generation of this production is redundant. Read position is already at the end.";
@@ -207,8 +207,8 @@ public class ProductionRule implements Iterable<Symbol> {
 	}
 
 	/**
-	 * Returns a String representation of this ProductionRule rule replacing
-	 * the Symbol identifiers with their String counter-parts. This method is
+	 * Returns a String representation of this ProductionRule replacing the
+	 * Symbol identifiers with their String counter-parts. This method is
 	 * useful for debugging because it produces output which is easier to
 	 * understand than only Symbol identifiers.
 	 *
@@ -243,11 +243,11 @@ public class ProductionRule implements Iterable<Symbol> {
 	}
 
 	/**
-	 * Returns a String representation of this ProductionRule rule.
+	 * Returns a String representation of this ProductionRule.
 	 *
 	 * @see #toString(java.util.Map)
 	 *
-	 * @return a String representation of this ProductionRule rule
+	 * @return a String representation of this ProductionRule
 	 */
 	@Override
 	public String toString() {
