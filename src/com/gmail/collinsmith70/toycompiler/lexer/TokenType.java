@@ -57,7 +57,7 @@ public interface TokenType {
 		 * interpreted as specified.
 		 *
 		 * @param regex regular expression representation of the token type
-		 * @param isLiteral {@true} if the regular expression should be
+		 * @param isLiteral {@code true} if the regular expression should be
 		 *	interpreted literally, otherwise {@code false}
 		 */
 		DefaultTokenTypes(String regex, boolean isLiteral) {

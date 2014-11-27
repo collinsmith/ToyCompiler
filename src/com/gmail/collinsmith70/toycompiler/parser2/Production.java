@@ -6,21 +6,69 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 
+/**
+ * A production or production rule in computer science is a rewrite rule
+ * specifying a symbol substitution that can be recursively performed to
+ * generate new symbol sequences.
+ *
+ * @see <a href="https://en.wikipedia.org/wiki/Production_(computer_science)">https://en.wikipedia.org/wiki/Production_(computer_science)</a>
+ *
+ * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
+ */
 public class Production implements Iterable<Symbol> {
+	/**
+	 * String representing the delimiter to use when outputting the String
+	 * representation of this Production.
+	 */
 	private static final String RHS_DELIMITER = "->";
 
+	/**
+	 * Ancestor Production of this Production (i.e., the first instance of
+	 * this Production where {@link #POSITION} {@code = 0}).
+	 */
 	private final Production ANCESTOR;
-	private final int POSITION;
+
+	/**
+	 * Current read position (in symbols) within the right-hand side of this
+	 * Production. Each succeeding generation of this Production will have
+	 * it's position incremented by {@code 1}. Initially set to {@code 0}.
+	 */
+	private final int POSITION; // TODO: change this to a short?
+
+	/**
+	 * NonterminalSymbol generating this Production (i.e., producing the
+	 * Symbols on the right-hand side ({@link #RHS})).
+	 */
 	private final NonterminalSymbol NONTERMINAL;
+
+	/**
+	 * List of Symbols which are produced by this Production. This list is
+	 * made immutable to prevent issues with succeeding generations.
+	 */
 	private final ImmutableList<Symbol> RHS;
 
+	/**
+	 * Constructs a Production which given a NonterminalSymbol, will produce
+	 * the list of Symbols (referenced as the right-hand side).
+	 *
+	 * @param nonterminal NonterminalSymbol generating this Production rule
+	 * @param rhs Symbols that the NonterminalSymbol will generate according
+	 *	to this Production rule
+	 */
 	public Production(NonterminalSymbol nonterminal, ImmutableList<Symbol> rhs) {
-		this.ANCESTOR = this;
+		this.ANCESTOR = this; // TODO: Fix leaking "this" in constructor
 		this.POSITION = 0;
 		this.NONTERMINAL = nonterminal;
 		this.RHS = Objects.requireNonNull(rhs, "Productions must have a non-null RHS");
 	}
-	
+
+	/**
+	 * Private constructor which is used to generate the succeeding generation
+	 * of this Production with {@link #POSITION} {@code = p.}
+	 * {@link #POSITION}{@code +1}.
+	 *
+	 * @param p parent Production to generate this successor from
+	 */
 	private Production(Production p) {
 		assert p != null;
 		this.ANCESTOR = p.ANCESTOR;
@@ -28,71 +76,148 @@ public class Production implements Iterable<Symbol> {
 		this.NONTERMINAL = p.NONTERMINAL;
 		this.RHS = p.RHS;
 	}
-	
+
+	/**
+	 * Returns the NonterminalSymbol which produces this production rule.
+	 *
+	 * @return the NonterminalSymbol which produces this production rule
+	 */
 	public NonterminalSymbol getNonterminalSymbol() {
 		return NONTERMINAL;
 	}
-	
+
+	/**
+	 * Returns the ancestor of this Production (i.e., the Production where
+	 * the read position is set to {@code 0}).
+	 *
+	 * @return the ancestor of this Production
+	 */
 	public Production getAncestor() {
 		return ANCESTOR;
 	}
-	
+
+	/**
+	 * Returns whether or not this Production rule can generate another
+	 * generation. A Production can generate another generation if the read
+	 * position can advance past another symbol. I.e., a Production rule can
+	 * generate a succeeding generation if the current read position is &lt;
+	 * the number of Symbols on the right-hand side of this Production.
+	 *
+	 * @return {@code true} if it is, otherwise {@code false}
+	 */
 	public boolean hasNext() {
 		return POSITION < RHS.size();
 	}
-	
+
+	/**
+	 * Returns the successor to this Production with the read position
+	 * incremented by {@code 1}.
+	 *
+	 * @return the successor to this Production rule
+	 */
 	public Production next() {
+		assert hasNext() : "The succeeding generation of this production is redundant. Read position is already at the end.";
 		return new Production(this);
 	}
-	
+
+	/**
+	 * Returns the current Symbol at the read position in the right-hand side
+	 * of this Production.
+	 *
+	 * @return the current Symbol at the read position in the right-hand side
+	 *	of this Production or {@code null} if no Symbol has been read yet
+	 */
 	public Symbol currentSymbol() {
 		if (POSITION == 0) {
 			return null;
 		}
-		
+
 		return RHS.get(POSITION-1);
 	}
 
+	/**
+	 * Returns the Symbol which is at the next read position (i.e.,
+	 * {@code POSITION+1}) in the right-hand side of this Production.
+	 *
+	 * @return the Symbol which is at the next read position (i.e.,
+	 *	{@code POSITION+1}) in the right-hand side of this Production or
+	 *	{@code null} if the read position is beyond the number of symbols
+	 *	in the RHS of this Production.
+	 */
 	public Symbol peekNextSymbol() {
 		if (!hasNext()) {
 			return null;
 		}
-		
+
 		return RHS.get(POSITION);
 	}
-	
+
+	/**
+	 * Returns the number of symbols in the right-hand side of this
+	 * Production.
+	 *
+	 * @return the number of symbols in the right-hand side of this
+	 *	Production.
+	 */
 	public int size() {
 		return RHS.size();
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Iterator<Symbol> iterator() {
 		return RHS.listIterator(POSITION);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+
 		if (obj == this) {
 			return true;
 		}
-		
+
 		if (!(obj instanceof Production)) {
-			return false;			
+			return false;
 		}
-		
+
 		Production other = (Production)this;
 		if (this.NONTERMINAL != other.NONTERMINAL || this.POSITION != other.POSITION || this.size() != other.size()) {
 			return false;
 		}
-		
+
 		return this.RHS.equals(other.RHS);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.NONTERMINAL, this.POSITION, this.RHS);
 	}
-	
+
+	/**
+	 * Returns a String representation of this Production rule replacing the
+	 * Symbol identifiers with their String counter-parts. This method is
+	 * useful for debugging because it produces output which is easier to
+	 * understand than only Symbol identifiers.
+	 *
+	 * @see #toString()
+	 *
+	 * @param translator a map using Symbols as keys to retrieve String
+	 *	representations of those Symbols.
+	 *
+	 * @return a String representation of this Production with Symbols
+	 *	translated into their String representations
+	 */
 	public String toString(Map<Symbol, String> translator) {
 		Preconditions.checkNotNull(translator);
 
@@ -115,6 +240,13 @@ public class Production implements Iterable<Symbol> {
 		return sb.toString();
 	}
 
+	/**
+	 * Returns a String representation of this Production rule.
+	 *
+	 * @see #toString(java.util.Map)
+	 *
+	 * @return a String representation of this Production rule
+	 */
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder(String.format("%d %s", NONTERMINAL, RHS_DELIMITER));

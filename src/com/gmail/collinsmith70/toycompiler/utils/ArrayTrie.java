@@ -89,7 +89,7 @@ public class ArrayTrie<E> implements Trie<E> {
 	/**
 	 * Constructs an ArrayTrie with a specified initial table size.
 	 *
-	 * @param initialSize initial size of the trie in characters (value > 0)
+	 * @param initialSize initial size of the trie in characters (value &gt; 0)
 	 */
 	public ArrayTrie(int initialSize) {
 		if (initialSize <= 0) {
@@ -272,6 +272,7 @@ public class ArrayTrie<E> implements Trie<E> {
 	 * @param sentinel marker to use to mark the end of the key
 	 * @param key string to append
 	 * @param pos offset within the key to start appending
+	 * @param data data to be stored at the specified key
 	 */
 	private void insert(char sentinel, String key, int pos, E data) {
 		assert key != null && !key.isEmpty();
