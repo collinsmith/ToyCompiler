@@ -6,6 +6,7 @@ import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
 import com.gmail.collinsmith70.toycompiler.parser.Parser;
 import com.gmail.collinsmith70.toycompiler.parser.slr.SLRParser;
 import com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator;
+import com.gmail.collinsmith70.toycompiler.parser2.Grammar;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -31,6 +32,13 @@ public class Main {
 			parser = new SLRParser(parserGenerator.getGeneratedTables());
 		} catch (IOException e) {
 			System.out.println("Unable to open toy.cfg.txt");
+		}
+
+		try {
+			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.cfg.txt"), Charset.forName("US-ASCII"));
+			System.out.format("Grammar generated from file!%n");
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		Arrays.stream(args)

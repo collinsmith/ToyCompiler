@@ -200,7 +200,7 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(String.format("%d %s", ANCESTOR.getNonterminalSymbol(), ProductionRule.RHS_DELIMITER));
+		StringBuilder sb = new StringBuilder(String.format("%s %s", ANCESTOR.getNonterminalSymbol(), ProductionRule.RHS_DELIMITER));
 
 		int i = 0;
 		for (Symbol s : ANCESTOR) {
@@ -208,7 +208,7 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 				sb.append(" .");
 			}
 
-			sb.append(String.format(" %d", s));
+			sb.append(String.format(" %s", s));
 			i++;
 		}
 

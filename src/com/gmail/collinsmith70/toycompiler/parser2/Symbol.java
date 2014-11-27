@@ -23,6 +23,15 @@ public class Symbol {
 	}
 
 	/**
+	 * Returns the unique identifier for this Symbol.
+	 *
+	 * @return the unique identifier for this Symbol
+	 */
+	public int getId() {
+		return ID;
+	}
+
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override

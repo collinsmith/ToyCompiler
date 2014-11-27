@@ -109,7 +109,7 @@ public class ProductionRule implements Iterable<Symbol> {
 		}
 
 		ProductionRule other = (ProductionRule)this;
-		if (this.NONTERMINAL != other.NONTERMINAL || this.getRHS().size() != other.getRHS().size()) {
+		if (this.NONTERMINAL != other.NONTERMINAL || this.RHS.size() != other.RHS.size()) {
 			return false;
 		}
 
@@ -121,7 +121,7 @@ public class ProductionRule implements Iterable<Symbol> {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.NONTERMINAL, this.RHS);
+		return Objects.hash(this.NONTERMINAL, this.RHS, this.RHS.size());
 	}
 
 	/**
@@ -161,11 +161,11 @@ public class ProductionRule implements Iterable<Symbol> {
 	 */
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(String.format("%d %s", NONTERMINAL, RHS_DELIMITER));
+		StringBuilder sb = new StringBuilder(String.format("%s %s", NONTERMINAL, RHS_DELIMITER));
 
 		int i = 0;
 		for (Symbol s : RHS) {
-			sb.append(String.format(" %d", s));
+			sb.append(String.format(" %s", s));
 			i++;
 		}
 
