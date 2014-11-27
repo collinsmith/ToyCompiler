@@ -19,7 +19,7 @@ import java.util.Objects;
  *
  * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
  */
-public class State implements Iterable<ProductionRule> {
+public class State implements Iterable<ProductionRuleInstance> {
 	/**
 	 * Unique identifier for this State.
 	 */
@@ -49,14 +49,14 @@ public class State implements Iterable<ProductionRule> {
 	 * kernel item must be closed over and the created ProductionRules added
 	 * into {@link #CLOSURE_ITEMS}.
 	 */
-	private final ImmutableSet<ProductionRule> KERNEL_ITEMS;
+	private final ImmutableSet<ProductionRuleInstance> KERNEL_ITEMS;
 
 	/**
 	 * Set of ProductionRules which are created by closing over each item
 	 * contained within {@link #KERNEL_ITEMS}. These items must then be closed
 	 * over, recursively, until the set is complete.
 	 */
-	private final ImmutableSet<ProductionRule> CLOSURE_ITEMS;
+	private final ImmutableSet<ProductionRuleInstance> CLOSURE_ITEMS;
 
 	/**
 	 * Constructs a State with the specified unique identifier, parent State,
@@ -75,8 +75,8 @@ public class State implements Iterable<ProductionRule> {
 		int id,
 		State parent,
 		ImmutableList<Symbol> viablePrefixes,
-		ImmutableSet<ProductionRule> kernelItems,
-		ImmutableSet<ProductionRule> closureItems
+		ImmutableSet<ProductionRuleInstance> kernelItems,
+		ImmutableSet<ProductionRuleInstance> closureItems
 	) {
 		this.ID = id;
 		this.PARENT = parent;
@@ -158,7 +158,7 @@ public class State implements Iterable<ProductionRule> {
 	 *
 	 * @return an immutable set of the kernel items for this State
 	 */
-	public ImmutableSet<ProductionRule> getKernelItems() {
+	public ImmutableSet<ProductionRuleInstance> getKernelItems() {
 		return KERNEL_ITEMS;
 	}
 
@@ -167,7 +167,7 @@ public class State implements Iterable<ProductionRule> {
 	 *
 	 * @return an immutable set of the closure items for this State
 	 */
-	public ImmutableSet<ProductionRule> getClosureItems() {
+	public ImmutableSet<ProductionRuleInstance> getClosureItems() {
 		return CLOSURE_ITEMS;
 	}
 
@@ -180,7 +180,7 @@ public class State implements Iterable<ProductionRule> {
 	 *	in this State
 	 */
 	@Override
-	public Iterator<ProductionRule> iterator() {
+	public Iterator<ProductionRuleInstance> iterator() {
 		return Iterators.concat(KERNEL_ITEMS.iterator(), CLOSURE_ITEMS.iterator());
 	}
 }

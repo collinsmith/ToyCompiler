@@ -20,21 +20,7 @@ public class ProductionRule implements Iterable<Symbol> {
 	 * String representing the delimiter to use when outputting the String
 	 * representation of this ProductionRule.
 	 */
-	private static final String RHS_DELIMITER = "->";
-
-	/**
-	 * Ancestor ProductionRule of this ProductionRule (i.e., the first
-	 * instance of this ProductionRule where {@link #POSITION} {@code = 0}).
-	 */
-	private final ProductionRule ANCESTOR;
-
-	/**
-	 * Current read position (in symbols) within the right-hand side of this
-	 * ProductionRule. Each succeeding generation of this ProductionRule will
-	 * have it's position incremented by {@code 1}. Initially set to
-	 * {@code 0}.
-	 */
-	private final int POSITION; // TODO: change this to a short?
+	public static final String RHS_DELIMITER = "->";
 
 	/**
 	 * NonterminalSymbol generating this ProductionRule (i.e., producing the
@@ -57,23 +43,11 @@ public class ProductionRule implements Iterable<Symbol> {
 	 *	to this ProductionRule
 	 */
 	public ProductionRule(NonterminalSymbol nonterminal, ImmutableList<Symbol> rhs) {
-		this.ANCESTOR = this; // TODO: Fix leaking "this" in constructor
-		this.POSITION = 0;
 		this.NONTERMINAL = nonterminal;
 		this.RHS = Objects.requireNonNull(rhs, "Productions must have a non-null RHS");
 	}
 
-	/**
-	 * Private constructor which is used to generate the succeeding generation
-	 * of this ProductionRule with {@link #POSITION} {@code = p.}
-	 * {@link #POSITION}{@code +1}.
-	 *
-	 * @param p parent ProductionRule to generate this successor from
-	 */
-	private ProductionRule(ProductionRule p) {
-		assert p != null;
-		this.ANCESTOR = p.ANCESTOR;
-		this.POSITION = p.POSITION+1;
+	public ProductionRule(ProductionRule p) {
 		this.NONTERMINAL = p.NONTERMINAL;
 		this.RHS = p.RHS;
 	}
@@ -88,70 +62,14 @@ public class ProductionRule implements Iterable<Symbol> {
 	}
 
 	/**
-	 * Returns the ancestor of this ProductionRule (i.e., the ProductionRule
-	 * where the read position is set to {@code 0}).
-	 *
-	 * @return the ancestor of this ProductionRule
-	 */
-	public ProductionRule getAncestor() {
-		return ANCESTOR;
-	}
-
-	/**
-	 * Returns whether or not this ProductionRule can generate another
-	 * generation. A ProductionRule can generate another generation if the
-	 * read position can advance past another symbol. I.e., a ProductionRule
-	 * can generate a succeeding generation if the current read position is
-	 * &lt; the number of Symbols on the right-hand side of this
-	 * ProductionRule.
-	 *
-	 * @return {@code true} if it is, otherwise {@code false}
-	 */
-	public boolean hasNext() {
-		return POSITION < RHS.size();
-	}
-
-	/**
-	 * Returns the successor to this ProductionRule with the read position
-	 * incremented by {@code 1}.
-	 *
-	 * @return the successor to this ProductionRule
-	 */
-	public ProductionRule next() {
-		assert hasNext() : "The succeeding generation of this production is redundant. Read position is already at the end.";
-		return new ProductionRule(this);
-	}
-
-	/**
-	 * Returns the current Symbol at the read position in the right-hand side
+	 * Returns an immutable list of symbols representing the right-hand side
 	 * of this ProductionRule.
 	 *
-	 * @return the current Symbol at the read position in the right-hand side
-	 *	of this ProductionRule or {@code null} if no Symbol has been read yet
+	 * @return an immutable list of symbols representing the right-hand side
+	 *	of this ProductionRule
 	 */
-	public Symbol currentSymbol() {
-		if (POSITION == 0) {
-			return null;
-		}
-
-		return RHS.get(POSITION-1);
-	}
-
-	/**
-	 * Returns the Symbol which is at the next read position (i.e.,
-	 * {@code POSITION+1}) in the right-hand side of this ProductionRule.
-	 *
-	 * @return the Symbol which is at the next read position (i.e.,
-	 *	{@code POSITION+1}) in the right-hand side of this ProductionRule or
-	 *	{@code null} if the read position is beyond the number of symbols
-	 *	in the RHS of this ProductionRule.
-	 */
-	public Symbol peekNextSymbol() {
-		if (!hasNext()) {
-			return null;
-		}
-
-		return RHS.get(POSITION);
+	public ImmutableList<Symbol> getRHS() {
+		return RHS;
 	}
 
 	/**
@@ -170,7 +88,7 @@ public class ProductionRule implements Iterable<Symbol> {
 	 */
 	@Override
 	public Iterator<Symbol> iterator() {
-		return RHS.listIterator(POSITION);
+		return RHS.listIterator(0);
 	}
 
 	/**
@@ -191,7 +109,7 @@ public class ProductionRule implements Iterable<Symbol> {
 		}
 
 		ProductionRule other = (ProductionRule)this;
-		if (this.NONTERMINAL != other.NONTERMINAL || this.POSITION != other.POSITION || this.size() != other.size()) {
+		if (this.NONTERMINAL != other.NONTERMINAL || this.getRHS().size() != other.getRHS().size()) {
 			return false;
 		}
 
@@ -203,7 +121,7 @@ public class ProductionRule implements Iterable<Symbol> {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.NONTERMINAL, this.POSITION, this.RHS);
+		return Objects.hash(this.NONTERMINAL, this.RHS);
 	}
 
 	/**
@@ -227,16 +145,8 @@ public class ProductionRule implements Iterable<Symbol> {
 
 		int i = 0;
 		for (Symbol s : RHS) {
-			if (i == POSITION) {
-				sb.append(" .");
-			}
-
 			sb.append(String.format(" %s", translator.get(s)));
 			i++;
-		}
-
-		if (POSITION == RHS.size()) {
-			sb.append(" .");
 		}
 
 		return sb.toString();
@@ -255,16 +165,8 @@ public class ProductionRule implements Iterable<Symbol> {
 
 		int i = 0;
 		for (Symbol s : RHS) {
-			if (i == POSITION) {
-				sb.append(" .");
-			}
-
 			sb.append(String.format(" %d", s));
 			i++;
-		}
-
-		if (POSITION == RHS.size()) {
-			sb.append(" .");
 		}
 
 		return sb.toString();
