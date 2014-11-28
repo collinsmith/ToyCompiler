@@ -7,7 +7,9 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterators;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -15,23 +17,29 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 import java.util.regex.Pattern;
 
 public class Grammar {
 	private static final Pattern NONTERMINAL_PATTERN = Pattern.compile("[A-Z]\\w*:$");
 
 	private final ImmutableBiMap<String, Symbol> SYMBOLS;
+	private final ImmutableMap<Symbol, Symbol> RESOLUTION;
+
 	private final ImmutableSet<ProductionRule> PRODUCTIONS;
 	private final ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> NONTERMINAL;
 
-	private final Logger LOGGER;
+	private static final Logger LOGGER = Logger.getLogger("ToyCompilerLogger");
 
 	private final String GRAMMAR_NAME;
 
@@ -52,14 +60,22 @@ public class Grammar {
 		grammarName = grammarName.substring(0, grammarName.lastIndexOf('.'));
 		GRAMMAR_NAME = grammarName;
 
-		LOGGER = Logger.getLogger(this.getClass().getName());
 		LOGGER.addHandler(new ConsoleHandler());
-		LOGGER.addHandler(new FileHandler(Paths.get(".", "logs", GRAMMAR_NAME + ".xml").toString(), true));
 		LOGGER.setLevel(Level.ALL);
+
+		try {
+			FileHandler fileHandler = new FileHandler(Paths.get(".", "logs", GRAMMAR_NAME + ".txt").toString(), true);
+			fileHandler.setFormatter(new SimpleFormatter());
+			LOGGER.addHandler(fileHandler);
+		} catch (IOException e) {
+			LOGGER.severe("Log file could not be generated!");
+		}
 
 		LOGGER.info("Generating symbols table...");
 		long dt = System.currentTimeMillis();
-		this.SYMBOLS = createSymbolsTable(p, c);
+		Map<Symbol, Symbol> resolution = new HashMap<>();
+		this.SYMBOLS = createSymbolsTable(p, c, resolution);
+		this.RESOLUTION = ImmutableMap.copyOf(resolution);
 		LOGGER.info(String.format("Symbols table generated in %dms; %d symbols (%d terminal symbols, %d nonterminal symbols)",
 			System.currentTimeMillis()-dt,
 			numTerminalSymbols+numNonterminalSymbols,
@@ -79,26 +95,66 @@ public class Grammar {
 		));
 	}
 
-	private ImmutableBiMap<String, Symbol> createSymbolsTable(Path p, Charset c) throws IOException {
+	public String getName() {
+		return GRAMMAR_NAME;
+	}
+
+	private ImmutableBiMap<String, Symbol> createSymbolsTable(Path p, Charset c, Map<Symbol, Symbol> resolution) throws IOException {
 		numTerminalSymbols = numNonterminalSymbols = 0;
 		BiMap<String, Symbol> symbols = HashBiMap.create();
-		for (TokenType.DefaultTokenTypes k : TokenType.DefaultTokenTypes.values()) {
-			symbols.put(k.name(), new TerminalSymbol(k.getId()));
+
+		Symbol symbol, alternateSymbol;
+
+		Enum e;
+		TokenType t;
+		Iterator<Enum> defaultTokens = Iterators.forArray(TokenType.DefaultTokenTypes.values());
+		Iterator<Enum> toyTokenTypes = Iterators.forArray(ToyTokenTypes.values());
+		for (Iterator<Enum> it = Iterators.concat(defaultTokens, toyTokenTypes); it.hasNext(); ) {
+			e = it.next();
+			assert e instanceof TokenType : "Enumeration should implement " + TokenType.class.toString();
+			t = (TokenType)e;
+			symbol = new TerminalSymbol(t.getId());
+			symbols.put(t.name(), symbol);
+			resolution.put(symbol, symbol);
+			if (t.isLiteral()) {
+				alternateSymbol = new TerminalSymbol(Integer.MIN_VALUE+t.getId());
+				symbols.put(t.getRegex(), alternateSymbol);
+				resolution.put(alternateSymbol, symbol);
+			}
+
+			numTerminalSymbols++;
+		}
+
+		// Above part should concatonate both of the below loops
+		/*for (TokenType.DefaultTokenTypes k : TokenType.DefaultTokenTypes.values()) {
+			symbol = new TerminalSymbol(k.getId());
+			symbols.put(k.name(), symbol);
+			resolution.put(symbol, symbol);
+			System.out.format("Resolve %s -> %s%n", symbol, symbol);
 			if (k.isLiteral()) {
-				symbols.put(k.getRegex(), new TerminalSymbol(Integer.MIN_VALUE+k.getId()));
+				alternateSymbol = new TerminalSymbol(Integer.MIN_VALUE+k.getId());
+				symbols.put(k.getRegex(), alternateSymbol);
+				resolution.put(alternateSymbol, symbol);
+				System.out.format("Resolve %s -> %s%n", alternateSymbol, symbol);
 			}
 
 			numTerminalSymbols++;
 		}
 
 		for (ToyTokenTypes k : ToyTokenTypes.values()) {
-			symbols.put(k.name(), new TerminalSymbol(k.getId()));
+			symbol = new TerminalSymbol(k.getId());
+			symbols.put(k.name(), symbol);
+			resolution.put(symbol, symbol);
+			System.out.format("Resolve %s -> %s%n", symbol, symbol);
 			if (k.isLiteral()) {
-				symbols.put(k.getRegex(), new TerminalSymbol(Integer.MIN_VALUE+k.getId()));
+				alternateSymbol = new TerminalSymbol(Integer.MIN_VALUE+k.getId());
+				symbols.put(k.getRegex(), alternateSymbol);
+				resolution.put(alternateSymbol, symbol);
+				System.out.format("Resolve %s -> %s%n", alternateSymbol, symbol);
 			}
 
 			numTerminalSymbols++;
-		}
+		}*/
 
 		try (BufferedReader br = Files.newBufferedReader(p, c)) {
 			NonterminalSymbol nonterminalSymbol;
@@ -117,6 +173,7 @@ public class Grammar {
 				//System.out.println(line + ", " + id);
 				//System.out.println(symbols.inverse().get(id));
 				symbols.put(line, nonterminalSymbol);
+				resolution.put(nonterminalSymbol, nonterminalSymbol);
 				numNonterminalSymbols++;
 			}
 		}
@@ -180,6 +237,7 @@ public class Grammar {
 					}
 
 					Symbol resolvedToken = resolveSymbol(token);
+					assert resolvedToken != null : "Could not resolve token";
 					usedSymbols.add(resolvedToken);
 					productionList.add(resolvedToken);
 				}
@@ -222,16 +280,7 @@ public class Grammar {
 			);
 		}
 
-		if (resolved.getId() < 0) {
-			/**
-			 * TODO: generating objects that should not be needed, should
-			 * look into adding multiple IDs for a single symbol to
-			 * support up to n alternatives.
-			 */
-			return new Symbol(resolved.getId() - Integer.MIN_VALUE);
-		}
-
-		return resolved;
+		return RESOLUTION.get(resolved);
 	}
 
 	/*public final boolean isNonterminal(Symbol s) {

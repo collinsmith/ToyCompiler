@@ -105,6 +105,13 @@ public interface TokenType {
 	}
 
 	/**
+	 * Returns the name of this token type.
+	 *
+	 * @return the name of this token type
+	 */
+	String name();
+
+	/**
 	 * Returns the regular expression representing this token type.
 	 *
 	 * @return the regular expression representing this token type

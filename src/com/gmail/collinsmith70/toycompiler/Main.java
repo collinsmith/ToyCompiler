@@ -36,7 +36,6 @@ public class Main {
 
 		try {
 			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.cfg.txt"), Charset.forName("US-ASCII"));
-			System.out.format("Grammar generated from file!%n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
