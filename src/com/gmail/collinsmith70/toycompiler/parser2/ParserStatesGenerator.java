@@ -1,5 +1,5 @@
 package com.gmail.collinsmith70.toycompiler.parser2;
 
-public interface ParserTablesGenerator<T> {
+public interface ParserStatesGenerator<T> {
 	T generateParserTables(Grammar g);
 }

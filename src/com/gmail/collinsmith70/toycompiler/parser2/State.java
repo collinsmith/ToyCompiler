@@ -183,4 +183,89 @@ public class State implements Iterable<ProductionRuleInstance> {
 	public Iterator<ProductionRuleInstance> iterator() {
 		return Iterators.concat(KERNEL_ITEMS.iterator(), CLOSURE_ITEMS.iterator());
 	}
+
+	/**
+	 * Returns an instance of a Metadata object which contains data necessary
+	 * to create a child State from this State.
+	 *
+	 * @param symbol the lookahead symbol for this child
+	 * @param kernelItems initial items in the state
+	 *
+	 * @return an instance of a Metadata object containing structural metadata
+	 *	for a child State of this State
+	 */
+	public Metadata getChildMetadata(Symbol symbol, ImmutableSet<ProductionRuleInstance> kernelItems) {
+		return new Metadata(this, symbol, kernelItems);
+	}
+
+	/**
+	 * This class represents structural metadata which is required to form
+	 * child States from a States.
+	 *
+	 * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
+	 */
+	public static final class Metadata {
+		/**
+		 * Reference to a parent State of a child State.
+		 */
+		private final State PARENT;
+
+		/**
+		 * The lookahead Symbol for a child State.
+		 */
+		private final Symbol SYMBOL;
+
+		/**
+		 * Set of ProductionRuleInstance which represent the initial items
+		 * for a child State.
+		 */
+		private final ImmutableSet<ProductionRuleInstance> KERNEL_ITEMS;
+
+		/**
+		 * Constructs a Metadata object containing the specified parameters
+		 * as items in order to construct child States from a parent State.
+		 *
+		 * @param parent the parent of a child State
+		 * @param symbol the lookahead Symbol for a child State
+		 * @param kernelItems initial ProductionRuleInstance items which
+		 *	represent the kernel items of a child State
+		 */
+		public Metadata(
+			State parent,
+			Symbol symbol,
+			ImmutableSet<ProductionRuleInstance> kernelItems
+		) {
+			this.PARENT = parent;
+			this.SYMBOL = symbol;
+			this.KERNEL_ITEMS = kernelItems;
+		}
+
+		/**
+		 * Returns the parent State of the constructable child State.
+		 *
+		 * @return the parent State of the constructable child State
+		 */
+		public State getParent() {
+			return PARENT;
+		}
+
+		/**
+		 * Returns the lookahead symbol of the constructable child State.
+		 *
+		 * @return the lookahead symbol of the constructable child State
+		 */
+		public Symbol getSymbol() {
+			return SYMBOL;
+		}
+
+		/**
+		 * Returns a set of ProductionRuleInstance which represent the
+		 * kernel items in the constructable child State.
+		 *
+		 * @return the set of kernel items for the constructable child State
+		 */
+		public ImmutableSet<ProductionRuleInstance> getKernelItems() {
+			return KERNEL_ITEMS;
+		}
+	}
 }

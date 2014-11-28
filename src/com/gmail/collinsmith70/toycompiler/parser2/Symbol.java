@@ -6,6 +6,8 @@ package com.gmail.collinsmith70.toycompiler.parser2;
  * identifier, which is unique to that symbol.
  *
  * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
+ *
+ * @param <E> the type associated with the parent of this Symbol
  */
 public class Symbol<E extends Symbol> {
 	/**
