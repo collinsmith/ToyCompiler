@@ -4,19 +4,16 @@ import com.gmail.collinsmith70.toycompiler.lexer.Scanner;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
 import com.gmail.collinsmith70.toycompiler.parser.Parser;
-import com.gmail.collinsmith70.toycompiler.parser.slr.SLRParser;
-import com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator;
 import com.gmail.collinsmith70.toycompiler.parser2.Grammar;
+import com.gmail.collinsmith70.toycompiler.parser2.slr.SLRParserStatesGenerator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 
 public class Main {
 	private static final Path OUTPUT_PATH = Paths.get(".", "output");
@@ -26,18 +23,20 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
+			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.cfg.txt"), Charset.forName("US-ASCII"));
+			SLRParserStatesGenerator s = new SLRParserStatesGenerator();
+			SLRParserStatesGenerator.outputTables(g, s.generateParserTables(g));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		/*try {
 			SLRParserGenerator parserGenerator = new SLRParserGenerator(Paths.get(".", "res", "toy.cfg.txt"));
 			parserGenerator.outputCFG();
 			parserGenerator.outputTables();
 			parser = new SLRParser(parserGenerator.getGeneratedTables());
 		} catch (IOException e) {
 			System.out.println("Unable to open toy.cfg.txt");
-		}
-
-		try {
-			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.cfg.txt"), Charset.forName("US-ASCII"));
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
 
 		Arrays.stream(args)
@@ -54,7 +53,7 @@ public class Main {
 				} catch (IOException e) {
 					System.out.format("Unreadable source: \"%s\"", arg);
 				}
-			});
+			});*/
 	}
 
 	private static void compile(Path p) {
@@ -66,33 +65,6 @@ public class Main {
 				System.out.format("Analyzing %s...%n", fileName);
 				long dt = System.currentTimeMillis();
 				TokenStream tokenStream = new TokenStream(TOY_SCANNER, br);
-				/*Token next;
-				while (tokenStream.hasNext()) {
-					next = tokenStream.next();
-					if (next.getTokenType() == TokenType.DefaultTokenType._eol) {
-						writer.append(String.format("%n"));
-						continue;
-					} else if (next.getTokenType() == ToyTokenTypes._booleanliteral) {
-						writer.append(String.format("%s(%s)", ToyTokenTypes._booleanliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == ToyTokenTypes._characterliteral) {
-						writer.append(String.format("%s(%s)", ToyTokenTypes._characterliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == ToyTokenTypes._doubleliteral) {
-						writer.append(String.format("%s(%s)", ToyTokenTypes._doubleliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == ToyTokenTypes._integerliteral) {
-						writer.append(String.format("%s(%s)", ToyTokenTypes._integerliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == ToyTokenTypes._nullliteral) {
-						writer.append(String.format("%s(%s)", ToyTokenTypes._nullliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == ToyTokenTypes._stringliteral) {
-						writer.append(String.format("%s(%s)", ToyTokenTypes._stringliteral, next.getValue().toString()));
-					} else if (next.getTokenType() == ToyTokenTypes._id) {
-						writer.append(String.format("%s(%s)", ToyTokenTypes._id, next.getValue().toString()));
-					} else {
-						writer.append(next.getTokenType().toString());
-					}
-
-					writer.append(" ");
-				}*/
-
 				parser.parse(tokenStream, writer);
 				System.out.format("%s scanned and parsed in %dms%n", fileName, System.currentTimeMillis()-dt);
 			} catch (IOException e) {

@@ -33,8 +33,8 @@ public class Grammar {
 	private final ImmutableBiMap<String, Symbol> SYMBOLS;
 	//private final ImmutableMap<Symbol, Symbol> RESOLUTION;
 
-	private final ImmutableSet<ProductionRule> PRODUCTION_RULES;
-	private final ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> NONTERMINAL_PRODUCTION_RULES;
+	private final ImmutableList<ProductionRule> PRODUCTION_RULES;
+	private final ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> PRODUCTION_RULES_MAP;
 
 	private static final Logger LOGGER = Logger.getLogger("ToyCompilerLogger");
 
@@ -71,7 +71,7 @@ public class Grammar {
 		LOGGER.info("Generating symbols table...");
 		long dt = System.currentTimeMillis();
 		//Map<Symbol, Symbol> resolution = new HashMap<>();
-		this.SYMBOLS = createSymbolsTable(p, c/*, resolution*/);
+		this.SYMBOLS = generateSymbolsTable(p, c/*, resolution*/);
 		//this.RESOLUTION = ImmutableMap.copyOf(resolution);
 		LOGGER.info(String.format("Symbols table generated in %dms; %d symbols (%d terminal symbols, %d nonterminal symbols)",
 			System.currentTimeMillis()-dt,
@@ -83,8 +83,8 @@ public class Grammar {
 		LOGGER.info("Generating productions table...");
 		dt = System.currentTimeMillis();
 		ArrayList<ProductionRule> productions = new ArrayList<>();
-		this.NONTERMINAL_PRODUCTION_RULES = createProductionsTable(p, c, productions);
-		this.PRODUCTION_RULES = ImmutableSet.copyOf(productions);
+		this.PRODUCTION_RULES_MAP = generateProductions(p, c, productions);
+		this.PRODUCTION_RULES = ImmutableList.copyOf(productions);
 		LOGGER.info(String.format("Productions table and list created in %dms; %d productions (%d unreachable symbols)",
 			System.currentTimeMillis()-dt,
 			this.PRODUCTION_RULES.size(),
@@ -100,11 +100,19 @@ public class Grammar {
 		return initialNonterminal;
 	}
 
-	public ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> getNonterminalProductionRules() {
-		return NONTERMINAL_PRODUCTION_RULES;
+	public ImmutableBiMap<String, Symbol> getSymbolsTable() {
+		return SYMBOLS;
 	}
 
-	private ImmutableBiMap<String, Symbol> createSymbolsTable(Path p, Charset c/*, Map<Symbol, Symbol> resolution*/) throws IOException {
+	public ImmutableList<ProductionRule> getProductionRules() {
+		return PRODUCTION_RULES;
+	}
+
+	public ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> getProductionRulesMap() {
+		return PRODUCTION_RULES_MAP;
+	}
+
+	private ImmutableBiMap<String, Symbol> generateSymbolsTable(Path p, Charset c/*, Map<Symbol, Symbol> resolution*/) throws IOException {
 		numTerminalSymbols = numNonterminalSymbols = 0;
 		BiMap<String, Symbol> symbols = HashBiMap.create();
 
@@ -186,7 +194,7 @@ public class Grammar {
 		return ImmutableBiMap.copyOf(symbols);
 	}
 
-	private ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> createProductionsTable(Path p, Charset c, ArrayList<ProductionRule> productions) throws IOException {
+	private ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> generateProductions(Path p, Charset c, ArrayList<ProductionRule> productions) throws IOException {
 		BiMap<NonterminalSymbol, Set<ProductionRule>> nonterminals = HashBiMap.create();
 		Set<Symbol> usedSymbols = new HashSet<>();
 		try (BufferedReader br = Files.newBufferedReader(p, c)) {
