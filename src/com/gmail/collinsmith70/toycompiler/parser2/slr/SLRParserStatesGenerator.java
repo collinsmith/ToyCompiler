@@ -28,58 +28,39 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.LinkedBlockingDeque;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.FileHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 public class SLRParserStatesGenerator implements ParserStatesGenerator {
-	private static final Logger LOGGER = Logger.getLogger("ToyCompilerLogger");
-	private FileHandler loggerFileHandler;
-
 	public SLRParserStatesGenerator() {
-		LOGGER.addHandler(new ConsoleHandler());
-		LOGGER.setLevel(Level.ALL);
+		//...
 	}
 
 	@Override
 	public Map<Set<ProductionRuleInstance>, State> generateParserTables(Grammar g) {
 		Preconditions.checkNotNull(g);
 
-		if (loggerFileHandler == null) {
-			try {
-				loggerFileHandler = new FileHandler(Paths.get(".", "logs", g.getName() + ".txt").toString(), true);
-				loggerFileHandler.setFormatter(new SimpleFormatter());
-				LOGGER.addHandler(loggerFileHandler);
-			} catch (IOException e) {
-				LOGGER.severe("Log file could not be generated!");
-			}
-		}
-
-		LOGGER.info("Creating production rule instances...");
+		g.getLogger().info("Creating production rule instances...");
 		long dt = System.currentTimeMillis();
 		BiMap<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> productionRuleInstances = HashBiMap.create();
 		g.getProductionRulesMap().entrySet().stream()
 			.forEach(entry -> productionRuleInstances.put(entry.getKey(), createProductionRuleInstances(entry.getValue())));
 		final ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> immutableProductionRuleInstances = ImmutableBiMap.copyOf(productionRuleInstances);
-		LOGGER.info(String.format("Production rule instances generated in %dms; %d production rules",
+		g.getLogger().info(String.format("Production rule instances generated in %dms; %d production rules",
 			System.currentTimeMillis()-dt,
 			immutableProductionRuleInstances.size()
 		));
 
-		LOGGER.info("Generating parser states...");
+		g.getLogger().info("Generating parser states...");
 		dt = System.currentTimeMillis();
 		Map<Set<ProductionRuleInstance>, State> states = generateParserStates(g, immutableProductionRuleInstances);
-		LOGGER.info(String.format("Parser states generated in %dms; %d states",
+		g.getLogger().info(String.format("Parser states generated in %dms; %d states",
 			System.currentTimeMillis()-dt,
 			states.size()
 		));
 
 		/*dt = System.currentTimeMillis();
-		LOGGER.info("Generating SLR tables...");
+		g.getLogger().info("Generating SLR tables...");
 		this.SLR_TABLES = generateSLRTables();
-		LOGGER.info(String.format("SLR tables generated in %dms; %d tables (%d shift-reduce conflicts, %d reduce-reduce conflicts)",
+		g.getLogger().info(String.format("SLR tables generated in %dms; %d tables (%d shift-reduce conflicts, %d reduce-reduce conflicts)",
 			System.currentTimeMillis()-dt,
 			this.TABLES.size(),
 			numWithShiftReduce,
@@ -99,7 +80,6 @@ public class SLRParserStatesGenerator implements ParserStatesGenerator {
 			productionRuleInstances.get(g.getInitialNonterminalSymbol())
 		));
 
-		int i = 1;
 		while (!deque.isEmpty()) {
 			generateChildState(deque.pollFirst(), states, deque, g, productionRuleInstances);
 		}
@@ -112,6 +92,14 @@ public class SLRParserStatesGenerator implements ParserStatesGenerator {
 		Symbol symbol = metadata.getSymbol();
 		ImmutableSet<ProductionRuleInstance> kernelItems = metadata.getKernelItems();
 		//State.Metadata metadata = deque.pollFirst();
+
+		/*for (Entry<Set<ProductionRuleInstance>, State> entry : states.entrySet()) {
+			if (kernelItems.containsAll(entry.getKey())) {
+				System.out.println("avoided!");
+				parent.putTransition(symbol, entry.getValue());
+				return;
+			}
+		}*/
 
 		State existingState = states.get(kernelItems);
 		if (existingState != null) {
@@ -178,9 +166,9 @@ public class SLRParserStatesGenerator implements ParserStatesGenerator {
 
 		if (1 < reductions.size()) {
 			//numWithReduceReduce++;
-			LOGGER.warning(String.format("State %d has %d reduce productions:", stateId, reductions.size()));
+			g.getLogger().warning(String.format("State %d has %d reduce productions:", stateId, reductions.size()));
 			reductions.stream()
-				.forEach(reduce -> LOGGER.warning(String.format("\t%s", reduce.toString(g.getSymbolsTable().inverse()))));
+				.forEach(reduce -> g.getLogger().warning(String.format("\t%s", reduce.toString(g.getSymbolsTable().inverse()))));
 		}
 	}
 
@@ -210,11 +198,11 @@ public class SLRParserStatesGenerator implements ParserStatesGenerator {
 	}
 
 	public static void outputTables(Grammar g, Map<Set<ProductionRuleInstance>, State> states) {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", "toy.tables.txt"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".tables"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			for (State state : states.values()) {
-				writer.write(String.format("%d: V%s", state.getId(), state.getViablePrefixes()));
+				writer.write(String.format("State %d: V%s", state.getId(), state.getViablePrefixes()));
 				if (state.getParent() != null) {
-					writer.write(String.format(" = goto(%d, %d)",
+					writer.write(String.format(" = goto(%d, %s)",
 						state.getParent().getId(),
 						state.getViablePrefixes().get(state.getViablePrefixes().size()-1)
 					));

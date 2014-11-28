@@ -43,13 +43,15 @@ public class ProductionRule implements Iterable<Symbol> {
 	 *	to this ProductionRule
 	 */
 	public ProductionRule(NonterminalSymbol nonterminal, ImmutableList<Symbol> rhs) {
-		this.NONTERMINAL = nonterminal;
-		this.RHS = Objects.requireNonNull(rhs, "Productions must have a non-null RHS");
+		this.NONTERMINAL = Objects.requireNonNull(nonterminal, "Production rules must have a non-null nonterminal symbol");
+		this.RHS = Objects.requireNonNull(rhs, "Production rules must have a non-null RHS");
 	}
 
 	public ProductionRule(ProductionRule p) {
-		this.NONTERMINAL = p.NONTERMINAL;
-		this.RHS = p.RHS;
+		this(Objects.requireNonNull(p).NONTERMINAL, Objects.requireNonNull(p).RHS);
+		//Preconditions.checkNotNull(p);
+		//this.NONTERMINAL = p.NONTERMINAL;
+		//this.RHS = p.RHS;
 	}
 
 	/**
@@ -86,7 +88,7 @@ public class ProductionRule implements Iterable<Symbol> {
 	/**
 	 * Creates a ProductionRuleInstance from this ProductionRule and
 	 * return it.
-	 * 
+	 *
 	 * @return a ProductionRuleInstance created from this ProductionRule
 	 */
 	public ProductionRuleInstance createInstance() {
@@ -118,8 +120,8 @@ public class ProductionRule implements Iterable<Symbol> {
 			return false;
 		}
 
-		ProductionRule other = (ProductionRule)this;
-		if (this.NONTERMINAL != other.NONTERMINAL || this.RHS.size() != other.RHS.size()) {
+		ProductionRule other = (ProductionRule)obj;
+		if (!this.NONTERMINAL.equals(other.NONTERMINAL) || this.RHS.size() != other.RHS.size()) {
 			return false;
 		}
 
@@ -131,7 +133,7 @@ public class ProductionRule implements Iterable<Symbol> {
 	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(this.NONTERMINAL, this.RHS, this.RHS.size());
+		return Objects.hash(NONTERMINAL, RHS, RHS.size());
 	}
 
 	/**

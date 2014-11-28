@@ -65,14 +65,6 @@ public class Symbol<E extends Symbol> {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int hashCode() {
-		return Integer.hashCode(ID);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean equals(Object obj) {
 		if (obj == null) {
 			return false;
@@ -86,8 +78,17 @@ public class Symbol<E extends Symbol> {
 			return false;
 		}
 
-		Symbol s = (Symbol)obj;
-		return ID == s.ID;
+		Symbol other = (Symbol)obj;
+		return this.ID == other.ID;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int hashCode() {
+		// TODO: changed from Integer.hashCode(int) to int since this value should be unique
+		return ID;
 	}
 
 	/**

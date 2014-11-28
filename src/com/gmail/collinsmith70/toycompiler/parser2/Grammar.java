@@ -20,7 +20,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
-import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,11 +56,11 @@ public class Grammar {
 		grammarName = grammarName.substring(0, grammarName.lastIndexOf('.'));
 		GRAMMAR_NAME = grammarName;
 
-		LOGGER.addHandler(new ConsoleHandler());
+		//LOGGER.addHandler(new ConsoleHandler());
 		LOGGER.setLevel(Level.ALL);
 
 		try {
-			FileHandler fileHandler = new FileHandler(Paths.get(".", "logs", GRAMMAR_NAME + ".txt").toString(), true);
+			FileHandler fileHandler = new FileHandler(Paths.get(".", "logs", GRAMMAR_NAME + ".log").toString(), true);
 			fileHandler.setFormatter(new SimpleFormatter());
 			LOGGER.addHandler(fileHandler);
 		} catch (IOException e) {
@@ -90,6 +89,10 @@ public class Grammar {
 			this.PRODUCTION_RULES.size(),
 			numUnreachableSymbols
 		));
+	}
+
+	public Logger getLogger() {
+		return LOGGER;
 	}
 
 	public String getName() {

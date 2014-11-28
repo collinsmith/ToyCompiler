@@ -139,12 +139,12 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 			return false;
 		}
 
-		ProductionRuleInstance other = (ProductionRuleInstance)this;
-		if (!this.equals(other)) {
+		ProductionRuleInstance other = (ProductionRuleInstance)obj;
+		if (!this.ANCESTOR.equals(other.ANCESTOR)) {
 			return false;
 		}
 
-		return this.POSITION != other.POSITION;
+		return this.POSITION == other.POSITION;
 	}
 
 	/**
