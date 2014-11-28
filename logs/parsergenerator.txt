@@ -4474,3 +4474,95 @@
   <message>SLR tables generated in 20ms; 204 tables (9 shift-reduce conflicts, 0 reduce-reduce conflicts)</message>
 </record>
 </log>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2014-11-27T22:08:06</date>
+  <millis>1417154886185</millis>
+  <sequence>0</sequence>
+  <logger>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</logger>
+  <level>INFO</level>
+  <class>com.gmail.collinsmith70.toycompiler.parser.AbstractParserGenerator</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Creating symbols table...</message>
+</record>
+<record>
+  <date>2014-11-27T22:08:06</date>
+  <millis>1417154886215</millis>
+  <sequence>1</sequence>
+  <logger>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</logger>
+  <level>INFO</level>
+  <class>com.gmail.collinsmith70.toycompiler.parser.AbstractParserGenerator</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Symbols table created in 30ms; 102 symbols (52 terminals, 50 nonterminals)</message>
+</record>
+<record>
+  <date>2014-11-27T22:08:06</date>
+  <millis>1417154886215</millis>
+  <sequence>2</sequence>
+  <logger>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</logger>
+  <level>INFO</level>
+  <class>com.gmail.collinsmith70.toycompiler.parser.AbstractParserGenerator</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Creating productions table and list...</message>
+</record>
+<record>
+  <date>2014-11-27T22:08:06</date>
+  <millis>1417154886274</millis>
+  <sequence>3</sequence>
+  <logger>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</logger>
+  <level>INFO</level>
+  <class>com.gmail.collinsmith70.toycompiler.parser.AbstractParserGenerator</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Productions table and list created in 59ms; 120 productions (6 unreachable symbols)</message>
+</record>
+<record>
+  <date>2014-11-27T22:08:06</date>
+  <millis>1417154886276</millis>
+  <sequence>4</sequence>
+  <logger>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</logger>
+  <level>INFO</level>
+  <class>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Generating tables...</message>
+</record>
+<record>
+  <date>2014-11-27T22:08:06</date>
+  <millis>1417154886320</millis>
+  <sequence>5</sequence>
+  <logger>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</logger>
+  <level>INFO</level>
+  <class>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Tables generated in 43ms; 204 tables</message>
+</record>
+<record>
+  <date>2014-11-27T22:08:06</date>
+  <millis>1417154886320</millis>
+  <sequence>6</sequence>
+  <logger>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</logger>
+  <level>INFO</level>
+  <class>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>Generating SLR tables...</message>
+</record>
+<record>
+  <date>2014-11-27T22:08:06</date>
+  <millis>1417154886344</millis>
+  <sequence>7</sequence>
+  <logger>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</logger>
+  <level>INFO</level>
+  <class>com.gmail.collinsmith70.toycompiler.parser.slr.SLRParserGenerator</class>
+  <method>&lt;init&gt;</method>
+  <thread>1</thread>
+  <message>SLR tables generated in 24ms; 204 tables (9 shift-reduce conflicts, 0 reduce-reduce conflicts)</message>
+</record>
+</log>

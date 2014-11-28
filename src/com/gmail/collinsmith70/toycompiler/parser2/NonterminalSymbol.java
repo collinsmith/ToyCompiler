@@ -13,7 +13,7 @@ package com.gmail.collinsmith70.toycompiler.parser2;
  *
  * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
  */
-public class NonterminalSymbol extends Symbol {
+public class NonterminalSymbol extends Symbol<NonterminalSymbol> {
 	/**
 	 * Constructs a NonterminalSymbol with the specified unique identifier.
 	 *
@@ -21,6 +21,18 @@ public class NonterminalSymbol extends Symbol {
 	 */
 	public NonterminalSymbol(int id) {
 		super(id);
+	}
+
+	/**
+	 * Constructs a NonterminalSymbol with the specified unique identifier and
+	 * a reference to the parent NonterminalSymbol of this NonterminalSymbol.
+	 *
+	 * @param id unique identifier representing this NonterminalSymbol
+	 * @param parent reference to the NonterminalSymbol parent of this
+	 *	NonterminalSymbol
+	 */
+	public NonterminalSymbol(int id, NonterminalSymbol parent) {
+		super(id, parent);
 	}
 
 	/**

@@ -9,7 +9,7 @@ package com.gmail.collinsmith70.toycompiler.parser2;
  *
  * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
  */
-public class TerminalSymbol extends Symbol {
+public class TerminalSymbol extends Symbol<TerminalSymbol> {
 	/**
 	 * Constructs a TerminalSymbol with the specified unique identifier.
 	 *
@@ -17,5 +17,17 @@ public class TerminalSymbol extends Symbol {
 	 */
 	public TerminalSymbol(int id) {
 		super(id);
+	}
+
+	/**
+	 * Constructs a TerminalSymbol with the specified unique identifier and a
+	 * reference to the parent TerminalSymbol of this TerminalSymbol.
+	 *
+	 * @param id unique identifier representing this TerminalSymbol
+	 * @param parent reference to the TerminalSymbol parent of this
+	 *	TerminalSymbol
+	 */
+	public TerminalSymbol(int id, TerminalSymbol parent) {
+		super(id, parent);
 	}
 }

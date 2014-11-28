@@ -7,7 +7,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import java.io.BufferedReader;
@@ -17,10 +16,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.ConsoleHandler;
@@ -34,7 +31,7 @@ public class Grammar {
 	private static final Pattern NONTERMINAL_PATTERN = Pattern.compile("[A-Z]\\w*:$");
 
 	private final ImmutableBiMap<String, Symbol> SYMBOLS;
-	private final ImmutableMap<Symbol, Symbol> RESOLUTION;
+	//private final ImmutableMap<Symbol, Symbol> RESOLUTION;
 
 	private final ImmutableSet<ProductionRule> PRODUCTIONS;
 	private final ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> NONTERMINAL;
@@ -73,9 +70,9 @@ public class Grammar {
 
 		LOGGER.info("Generating symbols table...");
 		long dt = System.currentTimeMillis();
-		Map<Symbol, Symbol> resolution = new HashMap<>();
-		this.SYMBOLS = createSymbolsTable(p, c, resolution);
-		this.RESOLUTION = ImmutableMap.copyOf(resolution);
+		//Map<Symbol, Symbol> resolution = new HashMap<>();
+		this.SYMBOLS = createSymbolsTable(p, c/*, resolution*/);
+		//this.RESOLUTION = ImmutableMap.copyOf(resolution);
 		LOGGER.info(String.format("Symbols table generated in %dms; %d symbols (%d terminal symbols, %d nonterminal symbols)",
 			System.currentTimeMillis()-dt,
 			numTerminalSymbols+numNonterminalSymbols,
@@ -99,11 +96,11 @@ public class Grammar {
 		return GRAMMAR_NAME;
 	}
 
-	private ImmutableBiMap<String, Symbol> createSymbolsTable(Path p, Charset c, Map<Symbol, Symbol> resolution) throws IOException {
+	private ImmutableBiMap<String, Symbol> createSymbolsTable(Path p, Charset c/*, Map<Symbol, Symbol> resolution*/) throws IOException {
 		numTerminalSymbols = numNonterminalSymbols = 0;
 		BiMap<String, Symbol> symbols = HashBiMap.create();
 
-		Symbol symbol, alternateSymbol;
+		TerminalSymbol symbol, alternateSymbol;
 
 		Enum e;
 		TokenType t;
@@ -115,11 +112,11 @@ public class Grammar {
 			t = (TokenType)e;
 			symbol = new TerminalSymbol(t.getId());
 			symbols.put(t.name(), symbol);
-			resolution.put(symbol, symbol);
+			//resolution.put(symbol, symbol);
 			if (t.isLiteral()) {
-				alternateSymbol = new TerminalSymbol(Integer.MIN_VALUE+t.getId());
+				alternateSymbol = new TerminalSymbol(Integer.MIN_VALUE+t.getId(), symbol);
 				symbols.put(t.getRegex(), alternateSymbol);
-				resolution.put(alternateSymbol, symbol);
+				//resolution.put(alternateSymbol, symbol);
 			}
 
 			numTerminalSymbols++;
@@ -173,7 +170,7 @@ public class Grammar {
 				//System.out.println(line + ", " + id);
 				//System.out.println(symbols.inverse().get(id));
 				symbols.put(line, nonterminalSymbol);
-				resolution.put(nonterminalSymbol, nonterminalSymbol);
+				//resolution.put(nonterminalSymbol, nonterminalSymbol);
 				numNonterminalSymbols++;
 			}
 		}
@@ -280,7 +277,12 @@ public class Grammar {
 			);
 		}
 
-		return RESOLUTION.get(resolved);
+		if (resolved.getParent() != null) {
+			return resolved.getParent();
+		}
+
+		//return RESOLUTION.get(resolved);
+		return resolved;
 	}
 
 	/*public final boolean isNonterminal(Symbol s) {
