@@ -2,11 +2,13 @@ package com.gmail.collinsmith70.toycompiler.parser2.slr;
 
 import com.gmail.collinsmith70.toycompiler.parser2.Grammar;
 import com.gmail.collinsmith70.toycompiler.parser2.ParserStatesGenerator;
+import com.gmail.collinsmith70.toycompiler.parser2.ProductionRule;
 import com.gmail.collinsmith70.toycompiler.parser2.ProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser2.State;
 import com.gmail.collinsmith70.toycompiler.parser2.Symbol;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedSet.Builder;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Deque;
@@ -68,7 +70,14 @@ public abstract class SLRParserStatesGenerator implements ParserStatesGenerator<
 		Map<Set<ProductionRuleInstance>, State> states = new LinkedHashMap<>();
 
 		Deque<State.Metadata> deque = new LinkedBlockingDeque<>();
-		deque.offerLast(new State.Metadata(null, null, g.getNonterminalProductionRules().get(g.getInitialNonterminalSymbol())));
+		deque.offerLast(new State.Metadata(
+			null,
+			null,
+			createProductionRuleInstances(
+				g.getNonterminalProductionRules()
+					.get(g.getInitialNonterminalSymbol())
+			)
+		));
 
 		while (!deque.isEmpty()) {
 			generateChildState(deque.pollFirst(), states, deque);
@@ -78,10 +87,18 @@ public abstract class SLRParserStatesGenerator implements ParserStatesGenerator<
 	}
 
 	private void generateChildState(State.Metadata metadata, Map<Set<ProductionRuleInstance>, State> states, Deque<State.Metadata> deque) {
-		State parent;
-		Symbol symbol;
-		ImmutableSet<ProductionRuleInstance> items;
-		State.Metadata metadata = deque.pollFirst();
+		State parent = metadata.getParent();
+		Symbol symbol = metadata.getSymbol();
+		ImmutableSet<ProductionRuleInstance> kernelItems = metadata.getKernelItems();
+		//State.Metadata metadata = deque.pollFirst();
 
+	}
+	
+	private ImmutableSet<ProductionRuleInstance> createProductionRuleInstances(Set<ProductionRule> productionRules) {;
+		return ImmutableSet.copyOf(
+			productionRules.stream()
+				.map(productionRule -> productionRule.createInstance())
+				.iterator()
+		);
 	}
 }
