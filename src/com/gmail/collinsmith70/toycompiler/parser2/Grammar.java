@@ -3,6 +3,7 @@ package com.gmail.collinsmith70.toycompiler.parser2;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenType;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyTokenTypes;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableBiMap;
@@ -10,16 +11,21 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,6 +51,10 @@ public class Grammar {
 
 	private NonterminalSymbol initialNonterminal;
 
+	public static Grammar generate(Path p, Charset c) throws IOException {
+		return new Grammar(Objects.requireNonNull(p), Objects.requireNonNull(c));
+	}
+
 	private Grammar(Path p, Charset c) throws IOException {
 		assert p != null;
 
@@ -56,7 +66,6 @@ public class Grammar {
 		grammarName = grammarName.substring(0, grammarName.lastIndexOf('.'));
 		GRAMMAR_NAME = grammarName;
 
-		//LOGGER.addHandler(new ConsoleHandler());
 		LOGGER.setLevel(Level.ALL);
 
 		try {
@@ -64,7 +73,8 @@ public class Grammar {
 			fileHandler.setFormatter(new SimpleFormatter());
 			LOGGER.addHandler(fileHandler);
 		} catch (IOException e) {
-			LOGGER.severe("Log file could not be generated!");
+			LOGGER.addHandler(new ConsoleHandler());
+			LOGGER.severe("Log file could not be generated. Switching to console.");
 		}
 
 		LOGGER.info("Generating symbols table...");
@@ -308,7 +318,79 @@ public class Grammar {
 		return numTerminalSymbols <= s.getId();
 	}*/
 
-	public static Grammar generate(Path p, Charset c) throws IOException {
-		return new Grammar(Objects.requireNonNull(p), Objects.requireNonNull(c));
+	public void outputGrammar() {
+		outputSymbols();
+		outputProductionRules();
+	}
+
+	private void outputSymbols() {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".symbols"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+			BiMap.Entry<String, Symbol>[] entries = SYMBOLS.entrySet().toArray(new BiMap.Entry[0]);
+			Arrays.sort(entries, (Map.Entry<String, Symbol> o1, Map.Entry<String, Symbol> o2) -> o1.getValue().compareTo(o2.getValue()));
+
+			writer.write(String.format("%4s %-20s %s%n",
+				"ID",
+				"Token Type",
+				"Alternative (Optional)"
+			));
+
+			boolean printingNonterminalSymbols = false;
+			for (BiMap.Entry<String, Symbol> entry : entries) {
+				if (entry.getValue().getParent() != null) {
+					continue;
+				} else if (!printingNonterminalSymbols && entry.getValue() instanceof NonterminalSymbol) {
+					printingNonterminalSymbols = true;
+					writer.write(String.format("%n----------------------------------------------------------------%n"));
+					writer.write(String.format("%4s %s%n",
+						"ID",
+						"Nonterminal"
+					));
+				}
+
+				String alternateValue = SYMBOLS.inverse().get(new Symbol<>(entry.getValue().getId()-Integer.MIN_VALUE));
+				writer.write(String.format("%4s %-20s %s%n",
+					entry.getValue(),
+					entry.getKey(),
+					Strings.nullToEmpty(alternateValue)
+				));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void outputProductionRules() {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".productions"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+			BiMap.Entry<Symbol, Set<ProductionRule>>[] entries = PRODUCTION_RULES_MAP.entrySet().toArray(new BiMap.Entry[0]);
+			Arrays.sort(entries, (Map.Entry<Symbol, Set<ProductionRule>> o1, Map.Entry<Symbol, Set<ProductionRule>> o2) -> o1.getKey().compareTo(o2.getKey()));
+
+			writer.write(String.format("[%4s] %s%n",
+				"ID",
+				"Nonterminal: Production Rules"
+			));
+
+			for (BiMap.Entry<Symbol, Set<ProductionRule>> entry : entries) {
+				writer.write(String.format("[%4s] %s:%n",
+					entry.getKey(),
+					SYMBOLS.inverse().get(entry.getKey())
+				));
+
+				ProductionRule[] productionRules = entry.getValue().toArray(new ProductionRule[0]);
+				Arrays.sort(productionRules, (ProductionRule o1, ProductionRule o2) -> PRODUCTION_RULES.indexOf(o1) - PRODUCTION_RULES.indexOf(o2));
+
+				for (ProductionRule p : productionRules) {
+					writer.write(String.format("\t%3d\t", PRODUCTION_RULES.indexOf(p)));
+					for (Symbol s : p) {
+						writer.write(String.format("%s[%s] ", SYMBOLS.inverse().get(s), s));
+					}
+
+					writer.write(String.format("%n"));
+				}
+
+				writer.write(String.format("%n"));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }

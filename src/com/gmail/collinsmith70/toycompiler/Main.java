@@ -28,9 +28,10 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.grammar"), Charset.forName("US-ASCII"));
+			g.outputGrammar();
 			SLRParserStatesGenerator slrParserStatesGenerator = new SLRParserStatesGenerator();
 			Map<Set<ProductionRuleInstance>, State> parserStates = slrParserStatesGenerator.generateParserTables(g);
-			SLRParserStatesGenerator.outputTables(g, parserStates);
+			SLRParserStatesGenerator.outputStates(g, parserStates);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -38,7 +39,7 @@ public class Main {
 		/*try {
 			SLRParserGenerator parserGenerator = new SLRParserGenerator(Paths.get(".", "res", "toy.cfg.txt"));
 			parserGenerator.outputCFG();
-			parserGenerator.outputTables();
+			parserGenerator.outputStates();
 			parser = new SLRParser(parserGenerator.getGeneratedTables());
 		} catch (IOException e) {
 			System.out.println("Unable to open toy.cfg.txt");

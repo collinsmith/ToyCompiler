@@ -9,7 +9,7 @@ package com.gmail.collinsmith70.toycompiler.parser2;
  *
  * @param <E> the type associated with the parent of this Symbol
  */
-public class Symbol<E extends Symbol> {
+public class Symbol<E extends Symbol> implements Comparable<Symbol> {
 	/**
 	 * Unique identifier for this Symbol.
 	 */
@@ -100,5 +100,13 @@ public class Symbol<E extends Symbol> {
 	@Override
 	public String toString() {
 		return Integer.toString(ID);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int compareTo(Symbol o) {
+		return Integer.compare(this.ID, o.ID);
 	}
 }

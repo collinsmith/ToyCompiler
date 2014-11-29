@@ -197,7 +197,7 @@ public class SLRParserStatesGenerator implements ParserStatesGenerator {
 		);
 	}
 
-	public static void outputTables(Grammar g, Map<Set<ProductionRuleInstance>, State> states) {
+	public static void outputStates(Grammar g, Map<Set<ProductionRuleInstance>, State> states) {
 		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".tables"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			for (State state : states.values()) {
 				writer.write(String.format("State %d: V%s", state.getId(), state.getViablePrefixes()));
