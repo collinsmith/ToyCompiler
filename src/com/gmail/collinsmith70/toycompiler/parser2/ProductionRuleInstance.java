@@ -138,12 +138,14 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 
 	/**
 	 * Returns the Symbol which is at the next read position (i.e.,
-	 * {@code POSITION+1}) in the right-hand side of this ProductionRule.
+	 * {@code POSITION+1}) in the right-hand side of this
+	 * ProductionRuleInstance.
 	 *
 	 * @return the Symbol which is at the next read position (i.e.,
-	 *	{@code POSITION+1}) in the right-hand side of this ProductionRule or
-	 *	{@code null} if the read position is beyond the number of symbols
-	 *	in the RHS of this ProductionRule.
+	 *	{@code POSITION+1}) in the right-hand side of this
+	 *	ProductionRuleInstance or {@code null} if the read position is
+	 *	beyond the number of symbols in the RHS of this
+	 *	ProductionRuleInstance.
 	 */
 	public Symbol peekNextSymbol() {
 		if (!hasNext()) {
@@ -151,6 +153,27 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 		}
 
 		return ANCESTOR.getRHS().get(POSITION);
+	}
+
+	/**
+	 * Returns the Symbol which is located n positions beyond the current
+	 * read position (i.e., {@code POSITION+n}) in the right-hand side of this
+	 * ProductionRuleInstance.
+	 *
+	 * @param n the number of positions beyond the current read position to
+	 *	look ahead
+	 *
+	 * @return the symbol which is n positions beyond the current read
+	 *	position (i.e., {@code POSITION+n}) in the right-hand side of this
+	 *	ProductionRuleInstance or {@code null} if the specified lookahead
+	 *	is beyond the number of Symbol in the RHS.
+	 */
+	public Symbol lookahead(int n) {
+		if (POSITION+n-1 < ANCESTOR.getRHS().size()) {
+			return null;
+		}
+
+		return ANCESTOR.getRHS().get(POSITION+n-1);
 	}
 
 	/**
