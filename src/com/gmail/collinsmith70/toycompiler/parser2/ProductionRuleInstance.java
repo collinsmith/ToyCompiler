@@ -148,11 +148,12 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 	 *	ProductionRuleInstance.
 	 */
 	public Symbol peekNextSymbol() {
-		if (!hasNext()) {
+		/*if (!hasNext()) {
 			return null;
 		}
 
-		return ANCESTOR.getRHS().get(POSITION);
+		return ANCESTOR.getRHS().get(POSITION);*/
+		return lookahead(1);
 	}
 
 	/**
