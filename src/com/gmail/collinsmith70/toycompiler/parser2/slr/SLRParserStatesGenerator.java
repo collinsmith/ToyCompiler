@@ -1,11 +1,11 @@
 package com.gmail.collinsmith70.toycompiler.parser2.slr;
 
+import com.gmail.collinsmith70.toycompiler.parser2.AbstractParserStatesGenerator;
 import com.gmail.collinsmith70.toycompiler.parser2.Grammar;
 import com.gmail.collinsmith70.toycompiler.parser2.NonterminalSymbol;
 import com.gmail.collinsmith70.toycompiler.parser2.ProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser2.State;
 import com.gmail.collinsmith70.toycompiler.parser2.Symbol;
-import com.gmail.collinsmith70.toycompiler.parser2.AbstractParserStatesGenerator;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.io.BufferedWriter;
@@ -124,7 +124,6 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 		}
 
 		Symbol lookahead = p.peekNextSymbol();
-		// TODO: verify this works, there may have been type erasure, can still verify using symbol id
 		if (lookahead instanceof NonterminalSymbol) {
 			productionRuleInstances.get(lookahead).stream()
 				.filter(closureItem -> !(kernelItems.contains(closureItem) || closureItems.contains(closureItem)))

@@ -87,7 +87,6 @@ public class Symbol<E extends Symbol> implements Comparable<Symbol> {
 	 */
 	@Override
 	public int hashCode() {
-		// TODO: changed from Integer.hashCode(int) to int since this value should be unique
 		return ID;
 	}
 

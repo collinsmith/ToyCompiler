@@ -34,7 +34,10 @@ public class LALRParserStatesGenerator extends AbstractParserStatesGenerator {
 			// TODO: replace this (n^2) with something better?
 			for (ProductionRuleInstance repeatedItem : kernelItems) {
 				for (ProductionRuleInstance existingItem : existingState.getKernelItems()) {
-					existingItem.addAllLookaheads(repeatedItem.getLookaheads());
+					if (repeatedItem.equals(existingItem)) {
+						existingItem.addAllLookaheads(repeatedItem.getLookaheads());
+						break;
+					}
 				}
 			}
 		}
