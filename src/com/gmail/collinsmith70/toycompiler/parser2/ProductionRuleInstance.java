@@ -1,6 +1,8 @@
 package com.gmail.collinsmith70.toycompiler.parser2;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -69,13 +71,29 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 		return ANCESTOR;
 	}
 
-	// TODO: document
-	public Set<TerminalSymbol> getLookaheads() {
+	/**
+	 * Returns an immutable view of the set of terminal symbols which appear
+	 * before this production rule instance.
+	 *
+	 * @return an immutable view of the set of terminal symbols which appear
+	 *	before this production rule instance
+	 */
+	public ImmutableSet<TerminalSymbol> getLookaheads() {
 		if (LOOKAHEADS == null) {
 			LOOKAHEADS = new HashSet<>();
 		}
-		
-		return LOOKAHEADS;
+
+		return ImmutableSet.copyOf(LOOKAHEADS);
+	}
+
+	public ImmutableSet<TerminalSymbol> addLookahead(TerminalSymbol lookahead) {
+		LOOKAHEADS.add(lookahead);
+		return getLookaheads();
+	}
+
+	public ImmutableSet<TerminalSymbol> addAllLookaheads(Collection<? extends TerminalSymbol> c) {
+		LOOKAHEADS.addAll(c);
+		return getLookaheads();
 	}
 
 	/**
