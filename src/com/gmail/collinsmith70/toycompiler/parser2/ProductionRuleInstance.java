@@ -1,9 +1,11 @@
 package com.gmail.collinsmith70.toycompiler.parser2;
 
 import com.google.common.base.Preconditions;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * A production rule instance is a ProductionRule which maintains a link to it's
@@ -28,10 +30,19 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 	 */
 	private final int POSITION; // TODO: change this to a short?
 
+	/**
+	 * Set of terminal symbols which can appear directly after this production
+	 * rule instance. This data structure is mutable, and thus not
+	 * thread-safe. This field is lazily initiated upon the first call of
+	 * {@link #getLookaheads()}.
+	 */
+	private Set<TerminalSymbol> LOOKAHEADS;
+
 	public ProductionRuleInstance(ProductionRule ancestor) {
 		super(ancestor);
 		this.ANCESTOR = ancestor;
 		this.POSITION = 0;
+		this.LOOKAHEADS = null;
 	}
 
 	/**
@@ -45,6 +56,7 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 		super(p.ANCESTOR);
 		this.ANCESTOR = p.ANCESTOR;
 		this.POSITION = p.POSITION+1;
+		this.LOOKAHEADS = new HashSet<>(p.LOOKAHEADS);
 	}
 
 	/**
@@ -55,6 +67,15 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 	 */
 	public ProductionRule getAncestor() {
 		return ANCESTOR;
+	}
+
+	// TODO: document
+	public Set<TerminalSymbol> getLookaheads() {
+		if (LOOKAHEADS == null) {
+			LOOKAHEADS = new HashSet<>();
+		}
+		
+		return LOOKAHEADS;
 	}
 
 	/**
@@ -172,7 +193,7 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 	public String toString(Map<Symbol, String> symbolTable) {
 		Preconditions.checkNotNull(symbolTable);
 
-		StringBuilder sb = new StringBuilder(String.format("%16s %s", symbolTable.get(ANCESTOR.getNonterminalSymbol()), ProductionRule.RHS_DELIMITER));
+		StringBuilder sb = new StringBuilder(String.format("%s %s", symbolTable.get(ANCESTOR.getNonterminalSymbol()), ProductionRule.RHS_DELIMITER));
 
 		int i = 0;
 		for (Symbol s : ANCESTOR) {

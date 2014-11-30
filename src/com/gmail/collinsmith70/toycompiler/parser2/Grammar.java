@@ -139,7 +139,14 @@ public class Grammar {
 			e = it.next();
 			assert e instanceof TokenType : "Enumeration should implement " + TokenType.class.toString();
 			t = (TokenType)e;
-			symbol = new TerminalSymbol(t.getId());
+			if (t == TokenType.DefaultTokenTypes._eof) {
+				assert t.getId() == 0;
+				symbol = TerminalSymbol.EMPTY_STRING;
+			} else {
+				assert t.getId() != 0;
+				symbol = new TerminalSymbol(t.getId());
+			}
+
 			symbols.put(t.name(), symbol);
 			//resolution.put(symbol, symbol);
 			if (t.isLiteral()) {

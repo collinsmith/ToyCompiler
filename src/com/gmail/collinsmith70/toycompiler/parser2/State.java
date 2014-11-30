@@ -34,7 +34,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 * Mapping of transitions from a Symbol to the next State within this
 	 * State.
 	 */
-	private final Map<Symbol, State> TRANSITIONS;
+	private final Map<Symbol, State> TRANSITIONS; // TODO: Symbol -> TerminalSymbol?
 
 	/**
 	 * List of viable prefixes for this State. A Symbol is said to be a viable
@@ -42,7 +42,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 * consumed Symbol for all of the ProductionRules in the set of kernel
 	 * items.
 	 */
-	private final ImmutableList<Symbol> VIABLE_PREFIXES;
+	private final ImmutableList<Symbol> VIABLE_PREFIXES; // TODO: Symbol -> TerminalSymbol?
 
 	/**
 	 * Set of ProductionRules which are initially added into this State. Each
@@ -112,10 +112,9 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 *
 	 * @return {@code true} if there is, otherwise {@code false}
 	 */
-	public boolean transitionExistsFor(Symbol s) {
+	public boolean transitionExists(Symbol s) {
 		return TRANSITIONS.containsKey(Objects.requireNonNull(s));
 	}
-
 	/**
 	 * Returns the transition (if it exists) for the specified Symbol within
 	 * this State.
@@ -125,8 +124,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 * @return the State that the Symbol should transition to, or {@code null}
 	 *	if the transition does not exist.
 	 */
-	public State getTransitionFor(Symbol s) {
-		assert transitionExistsFor(s) && TRANSITIONS.get(s) != null;
+	public State getTransition(Symbol s) {
 		return TRANSITIONS.get(Objects.requireNonNull(s));
 	}
 
@@ -136,12 +134,14 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 *
 	 * @param symbol the Symbol to set the transition for
 	 * @param state the State that the Symbol should transition to
-	 *
-	 * @return the previously assigned State which the Symbol should have
-	 *	transitioned to, or {@code null} if there was none
 	 */
-	public State putTransition(Symbol symbol, State state) {
-		return TRANSITIONS.put(Objects.requireNonNull(symbol), Objects.requireNonNull(state));
+	public void putTransition(Symbol symbol, State state) {
+		if (getTransition(symbol) != null) {
+			// TODO: create a more effective exception
+			throw new RuntimeException();
+		}
+
+		TRANSITIONS.put(symbol, Objects.requireNonNull(state));
 	}
 
 	/**

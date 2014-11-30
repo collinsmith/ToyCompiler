@@ -2,7 +2,7 @@ package com.gmail.collinsmith70.toycompiler.parser2;
 
 import java.io.PrintStream;
 
-public abstract class Conflict {
+public abstract class Conflict extends RuntimeException {
 	@Override
 	public abstract String toString();
 

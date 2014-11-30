@@ -1,0 +1,17 @@
+Sp:
+S
+
+S:
+V = E
+
+E:
+F
+E + F
+
+F:
+V
+int
+( E )
+
+V:
+_id

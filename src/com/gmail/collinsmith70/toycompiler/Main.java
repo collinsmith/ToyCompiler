@@ -27,7 +27,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
-			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.grammar"), Charset.forName("US-ASCII"));
+			Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("US-ASCII"));
 			g.outputGrammar();
 			SLRParserStatesGenerator slrParserStatesGenerator = new SLRParserStatesGenerator();
 			Map<Set<ProductionRuleInstance>, State> parserStates = slrParserStatesGenerator.generateParserTables(g);

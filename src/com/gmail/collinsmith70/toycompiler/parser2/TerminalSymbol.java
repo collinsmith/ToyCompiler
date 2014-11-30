@@ -10,6 +10,8 @@ package com.gmail.collinsmith70.toycompiler.parser2;
  * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
  */
 public class TerminalSymbol extends Symbol<TerminalSymbol> {
+	public static final TerminalSymbol EMPTY_STRING = new TerminalSymbol(0);
+
 	/**
 	 * Constructs a TerminalSymbol with the specified unique identifier.
 	 *

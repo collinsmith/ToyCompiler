@@ -86,16 +86,6 @@ public class ProductionRule implements Iterable<Symbol> {
 	}
 
 	/**
-	 * Creates a ProductionRuleInstance from this ProductionRule and
-	 * return it.
-	 *
-	 * @return a ProductionRuleInstance created from this ProductionRule
-	 */
-	public ProductionRuleInstance createInstance() {
-		return new ProductionRuleInstance(this);
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@Override
