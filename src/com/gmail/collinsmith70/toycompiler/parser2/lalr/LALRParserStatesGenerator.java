@@ -126,6 +126,25 @@ public class LALRParserStatesGenerator extends AbstractParserStatesGenerator {
 			return;
 		}
 
+		Symbol lookahead;
+		Symbol nextSymbol;
+		Set<Symbol> follow;
+		Set<ProductionRuleInstance> existingItems;
+		Set<Symbol> lookaheadSymbols;
+		do {
+			nextSymbol = p.lookahead(1);
+			if (nextSymbol instanceof NonterminalSymbol) {
+				lookahead = p.lookahead(2);
+				existingItems = productionRuleInstances.get(nextSymbol);
+				if (closureItems.containsAll(existingItems)) {
+
+				}
+				//for (ProductionRuleInstance closureItem : productionRuleInstances.get(nextSymbol)) {
+				//	closureItems.con
+				//}
+			}
+		} while (lookahead.addAll(g));
+
 		Symbol lookahead = p.peekNextSymbol();
 		if (lookahead instanceof NonterminalSymbol) {
 			for (ProductionRuleInstance closureItem : productionRuleInstances.get(lookahead)) {
