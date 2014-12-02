@@ -15,10 +15,10 @@ public class LAProductionRuleInstance extends ProductionRuleInstance {
 	}
 	
 	public LAProductionRuleInstance(ProductionRuleInstance instance, LAProductionRuleInstance parent) {
-		super(instance.getAncestor());
+		super(instance);
 		this.INSTANCE = instance;
 		this.PARENT = parent;
-		this.FOLLOW = new HashSet<>();
+		this.FOLLOW = parent == null ? new HashSet<>() : new HashSet<>(parent.FOLLOW);
 	}
 	
 	public LAProductionRuleInstance getParent() {
@@ -27,6 +27,10 @@ public class LAProductionRuleInstance extends ProductionRuleInstance {
 	
 	public ProductionRuleInstance getInstance() {
 		return INSTANCE;
+	}
+	
+	public LAProductionRuleInstance getChild() {
+		return new LAProductionRuleInstance(INSTANCE.next(), this);
 	}
 	
 	public Set<Symbol> getFollowSet() {

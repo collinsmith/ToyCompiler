@@ -159,7 +159,7 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 			return true;
 		}
 
-		if (!(obj instanceof ProductionRule)) {
+		if (!(obj instanceof ProductionRuleInstance)) {
 			return false;
 		}
 

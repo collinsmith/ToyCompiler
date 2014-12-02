@@ -200,23 +200,28 @@ public class LALRParserStatesGenerator {
 		Set<LAProductionRuleInstance> reductions = new HashSet();
 		while (!remainingProductions.isEmpty()) {
 			p = remainingProductions.pollFirst();
-			if (p.hasNext()) {
+			if (p.getInstance().hasNext()) {
 				Symbol lookahead = p.peekNextSymbol();
 				Set<LAProductionRuleInstance> productionsWithSameLookahead = new HashSet<>();
 				remainingProductions.stream()
-					.filter(sibling -> (sibling.hasNext() && Objects.equals(sibling.peekNextSymbol(), lookahead)))
+					.filter(sibling -> sibling.peekNextSymbol().equals(lookahead))
 					.forEach(sibling -> {
 						productionsWithSameLookahead.add(sibling);
 					});
 
 				remainingProductions.removeAll(productionsWithSameLookahead);
 				productionsWithSameLookahead.add(p);
-
+				
 				Set<LAProductionRuleInstance> nextKernelItems = new HashSet<>();
 				productionsWithSameLookahead.stream()
-					.forEach((production) -> nextKernelItems.add(new LAProductionRuleInstance(production.next(), production)));
+					.forEach(production -> {
+						//System.out.println(production);
+						LAProductionRuleInstance p2 = production.getChild();
+						//System.out.println(p2);
+						nextKernelItems.add(p2);
+					});
 
-				State.Metadata childMetadata = state.getChildMetadata(lookahead, ImmutableSet.copyOf(nextKernelItems));
+				State.Metadata<LAProductionRuleInstance> childMetadata = state.getChildMetadata(lookahead, ImmutableSet.copyOf(nextKernelItems));
 				deque.offerLast(childMetadata);
 			} else {
 				reductions.add(p);
@@ -298,7 +303,7 @@ public class LALRParserStatesGenerator {
 			LAProductionRuleInstance temp = new LAProductionRuleInstance(child, p);
 			temp.getFollowSet().addAll(childFollowSet);
 			closureItems.add(temp);
-			closeOver(temp, g, kernelItems, closureItems, productionRuleInstances, FIRST);
+			closeOver(temp.getChild(), g, kernelItems, closureItems, productionRuleInstances, FIRST);
 		}
 	}
 	
@@ -355,14 +360,14 @@ public class LALRParserStatesGenerator {
 		for (Symbol followSymbol : p.getFollowSet()) {
 			sj.add(g.getSymbolsTable().inverse().get(followSymbol));
 		}
-		
+
 		Symbol lookahead = p.peekNextSymbol();
 		writer.write(String.format("%-4s %-48s %-32s %-32s %s%n",
 			isKernelItem ? "I:" : "",
 			p.toString(g.getSymbolsTable().inverse()),
 			sj.toString(),
 			String.format("goto(S%d, %s)",
-				s.getTransition(lookahead).getId(),
+				lookahead.getId(),
 				g.getSymbolsTable().inverse().get(lookahead)
 			),
 			(lookahead instanceof NonterminalSymbol) ? "" : "shift"
