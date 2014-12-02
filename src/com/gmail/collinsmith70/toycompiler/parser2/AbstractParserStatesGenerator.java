@@ -19,9 +19,9 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public abstract class AbstractParserStatesGenerator {
 	abstract protected void generateChildState(
-		State.Metadata metadata,
-		Map<Set<ProductionRuleInstance>, State> states,
-		Deque<State.Metadata> deque,
+		State.Metadata<ProductionRuleInstance> metadata,
+		Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> states,
+		Deque<State.Metadata<ProductionRuleInstance>> deque,
 		Grammar g,
 		Map<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> productionRuleInstances
 	);
@@ -34,7 +34,7 @@ public abstract class AbstractParserStatesGenerator {
 		Map<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> productionRuleInstances
 	);
 
-	public Map<Set<ProductionRuleInstance>, State> generateParserTables(Grammar g) {
+	public Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> generateParserTables(Grammar g) {
 		Preconditions.checkNotNull(g);
 
 		g.getLogger().info("Creating production rule instances...");
@@ -48,15 +48,15 @@ public abstract class AbstractParserStatesGenerator {
 			immutableProductionRuleInstances.size()
 		));
 
-		ImmutableSet<ProductionRuleInstance> initialProductionRules = immutableProductionRuleInstances.get(g.getInitialNonterminalSymbol());
-		for (ProductionRuleInstance p : initialProductionRules) {
-			Set<TerminalSymbol> lookaheads = p.getLookaheads();
-			lookaheads.add(TerminalSymbol.EMPTY_STRING);
-		}
+		//ImmutableSet<ProductionRuleInstance> initialProductionRules = immutableProductionRuleInstances.get(g.getInitialNonterminalSymbol());
+		//for (ProductionRuleInstance p : initialProductionRules) {
+		//	Set<TerminalSymbol> lookaheads = p.getLookaheads();
+		//	lookaheads.add(TerminalSymbol.EMPTY_STRING);
+		//}
 
 		g.getLogger().info("Generating parser states...");
 		dt = System.currentTimeMillis();
-		Map<Set<ProductionRuleInstance>, State> states = generateParserStates(g, immutableProductionRuleInstances);
+		Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> states = generateParserStates(g, immutableProductionRuleInstances);
 		g.getLogger().info(String.format("Parser states generated in %dms; %d states",
 			System.currentTimeMillis()-dt,
 			states.size()
@@ -65,16 +65,14 @@ public abstract class AbstractParserStatesGenerator {
 		return states;
 	}
 
-
-
-	protected Map<Set<ProductionRuleInstance>, State> generateParserStates(
+	protected Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> generateParserStates(
 		Grammar g,
 		Map<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> productionRuleInstances
 	) {
-		Map<Set<ProductionRuleInstance>, State> states = new LinkedHashMap<>();
+		Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> states = new LinkedHashMap<>();
 
-		Deque<State.Metadata> deque = new LinkedBlockingDeque<>();
-		deque.offerLast(new State.Metadata(
+		Deque<State.Metadata<ProductionRuleInstance>> deque = new LinkedBlockingDeque<>();
+		deque.offerLast(new State.Metadata<>(
 			null,
 			null,
 			productionRuleInstances.get(g.getInitialNonterminalSymbol())

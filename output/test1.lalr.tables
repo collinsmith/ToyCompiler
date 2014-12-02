@@ -1,0 +1,12 @@
+State 0: V[]
+I:   Sp -> . S                                        FIRST={_eof}                     goto(S0, S)                      
+     V -> . _id                                       FIRST={_assignop}                goto(S1, _id)                    shift
+     S -> . V _assignop E                             FIRST={_eof}                     goto(S2, V)                      
+
+State 1: V[51] = goto(S0, 51)
+I:   V -> . _id                                       FIRST={}                         goto(S1, _id)                    shift
+
+State 2: V[_56] = goto(S0, _56)
+I:   S -> . V _assignop E                             FIRST={}                         goto(S2, V)                      
+     V -> . _id                                       FIRST={_assignop}                goto(S1, _id)                    shift
+

@@ -5,8 +5,9 @@ import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
 import com.gmail.collinsmith70.toycompiler.parser.Parser;
 import com.gmail.collinsmith70.toycompiler.parser2.Grammar;
-import com.gmail.collinsmith70.toycompiler.parser2.ProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser2.State;
+import com.gmail.collinsmith70.toycompiler.parser2.lalr.LALRParserStatesGenerator;
+import com.gmail.collinsmith70.toycompiler.parser2.lalr.LAProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser2.slr.SLRParserStatesGenerator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -29,9 +30,12 @@ public class Main {
 		try {
 			Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("US-ASCII"));
 			g.outputGrammar();
-			SLRParserStatesGenerator slrParserStatesGenerator = new SLRParserStatesGenerator();
-			Map<Set<ProductionRuleInstance>, State> parserStates = slrParserStatesGenerator.generateParserTables(g);
-			SLRParserStatesGenerator.outputStates(g, parserStates);
+			LALRParserStatesGenerator lalrParserStatesGenerator = new LALRParserStatesGenerator();
+			Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> parserStates = lalrParserStatesGenerator.generateParserTables(g);
+			LALRParserStatesGenerator.outputStates(g, parserStates);
+			//SLRParserStatesGenerator slrParserStatesGenerator = new SLRParserStatesGenerator();
+			//Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> parserStates = slrParserStatesGenerator.generateParserTables(g);
+			//SLRParserStatesGenerator.outputStates(g, parserStates);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

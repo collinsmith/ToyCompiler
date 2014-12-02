@@ -32,19 +32,10 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 	 */
 	private final int POSITION; // TODO: change this to a short?
 
-	/**
-	 * Set of terminal symbols which can appear directly after this production
-	 * rule instance. This data structure is mutable, and thus not
-	 * thread-safe. This field is lazily initiated upon the first call of
-	 * {@link #getLookaheads()}.
-	 */
-	private Set<TerminalSymbol> LOOKAHEADS;
-
 	public ProductionRuleInstance(ProductionRule ancestor) {
 		super(ancestor);
 		this.ANCESTOR = ancestor;
 		this.POSITION = 0;
-		this.LOOKAHEADS = null;
 	}
 
 	/**
@@ -58,7 +49,6 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 		super(p.ANCESTOR);
 		this.ANCESTOR = p.ANCESTOR;
 		this.POSITION = p.POSITION+1;
-		this.LOOKAHEADS = new HashSet<>(p.LOOKAHEADS);
 	}
 
 	/**
@@ -69,31 +59,6 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 	 */
 	public ProductionRule getAncestor() {
 		return ANCESTOR;
-	}
-
-	/**
-	 * Returns an immutable view of the set of terminal symbols which appear
-	 * before this production rule instance.
-	 *
-	 * @return an immutable view of the set of terminal symbols which appear
-	 *	before this production rule instance
-	 */
-	public ImmutableSet<TerminalSymbol> getLookaheads() {
-		if (LOOKAHEADS == null) {
-			LOOKAHEADS = new HashSet<>();
-		}
-
-		return ImmutableSet.copyOf(LOOKAHEADS);
-	}
-
-	public ImmutableSet<TerminalSymbol> addLookahead(TerminalSymbol lookahead) {
-		LOOKAHEADS.add(lookahead);
-		return getLookaheads();
-	}
-
-	public ImmutableSet<TerminalSymbol> addAllLookaheads(Collection<? extends TerminalSymbol> c) {
-		LOOKAHEADS.addAll(c);
-		return getLookaheads();
 	}
 
 	/**
@@ -148,11 +113,6 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 	 *	ProductionRuleInstance.
 	 */
 	public Symbol peekNextSymbol() {
-		/*if (!hasNext()) {
-			return null;
-		}
-
-		return ANCESTOR.getRHS().get(POSITION);*/
 		return lookahead(1);
 	}
 
@@ -170,11 +130,12 @@ public class ProductionRuleInstance extends ProductionRule implements Iterable<S
 	 *	is beyond the number of Symbol in the RHS.
 	 */
 	public Symbol lookahead(int n) {
-		if (POSITION+n-1 < ANCESTOR.getRHS().size()) {
+		n -= 1;
+		if (POSITION+n >= ANCESTOR.getRHS().size()) {
 			return null;
 		}
 
-		return ANCESTOR.getRHS().get(POSITION+n-1);
+		return ANCESTOR.getRHS().get(POSITION+n);
 	}
 
 	/**

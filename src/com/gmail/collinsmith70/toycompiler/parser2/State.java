@@ -19,7 +19,7 @@ import java.util.Objects;
  *
  * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
  */
-public class State implements Iterable<ProductionRuleInstance> {
+public class State<E extends ProductionRuleInstance> implements Iterable<E> {
 	/**
 	 * Unique identifier for this State.
 	 */
@@ -28,13 +28,13 @@ public class State implements Iterable<ProductionRuleInstance> {
 	/**
 	 * Parent of this State.
 	 */
-	private final State PARENT;
+	private final State<E> PARENT;
 
 	/**
 	 * Mapping of transitions from a Symbol to the next State within this
 	 * State.
 	 */
-	private final Map<Symbol, State> TRANSITIONS; // TODO: Symbol -> TerminalSymbol?
+	private final Map<Symbol, State<E>> TRANSITIONS; // TODO: Symbol -> TerminalSymbol?
 
 	/**
 	 * List of viable prefixes for this State. A Symbol is said to be a viable
@@ -49,14 +49,14 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 * kernel item must be closed over and the created ProductionRules added
 	 * into {@link #CLOSURE_ITEMS}.
 	 */
-	private final ImmutableSet<ProductionRuleInstance> KERNEL_ITEMS;
+	private final ImmutableSet<E> KERNEL_ITEMS;
 
 	/**
 	 * Set of ProductionRules which are created by closing over each item
 	 * contained within {@link #KERNEL_ITEMS}. These items must then be closed
 	 * over, recursively, until the set is complete.
 	 */
-	private final ImmutableSet<ProductionRuleInstance> CLOSURE_ITEMS;
+	private final ImmutableSet<E> CLOSURE_ITEMS;
 
 	/**
 	 * Constructs a State with the specified unique identifier, parent State,
@@ -75,8 +75,8 @@ public class State implements Iterable<ProductionRuleInstance> {
 		int id,
 		State parent,
 		ImmutableList<Symbol> viablePrefixes,
-		ImmutableSet<ProductionRuleInstance> kernelItems,
-		ImmutableSet<ProductionRuleInstance> closureItems
+		ImmutableSet<E> kernelItems,
+		ImmutableSet<E> closureItems
 	) {
 		this.ID = id;
 		this.PARENT = parent;
@@ -158,7 +158,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 *
 	 * @return an immutable set of the kernel items for this State
 	 */
-	public ImmutableSet<ProductionRuleInstance> getKernelItems() {
+	public ImmutableSet<E> getKernelItems() {
 		return KERNEL_ITEMS;
 	}
 
@@ -167,7 +167,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 *
 	 * @return an immutable set of the closure items for this State
 	 */
-	public ImmutableSet<ProductionRuleInstance> getClosureItems() {
+	public ImmutableSet<E> getClosureItems() {
 		return CLOSURE_ITEMS;
 	}
 
@@ -180,7 +180,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 *	in this State
 	 */
 	@Override
-	public Iterator<ProductionRuleInstance> iterator() {
+	public Iterator<E> iterator() {
 		return Iterators.concat(KERNEL_ITEMS.iterator(), CLOSURE_ITEMS.iterator());
 	}
 
@@ -194,7 +194,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 * @return an instance of a Metadata object containing structural metadata
 	 *	for a child State of this State
 	 */
-	public Metadata getChildMetadata(Symbol symbol, ImmutableSet<ProductionRuleInstance> kernelItems) {
+	public Metadata getChildMetadata(Symbol symbol, ImmutableSet<E> kernelItems) {
 		return new Metadata(this, symbol, kernelItems);
 	}
 
@@ -204,7 +204,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 	 *
 	 * @author Collin Smith <strong>collinsmith70@gmail.com</strong>
 	 */
-	public static final class Metadata {
+	public static final class Metadata<E extends ProductionRuleInstance> {
 		/**
 		 * Reference to a parent State of a child State.
 		 */
@@ -219,7 +219,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 		 * Set of ProductionRuleInstance which represent the initial items
 		 * for a child State.
 		 */
-		private final ImmutableSet<ProductionRuleInstance> KERNEL_ITEMS;
+		private final ImmutableSet<E> KERNEL_ITEMS;
 
 		/**
 		 * Constructs a Metadata object containing the specified parameters
@@ -233,7 +233,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 		public Metadata(
 			State parent,
 			Symbol symbol,
-			ImmutableSet<ProductionRuleInstance> kernelItems
+			ImmutableSet<E> kernelItems
 		) {
 			this.PARENT = parent;
 			this.SYMBOL = symbol;
@@ -264,7 +264,7 @@ public class State implements Iterable<ProductionRuleInstance> {
 		 *
 		 * @return the set of kernel items for the constructable child State
 		 */
-		public ImmutableSet<ProductionRuleInstance> getKernelItems() {
+		public ImmutableSet<E> getKernelItems() {
 			return KERNEL_ITEMS;
 		}
 	}

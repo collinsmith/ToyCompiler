@@ -14,6 +14,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,17 +31,17 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 
 	@Override
 	protected void generateChildState(
-		State.Metadata metadata,
-		Map<Set<ProductionRuleInstance>, State> states,
-		Deque<State.Metadata> deque,
+		State.Metadata<ProductionRuleInstance> metadata,
+		Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> states,
+		Deque<State.Metadata<ProductionRuleInstance>> deque,
 		Grammar g,
 		Map<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> productionRuleInstances
 	) {
-		State parent = metadata.getParent();
+		State<ProductionRuleInstance> parent = metadata.getParent();
 		Symbol symbol = metadata.getSymbol();
 		ImmutableSet<ProductionRuleInstance> kernelItems = metadata.getKernelItems();
 
-		State existingState = states.get(kernelItems);
+		State<ProductionRuleInstance> existingState = states.get(kernelItems);
 		if (existingState != null) {
 			parent.putTransition(symbol, existingState);
 			return;
@@ -60,7 +61,7 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 		}
 
 		int stateId = states.size();
-		State state = new State(
+		State state = new State<>(
 			stateId,
 			parent,
 			ImmutableList.copyOf(viablePrefixes), // TODO: creating more lists than necessary?
@@ -96,7 +97,7 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 				productionsWithSameLookahead.stream()
 					.forEach((productionWithSameNextSymbol) -> nextKernelItems.add(productionWithSameNextSymbol.next()));
 
-				State.Metadata childMetadata = state.getChildMetadata(lookahead, ImmutableSet.copyOf(nextKernelItems));
+				State.Metadata<ProductionRuleInstance> childMetadata = state.getChildMetadata(lookahead, ImmutableSet.copyOf(nextKernelItems));
 				deque.offerLast(childMetadata);
 			} else {
 				reductions.add(p);
@@ -136,10 +137,10 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 
 	public static void outputStates(
 		Grammar g,
-		Map<Set<ProductionRuleInstance>, State> states
+		Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> states
 	) {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".tables"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
-			for (State state : states.values()) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".slr.tables"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+			for (State<ProductionRuleInstance> state : states.values()) {
 				writer.write(String.format("State %d: V%s", state.getId(), state.getViablePrefixes()));
 				if (state.getParent() != null) {
 					writer.write(String.format(" = goto(S%d, %s)",
@@ -169,7 +170,7 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 	private static void writeProduction(
 		BufferedWriter writer,
 		Grammar g,
-		State s,
+		State<ProductionRuleInstance> s,
 		ProductionRuleInstance p,
 		boolean isKernelItem
 	) throws IOException {

@@ -109,6 +109,14 @@ public class Grammar {
 		return GRAMMAR_NAME;
 	}
 
+	public int getNumTerminalSymbols() {
+		return numTerminalSymbols;
+	}
+	
+	public int getNumNonterminalSymbols() {
+		return numNonterminalSymbols;
+	}
+
 	public NonterminalSymbol getInitialNonterminalSymbol() {
 		return initialNonterminal;
 	}
