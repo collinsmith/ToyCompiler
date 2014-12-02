@@ -367,7 +367,7 @@ public class LALRParserStatesGenerator {
 			p.toString(g.getSymbolsTable().inverse()),
 			sj.toString(),
 			String.format("goto(S%d, %s)",
-				lookahead.getId(),
+				s.getTransition(lookahead).getId(),
 				g.getSymbolsTable().inverse().get(lookahead)
 			),
 			(lookahead instanceof NonterminalSymbol) ? "" : "shift"
