@@ -1,19 +1,19 @@
 [  ID] Nonterminal: Production Rules
-[ _52] Sp:
-	  0	S[_53] 
+[  52] Sp:
+	  0	S[53] 
 
-[ _53] S:
-	  1	V[_56] _assignop[35] E[_54] 
+[  53] S:
+	  1	V[56] _assignop[35] E[54] 
 
-[ _54] E:
-	  2	F[_55] 
-	  3	E[_54] _plus[21] F[_55] 
+[  54] E:
+	  2	F[55] 
+	  3	E[54] _plus[21] F[55] 
 
-[ _55] F:
-	  4	V[_56] 
+[  55] F:
+	  4	V[56] 
 	  5	_int[12] 
-	  6	_leftparen[39] E[_54] _rightparen[40] 
+	  6	_leftparen[39] E[54] _rightparen[40] 
 
-[ _56] V:
+[  56] V:
 	  7	_id[51] 
 

@@ -1,4 +1,4 @@
-package com.gmail.collinsmith70.toycompiler.parser2;
+package com.gmail.collinsmith70.toycompiler.parser;
 
 import com.gmail.collinsmith70.toycompiler.lexer.TokenType;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyTokenTypes;
@@ -20,36 +20,35 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 import java.util.regex.Pattern;
+import static java.util.regex.Pattern.compile;
 
-public class Grammar {
-	private static final Pattern NONTERMINAL_PATTERN = Pattern.compile("[A-Z]\\w*:$");
+public final class Grammar {
+	private static final Pattern NONTERMINAL_PATTERN = compile("[A-Z]\\w*:$");
 
-	private final ImmutableBiMap<String, Symbol> SYMBOLS;
-	//private final ImmutableMap<Symbol, Symbol> RESOLUTION;
-
-	private final ImmutableList<ProductionRule> PRODUCTION_RULES;
-	private final ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> PRODUCTION_RULES_MAP;
-
-	private static final Logger LOGGER = Logger.getLogger("ToyCompilerLogger");
+	private final Logger LOGGER;
 
 	private final String GRAMMAR_NAME;
+	private final NonterminalSymbol INITIAL_NONTERMINAL;
+	private final ImmutableBiMap<String, Symbol> SYMBOLS;
+	private final ImmutableSet<ProductionRule> PRODUCTION_RULES;
+	private final ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> PRODUCTION_RULES_MAP;
 
 	private int numTerminalSymbols;
 	private int numNonterminalSymbols;
 	private int numUnreachableSymbols;
-
-	private NonterminalSymbol initialNonterminal;
 
 	public static Grammar generate(Path p, Charset c) throws IOException {
 		return new Grammar(Objects.requireNonNull(p), Objects.requireNonNull(c));
@@ -57,17 +56,13 @@ public class Grammar {
 
 	private Grammar(Path p, Charset c) throws IOException {
 		assert p != null;
-
-		this.numTerminalSymbols = Integer.MIN_VALUE;
-		this.numNonterminalSymbols = Integer.MIN_VALUE;
-		numUnreachableSymbols = Integer.MIN_VALUE;
+		assert c != null;
 
 		String grammarName = p.getFileName().toString();
 		grammarName = grammarName.substring(0, grammarName.lastIndexOf('.'));
-		GRAMMAR_NAME = grammarName;
+		this.GRAMMAR_NAME = grammarName;
 
-		LOGGER.setLevel(Level.ALL);
-
+		this.LOGGER = Logger.getLogger(GRAMMAR_NAME + "CompilerLogger");
 		try {
 			FileHandler fileHandler = new FileHandler(Paths.get(".", "logs", GRAMMAR_NAME + ".log").toString(), true);
 			fileHandler.setFormatter(new SimpleFormatter());
@@ -77,11 +72,18 @@ public class Grammar {
 			LOGGER.severe("Log file could not be generated. Switching to console.");
 		}
 
+		this.numTerminalSymbols = Integer.MIN_VALUE;
+		this.numNonterminalSymbols = Integer.MIN_VALUE;
+		this.numUnreachableSymbols = Integer.MIN_VALUE;
+
+		long dt;
 		LOGGER.info("Generating symbols table...");
-		long dt = System.currentTimeMillis();
-		//Map<Symbol, Symbol> resolution = new HashMap<>();
-		this.SYMBOLS = generateSymbolsTable(p, c/*, resolution*/);
-		//this.RESOLUTION = ImmutableMap.copyOf(resolution);
+		dt = System.currentTimeMillis();
+		BiMap<String, Symbol> symbolsTable = HashBiMap.create();
+		Map<TerminalSymbol, TerminalSymbol> symbolResolutions = new HashMap<>();
+		this.INITIAL_NONTERMINAL = generateSymbolsTable(p, c, symbolsTable, symbolResolutions);
+		this.SYMBOLS = ImmutableBiMap.copyOf(symbolsTable);
+		symbolResolutions = Collections.unmodifiableMap(symbolResolutions);
 		LOGGER.info(String.format("Symbols table generated in %dms; %d symbols (%d terminal symbols, %d nonterminal symbols)",
 			System.currentTimeMillis()-dt,
 			numTerminalSymbols+numNonterminalSymbols,
@@ -91,12 +93,17 @@ public class Grammar {
 
 		LOGGER.info("Generating productions table...");
 		dt = System.currentTimeMillis();
-		ArrayList<ProductionRule> productions = new ArrayList<>();
-		this.PRODUCTION_RULES_MAP = generateProductions(p, c, productions);
-		this.PRODUCTION_RULES = ImmutableList.copyOf(productions);
+		LinkedHashSet<ProductionRule> productions = new LinkedHashSet<>();
+		BiMap<NonterminalSymbol, Set<ProductionRule>> productionsMap = HashBiMap.create();
+		generateProductions(p, c, symbolResolutions, productions, productionsMap);
+		this.PRODUCTION_RULES = ImmutableSet.copyOf(productions);
+		BiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> immutableProductionsMap = HashBiMap.create();
+		productionsMap.entrySet().parallelStream()
+			.forEachOrdered(entry -> immutableProductionsMap.put(entry.getKey(), ImmutableSet.copyOf(entry.getValue())));
+		this.PRODUCTION_RULES_MAP = ImmutableBiMap.copyOf(immutableProductionsMap);
 		LOGGER.info(String.format("Productions table and list created in %dms; %d productions (%d unreachable symbols)",
 			System.currentTimeMillis()-dt,
-			this.PRODUCTION_RULES.size(),
+			PRODUCTION_RULES.size(),
 			numUnreachableSymbols
 		));
 	}
@@ -109,6 +116,22 @@ public class Grammar {
 		return GRAMMAR_NAME;
 	}
 
+	public NonterminalSymbol getInitialNonterminalSymbol() {
+		return INITIAL_NONTERMINAL;
+	}
+
+	public ImmutableBiMap<Symbol, String> getSymbolsTable() {
+		return SYMBOLS.inverse();
+	}
+
+	public ImmutableSet<ProductionRule> getProductionRules() {
+		return PRODUCTION_RULES;
+	}
+
+	public ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> getProductionRulesMap() {
+		return PRODUCTION_RULES_MAP;
+	}
+
 	public int getNumTerminalSymbols() {
 		return numTerminalSymbols;
 	}
@@ -117,25 +140,27 @@ public class Grammar {
 		return numNonterminalSymbols;
 	}
 
-	public NonterminalSymbol getInitialNonterminalSymbol() {
-		return initialNonterminal;
+	public int getNumUnreachableSymbols() {
+		return numUnreachableSymbols;
 	}
 
-	public ImmutableBiMap<String, Symbol> getSymbolsTable() {
-		return SYMBOLS;
+	private Symbol resolveSymbol(String token, Map<TerminalSymbol, TerminalSymbol> symbolResolutions) {
+		Preconditions.checkNotNull(token);
+		Symbol s = SYMBOLS.get(token);
+		if (s == null) {
+			throw new GrammarGenerationException("Symbol '%s' is not within the set of symbols!", token);
+		}
+
+		if (s instanceof TerminalSymbol) {
+			return symbolResolutions.get(s);
+		}
+
+		return s;
 	}
 
-	public ImmutableList<ProductionRule> getProductionRules() {
-		return PRODUCTION_RULES;
-	}
-
-	public ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> getProductionRulesMap() {
-		return PRODUCTION_RULES_MAP;
-	}
-
-	private ImmutableBiMap<String, Symbol> generateSymbolsTable(Path p, Charset c/*, Map<Symbol, Symbol> resolution*/) throws IOException {
-		numTerminalSymbols = numNonterminalSymbols = 0;
-		BiMap<String, Symbol> symbols = HashBiMap.create();
+	private NonterminalSymbol generateSymbolsTable(Path p, Charset c, BiMap<String, Symbol> symbolsTable, Map<TerminalSymbol, TerminalSymbol> symbolResolutions) throws IOException {
+		numTerminalSymbols = 0;
+		numNonterminalSymbols = 0;
 
 		TerminalSymbol symbol, alternateSymbol;
 
@@ -155,82 +180,50 @@ public class Grammar {
 				symbol = new TerminalSymbol(t.getId());
 			}
 
-			symbols.put(t.name(), symbol);
-			//resolution.put(symbol, symbol);
+			symbolsTable.put(t.name(), symbol);
+			symbolResolutions.put(symbol, symbol);
 			if (t.isLiteral()) {
-				alternateSymbol = new TerminalSymbol(Integer.MIN_VALUE+t.getId(), symbol);
-				symbols.put(t.getRegex(), alternateSymbol);
-				//resolution.put(alternateSymbol, symbol);
+				alternateSymbol = new TerminalSymbol(Integer.MIN_VALUE+t.getId());
+				symbolsTable.put(t.getRegex(), alternateSymbol);
+				symbolResolutions.put(alternateSymbol, symbol);
 			}
 
 			numTerminalSymbols++;
 		}
 
-		// Above part should concatonate both of the below loops
-		/*for (TokenType.DefaultTokenTypes k : TokenType.DefaultTokenTypes.values()) {
-			symbol = new TerminalSymbol(k.getId());
-			symbols.put(k.name(), symbol);
-			resolution.put(symbol, symbol);
-			System.out.format("Resolve %s -> %s%n", symbol, symbol);
-			if (k.isLiteral()) {
-				alternateSymbol = new TerminalSymbol(Integer.MIN_VALUE+k.getId());
-				symbols.put(k.getRegex(), alternateSymbol);
-				resolution.put(alternateSymbol, symbol);
-				System.out.format("Resolve %s -> %s%n", alternateSymbol, symbol);
-			}
-
-			numTerminalSymbols++;
-		}
-
-		for (ToyTokenTypes k : ToyTokenTypes.values()) {
-			symbol = new TerminalSymbol(k.getId());
-			symbols.put(k.name(), symbol);
-			resolution.put(symbol, symbol);
-			System.out.format("Resolve %s -> %s%n", symbol, symbol);
-			if (k.isLiteral()) {
-				alternateSymbol = new TerminalSymbol(Integer.MIN_VALUE+k.getId());
-				symbols.put(k.getRegex(), alternateSymbol);
-				resolution.put(alternateSymbol, symbol);
-				System.out.format("Resolve %s -> %s%n", alternateSymbol, symbol);
-			}
-
-			numTerminalSymbols++;
-		}*/
-
+		NonterminalSymbol initialNonterminal = null;
 		try (BufferedReader br = Files.newBufferedReader(p, c)) {
-			NonterminalSymbol nonterminalSymbol;
 			String line;
+			NonterminalSymbol nonterminalSymbol;
 			while ((line = br.readLine()) != null) {
 				if (!NONTERMINAL_PATTERN.matcher(line).matches()) {
 					continue;
 				}
 
-				nonterminalSymbol = new NonterminalSymbol(numTerminalSymbols+numNonterminalSymbols);
+				nonterminalSymbol = new NonterminalSymbol(getNumTerminalSymbols()+getNumNonterminalSymbols());
 				if (initialNonterminal == null) {
 					initialNonterminal = nonterminalSymbol;
 				}
 
 				line = line.substring(0, line.length()-1);
-				//System.out.println(line + ", " + id);
-				//System.out.println(symbols.inverse().get(id));
-				symbols.put(line, nonterminalSymbol);
-				//resolution.put(nonterminalSymbol, nonterminalSymbol);
+				symbolsTable.put(line, nonterminalSymbol);
 				numNonterminalSymbols++;
 			}
 		}
 
-		return ImmutableBiMap.copyOf(symbols);
+		return initialNonterminal;
 	}
 
-	private ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> generateProductions(Path p, Charset c, ArrayList<ProductionRule> productions) throws IOException {
-		BiMap<NonterminalSymbol, Set<ProductionRule>> nonterminals = HashBiMap.create();
+	private void generateProductions(Path p, Charset c, Map<TerminalSymbol, TerminalSymbol> symbolResolutions, Set<ProductionRule> productions, BiMap<NonterminalSymbol, Set<ProductionRule>> productionsMap) throws IOException {
 		Set<Symbol> usedSymbols = new HashSet<>();
 		try (BufferedReader br = Files.newBufferedReader(p, c)) {
+			ArrayList<Symbol> rhs;
 			ProductionRule productionRule;
-			Set<ProductionRule> nonterminalProductions;
+			Set<ProductionRule> existingProductionRules;
 			NonterminalSymbol currentNonterminalSymbol = null;
 
 			int id;
+			Symbol temp;
 			String line;
 			String[] tokens;
 			while ((line = br.readLine()) != null) {
@@ -240,15 +233,13 @@ public class Grammar {
 
 				if (NONTERMINAL_PATTERN.matcher(line).matches()) {
 					line = line.substring(0, line.length()-1);
-					assert SYMBOLS.get(line) instanceof NonterminalSymbol;
-					currentNonterminalSymbol = (NonterminalSymbol)SYMBOLS.get(line);
-					if (currentNonterminalSymbol == null) {
-						throw new GrammarGenerationException("Nonterminal symbol %s is not within the set of symbols!",
-							line
-						);
-					} else if (currentNonterminalSymbol.getId() < numTerminalSymbols) {
-						throw new GrammarGenerationException("Terminal symbol %s cannot be declared as a production nonterminal!",
-							SYMBOLS.inverse().get(currentNonterminalSymbol)
+					temp = resolveSymbol(line, symbolResolutions);
+					if (temp instanceof NonterminalSymbol) {
+						currentNonterminalSymbol = (NonterminalSymbol)temp;
+					} else {
+						assert temp instanceof TerminalSymbol : "Symbols should only be TerminalSymbols or NonterminalSymbols";
+						throw new GrammarGenerationException("Terminal symbol '%s' cannot be declared as a production rule nonterminal!",
+							SYMBOLS.inverse().get(temp)
 						);
 					}
 
@@ -257,19 +248,16 @@ public class Grammar {
 				}
 
 				if (currentNonterminalSymbol == null) {
-					throw new GrammarGenerationException("Production rule %s does not belong to any declared nonterminal!",
-						line
-					);
+					throw new GrammarGenerationException("Production rule '%s' does not belong to any declared nonterminal!", line);
 				}
 
-				nonterminalProductions = nonterminals.get(currentNonterminalSymbol);
-				if (nonterminalProductions == null) {
-					nonterminalProductions = new HashSet<>();
-					nonterminals.put(currentNonterminalSymbol, nonterminalProductions);
+				existingProductionRules = productionsMap.get(currentNonterminalSymbol);
+				if (existingProductionRules == null) {
+					existingProductionRules = new HashSet<>();
+					productionsMap.put(currentNonterminalSymbol, existingProductionRules);
 				}
 
-				ArrayList<Symbol> productionList = new ArrayList<>();
-
+				rhs = new ArrayList<>();
 				line = line.trim();
 				tokens = line.split("\\s+");
 				for (String token : tokens) {
@@ -277,63 +265,34 @@ public class Grammar {
 						continue;
 					}
 
-					Symbol resolvedToken = resolveSymbol(token);
-					assert resolvedToken != null : "Could not resolve token";
+					Symbol resolvedToken = resolveSymbol(token, symbolResolutions);
+					assert resolvedToken != null : "Could not resolve token.";
 					usedSymbols.add(resolvedToken);
-					productionList.add(resolvedToken);
+					rhs.add(resolvedToken);
 				}
 
-				productionList.trimToSize();
-				productionRule = new ProductionRule(currentNonterminalSymbol, ImmutableList.copyOf(productionList));
+				rhs.trimToSize();
+				productionRule = new ProductionRule(currentNonterminalSymbol, ImmutableList.copyOf(rhs), productions.size());
 				if (!productions.contains(productionRule)) {
 					productions.add(productionRule);
 				}
 
-				nonterminalProductions.add(productionRule);
+				existingProductionRules.add(productionRule);
 			}
 		}
-
-		productions.trimToSize();
 
 		numUnreachableSymbols = 0;
 		Set<Symbol> unusedSymbols = new HashSet<>(SYMBOLS.values());
 		unusedSymbols.removeAll(usedSymbols);
 		unusedSymbols.stream()
-			.filter((symbol) -> !(symbol.getId() < 0)).map((symbol) -> {
+			.filter(symbol -> !(symbol.getId() < 0))
+			.forEachOrdered(symbol -> {
 				numUnreachableSymbols++;
-				return symbol;
-			})
-			.forEachOrdered((symbol) -> System.out.format("%s (%s) is unreachable%n", SYMBOLS.inverse().get(symbol), symbol));
-
-		BiMap<NonterminalSymbol, ImmutableSet<ProductionRule>> immutableNonterminals = HashBiMap.create();
-		nonterminals.entrySet().stream()
-			.forEachOrdered((entry) -> immutableNonterminals.put(entry.getKey(), ImmutableSet.copyOf(entry.getValue())));
-
-		return ImmutableBiMap.copyOf(immutableNonterminals);
+				LOGGER.warning(String.format("%s (%s) is unreachable", SYMBOLS.inverse().get(symbol), symbol));
+			});
 	}
 
-	public final Symbol resolveSymbol(String token) {
-		Preconditions.checkNotNull(token);
-		Symbol resolved = SYMBOLS.get(token);
-		if (resolved == null) {
-			throw new GrammarGenerationException("Symbol %s is undefined!",
-				token
-			);
-		}
-
-		if (resolved.getParent() != null) {
-			return resolved.getParent();
-		}
-
-		//return RESOLUTION.get(resolved);
-		return resolved;
-	}
-
-	/*public final boolean isNonterminal(Symbol s) {
-		return numTerminalSymbols <= s.getId();
-	}*/
-
-	public void outputGrammar() {
+	public void output() {
 		outputSymbols();
 		outputProductionRules();
 	}
@@ -351,7 +310,7 @@ public class Grammar {
 
 			boolean printingNonterminalSymbols = false;
 			for (BiMap.Entry<String, Symbol> entry : entries) {
-				if (entry.getValue().getParent() != null) {
+				if (entry.getValue().getId() < 0) {
 					continue;
 				} else if (!printingNonterminalSymbols && entry.getValue() instanceof NonterminalSymbol) {
 					printingNonterminalSymbols = true;
@@ -362,7 +321,7 @@ public class Grammar {
 					));
 				}
 
-				String alternateValue = SYMBOLS.inverse().get(new Symbol<>(entry.getValue().getId()-Integer.MIN_VALUE));
+				String alternateValue = SYMBOLS.inverse().get(new TerminalSymbol(entry.getValue().getId()-Integer.MIN_VALUE));
 				writer.write(String.format("%4s %-20s %s%n",
 					entry.getValue(),
 					entry.getKey(),
@@ -376,25 +335,25 @@ public class Grammar {
 
 	private void outputProductionRules() {
 		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".productions"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
-			BiMap.Entry<Symbol, Set<ProductionRule>>[] entries = PRODUCTION_RULES_MAP.entrySet().toArray(new BiMap.Entry[0]);
-			Arrays.sort(entries, (Map.Entry<Symbol, Set<ProductionRule>> o1, Map.Entry<Symbol, Set<ProductionRule>> o2) -> o1.getKey().compareTo(o2.getKey()));
+			BiMap.Entry<NonterminalSymbol, Set<ProductionRule>>[] entries = PRODUCTION_RULES_MAP.entrySet().toArray(new BiMap.Entry[0]);
+			Arrays.sort(entries, (Map.Entry<NonterminalSymbol, Set<ProductionRule>> o1, Map.Entry<NonterminalSymbol, Set<ProductionRule>> o2) -> o1.getKey().compareTo(o2.getKey()));
 
 			writer.write(String.format("[%4s] %s%n",
 				"ID",
 				"Nonterminal: Production Rules"
 			));
 
-			for (BiMap.Entry<Symbol, Set<ProductionRule>> entry : entries) {
+			for (BiMap.Entry<NonterminalSymbol, Set<ProductionRule>> entry : entries) {
 				writer.write(String.format("[%4s] %s:%n",
 					entry.getKey(),
 					SYMBOLS.inverse().get(entry.getKey())
 				));
 
 				ProductionRule[] productionRules = entry.getValue().toArray(new ProductionRule[0]);
-				Arrays.sort(productionRules, (ProductionRule o1, ProductionRule o2) -> PRODUCTION_RULES.indexOf(o1) - PRODUCTION_RULES.indexOf(o2));
+				Arrays.sort(productionRules);
 
 				for (ProductionRule p : productionRules) {
-					writer.write(String.format("\t%3d\t", PRODUCTION_RULES.indexOf(p)));
+					writer.write(String.format("\t%3d\t", p.getId()));
 					for (Symbol s : p) {
 						writer.write(String.format("%s[%s] ", SYMBOLS.inverse().get(s), s));
 					}

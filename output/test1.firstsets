@@ -1,0 +1,5 @@
+FIRST(Sp) = { _id }
+FIRST(S) = { _id }
+FIRST(E) = { _id, _leftparen, _int }
+FIRST(F) = { _id, _leftparen, _int }
+FIRST(V) = { _id }

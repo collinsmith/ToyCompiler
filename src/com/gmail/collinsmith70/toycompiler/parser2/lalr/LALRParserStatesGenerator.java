@@ -27,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -44,7 +43,7 @@ public class LALRParserStatesGenerator {
 		long dt = System.currentTimeMillis();
 		BiMap<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> productionRuleInstances = HashBiMap.create();
 		g.getProductionRulesMap().entrySet().stream()
-			.forEach(entry -> productionRuleInstances.put(entry.getKey(), createProductionRuleInstances(entry.getValue())));
+			.forEachOrdered(entry -> productionRuleInstances.put(entry.getKey(), createProductionRuleInstances(entry.getValue())));
 		final ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> immutableProductionRuleInstances = ImmutableBiMap.copyOf(productionRuleInstances);
 		g.getLogger().info(String.format("Production rule instances generated in %dms; %d production rules",
 			System.currentTimeMillis()-dt,
@@ -57,7 +56,7 @@ public class LALRParserStatesGenerator {
 		g.getLogger().info(String.format("FIRST(1) sets computed in %dms",
 			System.currentTimeMillis()-dt
 		));
-		
+
 		g.getLogger().info("Generating parser states...");
 		dt = System.currentTimeMillis();
 		Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> states = generateParserStates(g, immutableProductionRuleInstances, FIRST);
@@ -68,7 +67,7 @@ public class LALRParserStatesGenerator {
 
 		return states;
 	}
-	
+
 	private Map<NonterminalSymbol, Set<TerminalSymbol>> computeFirstSets(Grammar g) {
 		Map<NonterminalSymbol, Set<TerminalSymbol>> first = new HashMap<>(g.getNumTerminalSymbols()+g.getNumNonterminalSymbols());
 		for (ProductionRule p : g.getProductionRules()) {
@@ -77,13 +76,13 @@ public class LALRParserStatesGenerator {
 
 		return ImmutableMap.copyOf(first);
 	}
-	
+
 	private Set<TerminalSymbol> generateFirstSet(ProductionRule p, Grammar g, Set<TerminalSymbol> firstSet, Set<ProductionRule> checked) {
 		Symbol first = p.getRHS().get(0);
 		if (checked.contains(p)) {
 			return firstSet;
 		}
-		
+
 		checked.add(p);
 		if (first instanceof TerminalSymbol) {
 			firstSet.add((TerminalSymbol)first);
@@ -92,7 +91,7 @@ public class LALRParserStatesGenerator {
 				generateFirstSet(child, g, firstSet, checked);
 			}
 		}
-		
+
 		return firstSet;
 	}
 
@@ -103,7 +102,7 @@ public class LALRParserStatesGenerator {
 				.iterator()
 		);
 	}
-	
+
 	private ImmutableSet<LAProductionRuleInstance> createLAProductionRuleInstances(Set<ProductionRuleInstance> productionRuleInstances) {
 		return ImmutableSet.copyOf(
 			productionRuleInstances.stream()
@@ -111,7 +110,7 @@ public class LALRParserStatesGenerator {
 				.iterator()
 		);
 	}
-	
+
 	protected Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> generateParserStates(
 		Grammar g,
 		Map<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> productionRuleInstances,
@@ -124,7 +123,7 @@ public class LALRParserStatesGenerator {
 		for (LAProductionRuleInstance p : initialLAProductionRuleInstances) {
 			p.getFollowSet().add(TerminalSymbol.EMPTY_STRING);
 		}
-		
+
 		Deque<State.Metadata<LAProductionRuleInstance>> deque = new LinkedBlockingDeque<>();
 		deque.offerLast(new State.Metadata<>(
 			null,
@@ -169,7 +168,7 @@ public class LALRParserStatesGenerator {
 
 		Set<LAProductionRuleInstance> closureItems = new HashSet<>();
 		kernelItems.stream()
-			.forEach(kernelItem -> closeOver(kernelItem, g, kernelItems, closureItems, productionRuleInstances, FIRST));
+			.forEachOrdered(kernelItem -> closeOver(kernelItem, g, kernelItems, closureItems, productionRuleInstances, FIRST));
 
 		List<Symbol> viablePrefixes;
 		if (parent != null) {
@@ -205,16 +204,16 @@ public class LALRParserStatesGenerator {
 				Set<LAProductionRuleInstance> productionsWithSameLookahead = new HashSet<>();
 				remainingProductions.stream()
 					.filter(sibling -> sibling.peekNextSymbol().equals(lookahead))
-					.forEach(sibling -> {
+					.forEachOrdered(sibling -> {
 						productionsWithSameLookahead.add(sibling);
 					});
 
 				remainingProductions.removeAll(productionsWithSameLookahead);
 				productionsWithSameLookahead.add(p);
-				
+
 				Set<LAProductionRuleInstance> nextKernelItems = new HashSet<>();
 				productionsWithSameLookahead.stream()
-					.forEach(production -> {
+					.forEachOrdered(production -> {
 						//System.out.println(production);
 						LAProductionRuleInstance p2 = production.getChild();
 						//System.out.println(p2);
@@ -232,7 +231,7 @@ public class LALRParserStatesGenerator {
 			//numWithReduceReduce++;
 			g.getLogger().warning(String.format("State %d has %d reduce productions:", stateId, reductions.size()));
 			reductions.stream()
-				.forEach(reduce -> g.getLogger().warning(String.format("\t%s", reduce.toString(g.getSymbolsTable().inverse()))));
+				.forEachOrdered(reduce -> g.getLogger().warning(String.format("\t%s", reduce.toString(g.getSymbolsTable().inverse()))));
 		}
 	}
 
@@ -248,11 +247,11 @@ public class LALRParserStatesGenerator {
 		if (l1 == null) {
 			return;
 		}
-		
+
 		if (!(l1 instanceof NonterminalSymbol)) {
 			return;
 		}
-		
+
 		Symbol l2 = p.lookahead(2);
 		Set<Symbol> childFollowSet;
 		if (l2 == null) {
@@ -265,7 +264,7 @@ public class LALRParserStatesGenerator {
 				childFollowSet.addAll(FIRST.get(l2));
 			}
 		}
-		
+
 		// TODO: Implement MappedSet, which will increase performance greatly
 		//LAProductionRuleInstance temp;
 		Set<ProductionRuleInstance> children = productionRuleInstances.get(l1);
@@ -278,13 +277,13 @@ public class LALRParserStatesGenerator {
 					}
 				}
 			}
-			
+
 			/*temp = kernelItems.get(child);
 			if (temp != null) {
 				temp.getFollowSet().addAll(childFollowSet);
 				continue;
 			}*/
-			
+
 			if (closureItems.contains(child)) {
 				for (LAProductionRuleInstance temp : closureItems) {
 					if (temp.equals(child)) {
@@ -293,7 +292,7 @@ public class LALRParserStatesGenerator {
 					}
 				}
 			}
-			
+
 			/*temp = closureItems.get(child);
 			if (temp != null) {
 				temp.getFollowSet().addAll(childFollowSet);
@@ -306,7 +305,7 @@ public class LALRParserStatesGenerator {
 			closeOver(temp.getChild(), g, kernelItems, closureItems, productionRuleInstances, FIRST);
 		}
 	}
-	
+
 	public static void outputStates(
 		Grammar g,
 		Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> states
@@ -355,7 +354,7 @@ public class LALRParserStatesGenerator {
 
 			return;
 		}
-		
+
 		StringJoiner sj = new StringJoiner(",", "FIRST={", "}");
 		for (Symbol followSymbol : p.getFollowSet()) {
 			sj.add(g.getSymbolsTable().inverse().get(followSymbol));

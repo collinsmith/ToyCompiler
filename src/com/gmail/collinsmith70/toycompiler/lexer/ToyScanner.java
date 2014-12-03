@@ -14,7 +14,7 @@ public class ToyScanner implements Scanner {
 	public ToyScanner() {
 		TRIE = new ArrayTrie<>();
 		ToyTokenTypes.KEYWORDS.stream()
-			.forEach((t) -> TRIE.put(KEYWORD_VALUE, t.getRegex(), t.getStaticToken()));
+			.forEachOrdered(t -> TRIE.put(KEYWORD_VALUE, t.getRegex(), t.getStaticToken()));
 	}
 
 	@Override

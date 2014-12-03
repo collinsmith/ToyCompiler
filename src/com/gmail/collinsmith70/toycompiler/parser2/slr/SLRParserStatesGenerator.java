@@ -14,7 +14,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -49,7 +48,7 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 
 		Set<ProductionRuleInstance> closureItems = new HashSet<>();
 		kernelItems.stream()
-			.forEach(kernelItem -> closeOver(kernelItem, g, kernelItems, closureItems, productionRuleInstances));
+			.forEachOrdered(kernelItem -> closeOver(kernelItem, g, kernelItems, closureItems, productionRuleInstances));
 
 		// TODO: change from list to set?
 		List<Symbol> viablePrefixes;
@@ -86,7 +85,7 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 				Set<ProductionRuleInstance> productionsWithSameLookahead = new HashSet<>();
 				remainingProductions.stream()
 					.filter(sibling -> (sibling.hasNext() && Objects.equals(sibling.peekNextSymbol(), lookahead)))
-					.forEach(sibling -> {
+					.forEachOrdered(sibling -> {
 						productionsWithSameLookahead.add(sibling);
 					});
 
@@ -95,7 +94,7 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 
 				Set<ProductionRuleInstance> nextKernelItems = new HashSet<>();
 				productionsWithSameLookahead.stream()
-					.forEach((productionWithSameNextSymbol) -> nextKernelItems.add(productionWithSameNextSymbol.next()));
+					.forEachOrdered((productionWithSameNextSymbol) -> nextKernelItems.add(productionWithSameNextSymbol.next()));
 
 				State.Metadata<ProductionRuleInstance> childMetadata = state.getChildMetadata(lookahead, ImmutableSet.copyOf(nextKernelItems));
 				deque.offerLast(childMetadata);
@@ -108,7 +107,7 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 			//numWithReduceReduce++;
 			g.getLogger().warning(String.format("State %d has %d reduce productions:", stateId, reductions.size()));
 			reductions.stream()
-				.forEach(reduce -> g.getLogger().warning(String.format("\t%s", reduce.toString(g.getSymbolsTable().inverse()))));
+				.forEachOrdered(reduce -> g.getLogger().warning(String.format("\t%s", reduce.toString(g.getSymbolsTable().inverse()))));
 		}
 	}
 
@@ -128,7 +127,7 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 		if (lookahead instanceof NonterminalSymbol) {
 			productionRuleInstances.get(lookahead).stream()
 				.filter(closureItem -> !(kernelItems.contains(closureItem) || closureItems.contains(closureItem)))
-				.forEach(closureItem -> {
+				.forEachOrdered(closureItem -> {
 					closureItems.add(closureItem);
 					closeOver(closureItem, g, kernelItems, closureItems, productionRuleInstances);
 				});

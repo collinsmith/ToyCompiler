@@ -1,11 +1,5 @@
 package com.gmail.collinsmith70.toycompiler.parser2;
 
-import com.gmail.collinsmith70.toycompiler.parser2.Grammar;
-import com.gmail.collinsmith70.toycompiler.parser2.NonterminalSymbol;
-import com.gmail.collinsmith70.toycompiler.parser2.ProductionRule;
-import com.gmail.collinsmith70.toycompiler.parser2.ProductionRuleInstance;
-import com.gmail.collinsmith70.toycompiler.parser2.State;
-import com.gmail.collinsmith70.toycompiler.parser2.TerminalSymbol;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -41,18 +35,12 @@ public abstract class AbstractParserStatesGenerator {
 		long dt = System.currentTimeMillis();
 		BiMap<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> productionRuleInstances = HashBiMap.create();
 		g.getProductionRulesMap().entrySet().stream()
-			.forEach(entry -> productionRuleInstances.put(entry.getKey(), createProductionRuleInstances(entry.getValue())));
+			.forEachOrdered(entry -> productionRuleInstances.put(entry.getKey(), createProductionRuleInstances(entry.getValue())));
 		final ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> immutableProductionRuleInstances = ImmutableBiMap.copyOf(productionRuleInstances);
 		g.getLogger().info(String.format("Production rule instances generated in %dms; %d production rules",
 			System.currentTimeMillis()-dt,
 			immutableProductionRuleInstances.size()
 		));
-
-		//ImmutableSet<ProductionRuleInstance> initialProductionRules = immutableProductionRuleInstances.get(g.getInitialNonterminalSymbol());
-		//for (ProductionRuleInstance p : initialProductionRules) {
-		//	Set<TerminalSymbol> lookaheads = p.getLookaheads();
-		//	lookaheads.add(TerminalSymbol.EMPTY_STRING);
-		//}
 
 		g.getLogger().info("Generating parser states...");
 		dt = System.currentTimeMillis();
