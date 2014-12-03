@@ -1,28 +1,62 @@
 State 0: V[]
-I:   Sp -> . S                                        FOLLOW={_eof}                    goto(S1, null)
-     S -> . V _assignop E                             FOLLOW={_eof}                    goto(S2, null)
-     V -> . _id                                       FOLLOW={_eof,_assignop}          goto(S3, null)                   shift
+I:   Sp -> . S                                        FOLLOW={_eof}                    goto(S1, S)                      
+     S -> . V _assignop E                             FOLLOW={_eof}                    goto(S2, V)                      
+     V -> . _id                                       FOLLOW={_assignop}               goto(S3, _id)                    shift
 
-State 1: V[53] = goto(S0, 53)
+State 1: V[S] = goto(S0, 53)
 I:   Sp -> S .                                        reduce(0)
 
-State 2: V[56] = goto(S0, 56)
-I:   S -> V . _assignop E                             FOLLOW={_eof}                    goto(S4, null)                   shift
+State 2: V[V] = goto(S0, 56)
+I:   S -> V . _assignop E                             FOLLOW={_eof}                    goto(S4, _assignop)              shift
 
-State 3: V[51] = goto(S0, 51)
+State 3: V[_id] = goto(S0, 51)
 I:   V -> _id .                                       reduce(7)
 
-State 4: V[56, 35] = goto(S2, 35)
-I:   S -> V _assignop . E                             FOLLOW={_eof}                    goto(Snull, null)
-     V -> . _id                                       FOLLOW={_id,_plus}               goto(Snull, null)                shift
-     F -> . _leftparen E _rightparen                  FOLLOW={_id,_plus}               goto(Snull, null)                shift
-     E -> . F                                         FOLLOW={_id}                     goto(Snull, null)
-     E -> . E _plus F                                 FOLLOW={_id}                     goto(Snull, null)
-     E -> . E _plus F                                 FOLLOW={_id,_plus}               goto(Snull, null)
-     F -> . _int                                      FOLLOW={_id}                     goto(Snull, null)                shift
-     F -> . _leftparen E _rightparen                  FOLLOW={_id}                     goto(Snull, null)                shift
-     F -> . V                                         FOLLOW={_id}                     goto(Snull, null)
-     E -> . F                                         FOLLOW={_id,_plus}               goto(Snull, null)
-     F -> . _int                                      FOLLOW={_id,_plus}               goto(Snull, null)                shift
-     V -> . _id                                       FOLLOW={_id}                     goto(Snull, null)                shift
-     F -> . V                                         FOLLOW={_id,_plus}               goto(Snull, null)
+State 4: V[V, _assignop] = goto(S2, 35)
+I:   S -> V _assignop . E                             FOLLOW={_eof}                    goto(S5, E)                      
+     E -> . F                                         FOLLOW={_plus}                   goto(S6, F)                      
+     F -> . _leftparen E _rightparen                  FOLLOW={_eof,_plus}              goto(S7, _leftparen)             shift
+     F -> . V                                         FOLLOW={_eof,_plus}              goto(S8, V)                      
+     E -> . E _plus F                                 FOLLOW={_eof,_plus}              goto(S5, E)                      
+     F -> . _int                                      FOLLOW={_plus}                   goto(S9, _int)                   shift
+     V -> . _id                                       FOLLOW={_eof}                    goto(S3, _id)                    shift
+
+State 5: V[V, _assignop, E] = goto(S4, 54)
+I:   E -> E . _plus F                                 FOLLOW={_eof,_plus}              goto(S10, _plus)                 shift
+I:   S -> V _assignop E .                             reduce(1)
+
+State 6: V[V, _assignop, F] = goto(S4, 55)
+I:   E -> F .                                         reduce(2)
+
+State 7: V[V, _assignop, _leftparen] = goto(S4, 39)
+I:   F -> _leftparen . E _rightparen                  FOLLOW={_eof,_plus,_rightparen}  goto(S11, E)                     
+     E -> . F                                         FOLLOW={_plus}                   goto(S6, F)                      
+     F -> . _leftparen E _rightparen                  FOLLOW={_plus,_rightparen}       goto(S7, _leftparen)             shift
+     F -> . V                                         FOLLOW={_plus,_rightparen}       goto(S8, V)                      
+     E -> . E _plus F                                 FOLLOW={_plus,_rightparen}       goto(S11, E)                     
+     F -> . _int                                      FOLLOW={_plus}                   goto(S9, _int)                   shift
+     V -> . _id                                       FOLLOW={_rightparen}             goto(S3, _id)                    shift
+
+State 8: V[V, _assignop, V] = goto(S4, 56)
+I:   F -> V .                                         reduce(4)
+
+State 9: V[V, _assignop, _int] = goto(S4, 12)
+I:   F -> _int .                                      reduce(5)
+
+State 10: V[V, _assignop, E, _plus] = goto(S5, 21)
+I:   E -> E _plus . F                                 FOLLOW={_eof,_plus,_rightparen}  goto(S12, F)                     
+     F -> . _leftparen E _rightparen                  FOLLOW={_eof,_plus}              goto(S7, _leftparen)             shift
+     F -> . V                                         FOLLOW={_eof,_plus}              goto(S8, V)                      
+     F -> . _int                                      FOLLOW={_eof,_plus}              goto(S9, _int)                   shift
+     V -> . _id                                       FOLLOW={_eof,_plus}              goto(S3, _id)                    shift
+
+State 11: V[V, _assignop, _leftparen, E] = goto(S7, 54)
+I:   E -> E . _plus F                                 FOLLOW={_plus,_rightparen}       goto(S10, _plus)                 shift
+I:   F -> _leftparen E . _rightparen                  FOLLOW={_eof,_plus}              goto(S13, _rightparen)           shift
+
+State 12: V[V, _assignop, E, _plus, F] = goto(S10, 55)
+I:   E -> E _plus F .                                 reduce(3)
+
+State 13: V[V, _assignop, _leftparen, E, _rightparen] = goto(S11, 40)
+I:   F -> _leftparen E _rightparen .                  reduce(6)
+

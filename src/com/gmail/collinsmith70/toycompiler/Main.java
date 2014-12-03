@@ -4,6 +4,7 @@ import com.gmail.collinsmith70.toycompiler.lexer.Scanner;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
 import com.gmail.collinsmith70.toycompiler.parser.Grammar;
 import com.gmail.collinsmith70.toycompiler.parser.LAProductionRuleInstance;
+import com.gmail.collinsmith70.toycompiler.parser.ProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser.State;
 import com.gmail.collinsmith70.toycompiler.parser.lalr.LALRParserStatesGenerator;
 import java.io.IOException;
@@ -24,7 +25,7 @@ public class Main {
 			Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("US-ASCII"));
 			g.output();
 			LALRParserStatesGenerator lalrParserStatesGenerator = new LALRParserStatesGenerator();
-			Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> parserStates = lalrParserStatesGenerator.generateParserTables(g);
+			Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> parserStates = lalrParserStatesGenerator.generateParserTables(g);
 			LALRParserStatesGenerator.outputStates(g, parserStates);
 			//Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("US-ASCII"));
 			//g.outputGrammar();

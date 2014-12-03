@@ -32,7 +32,7 @@ public class LALRParserStatesGenerator {
 		//...
 	}
 
-	public Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> generateParserTables(Grammar g) {
+	public Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> generateParserTables(Grammar g) {
 		Preconditions.checkNotNull(g);
 
 		long dt;
@@ -58,7 +58,7 @@ public class LALRParserStatesGenerator {
 
 		g.getLogger().info("Generating parser states...");
 		dt = System.currentTimeMillis();
-		Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> states = generateParserStates(g, FIRST);
+		Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> states = generateParserStates(g, FIRST);
 		g.getLogger().info(String.format("Parser states generated in %dms; %d states",
 			System.currentTimeMillis()-dt,
 			states.size()
@@ -113,26 +113,26 @@ public class LALRParserStatesGenerator {
 		return firstSet;
 	}
 
-	private Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> generateParserStates(
+	private Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> generateParserStates(
 		Grammar g,
 		Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST
 	) {
-		Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> states = new LinkedHashMap<>();
+		Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> states = new LinkedHashMap<>();
 
 		ImmutableSet<ProductionRule> initialProductionRules = g.getProductionRulesMap().get(g.getInitialNonterminalSymbol());
 		ImmutableSet<ProductionRuleInstance> initialProductionRuleInstances = createProductionRuleInstances(initialProductionRules);
 		ImmutableSet<LAProductionRuleInstance> initialLAProductionRuleInstances = createLAProductionRuleInstance(initialProductionRuleInstances, new HashSet<>());
-		Map<LAProductionRuleInstance, LAProductionRuleInstance> kernelItems = new LinkedHashMap<>();
+		Map<ProductionRuleInstance, LAProductionRuleInstance> kernelItems = new LinkedHashMap<>();
 		for (LAProductionRuleInstance p : initialLAProductionRuleInstances) {
 			p.addFollowSymbol(TerminalSymbol.EMPTY_STRING);
-			kernelItems.put(p, p);
+			kernelItems.put(p.getInstance(), p);
 		}
 
 		initialProductionRules = null;
 		initialProductionRuleInstances = null;
 		initialLAProductionRuleInstances = null;
 
-		Deque<State.Metadata<LAProductionRuleInstance>> deque = new LinkedBlockingDeque<>();
+		Deque<State.Metadata<ProductionRuleInstance, LAProductionRuleInstance>> deque = new LinkedBlockingDeque<>();
 		deque.offerLast(State.firstMetadata(ImmutableMap.copyOf(kernelItems)));
 		kernelItems = null;
 
@@ -144,29 +144,31 @@ public class LALRParserStatesGenerator {
 	}
 
 	private void generateChildState(
-		State.Metadata<LAProductionRuleInstance> metadata,
-		Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> states,
-		Deque<State.Metadata<LAProductionRuleInstance>> deque,
+		State.Metadata<ProductionRuleInstance, LAProductionRuleInstance> metadata,
+		Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> states,
+		Deque<State.Metadata<ProductionRuleInstance, LAProductionRuleInstance>> deque,
 		Grammar grammar,
 		Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST
 	) {
 		State<LAProductionRuleInstance> parent = metadata.getParent();
-		ImmutableMap<LAProductionRuleInstance, LAProductionRuleInstance> kernelItems = metadata.getKernelItems();
+		ImmutableMap<ProductionRuleInstance, LAProductionRuleInstance> kernelItems = metadata.getKernelItems();
 		Symbol currentSymbol = metadata.getCurrent();
 
-		State<LAProductionRuleInstance> existingState = states.get(kernelItems);
+		State<LAProductionRuleInstance> existingState = states.get(kernelItems.keySet());//TODO: tagged
 		if (existingState != null) {
 			parent.putTransition(currentSymbol, existingState);
 			for (LAProductionRuleInstance existingProductionRuleInstance : kernelItems.values()) {
 				existingState.getKernelItems()
-					.get(existingProductionRuleInstance)
+					.get(existingProductionRuleInstance.getInstance())
 					.addAllFollowSymbols(existingProductionRuleInstance.getFollowSet());
+				System.out.println("Adding Symbols to existing state");
 			}
 
 			return;
 		}
 
-		Map<LAProductionRuleInstance, LAProductionRuleInstance> closureItems = new HashMap<>();
+		System.out.println("---------------------------------------");
+		Map<ProductionRuleInstance, LAProductionRuleInstance> closureItems = new HashMap<>();
 		kernelItems.values().stream()
 			.forEachOrdered(kernelItem -> closeOver(kernelItem, grammar, kernelItems, closureItems, FIRST));
 
@@ -212,12 +214,12 @@ public class LALRParserStatesGenerator {
 				remainingProductions.removeAll(productionsWithSameLookahead);
 				productionsWithSameLookahead.add(p);
 
-				Map<LAProductionRuleInstance, LAProductionRuleInstance> nextKernelItems = new HashMap<>();
+				Map<ProductionRuleInstance, LAProductionRuleInstance> nextKernelItems = new HashMap<>();
 				productionsWithSameLookahead.stream()
 					.map(production -> production.next())
-					.forEachOrdered(production -> nextKernelItems.put(production, production));
+					.forEachOrdered(production -> nextKernelItems.put(production.getInstance(), production));
 
-				State.Metadata<LAProductionRuleInstance> childMetadata = state.createMetadata(ImmutableMap.copyOf(nextKernelItems));
+				State.Metadata<ProductionRuleInstance, LAProductionRuleInstance> childMetadata = state.createMetadata(ImmutableMap.copyOf(nextKernelItems));
 				deque.offerLast(childMetadata);
 			} else {
 				reductions.add(p);
@@ -235,23 +237,26 @@ public class LALRParserStatesGenerator {
 	private void closeOver(
 		LAProductionRuleInstance p,
 		Grammar grammar,
-		ImmutableMap<LAProductionRuleInstance, LAProductionRuleInstance> kernelItems,
-		Map<LAProductionRuleInstance, LAProductionRuleInstance> closureItems,
+		Map<ProductionRuleInstance, LAProductionRuleInstance> kernelItems,
+		Map<ProductionRuleInstance, LAProductionRuleInstance> closureItems,
 		Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST
 	) {
-		//System.out.println(p.toString(grammar.getSymbolsTable()));
+		System.out.println(p.toString(grammar.getSymbolsTable()));
 		Symbol l1 = p.lookahead(1);
 		if (l1 == null) {
+			System.out.println("reduction, skipping " + p.toString(grammar.getSymbolsTable()));
 			return;
 		}
 
 		if (!(l1 instanceof NonterminalSymbol)) {
+			System.out.println("terminal symbol, nothing to close over, skipping " + p.toString(grammar.getSymbolsTable()));
 			return;
 		}
 
 		Symbol l2 = p.lookahead(2);
 		Set<TerminalSymbol> childFollowSet;
 		if (l2 == null) {
+			// TODO: which?
 			childFollowSet = new HashSet<>(p.getFollowSet());
 			//childFollowSet = p.getFollowSet();
 		} else {
@@ -263,37 +268,43 @@ public class LALRParserStatesGenerator {
 			}
 		}
 
-		LAProductionRuleInstance temp;
+		LAProductionRuleInstance temp, map;
 		Set<ProductionRuleInstance> children = createProductionRuleInstances(grammar.getProductionRulesMap().get((NonterminalSymbol)l1));
 		for (ProductionRuleInstance child : children) {
 			temp = kernelItems.get(child);
 			if (temp != null) {
+				// TODO: maybe check if added, if same follow,...
 				temp.addAllFollowSymbols(childFollowSet);
-				System.out.println("kernel exists, addall + " + childFollowSet);
+				System.out.println("kernel exists, skipping " + p.toString(grammar.getSymbolsTable()));
 				continue;
 			}
 
 			temp = closureItems.get(child);
 			if (temp != null) {
-				temp.addAllFollowSymbols(childFollowSet);
-				System.out.println("closure exists, addall + " + childFollowSet);
-				continue;
+				System.out.print("\t" + temp.getFollowSet());
+				if (!temp.addAllFollowSymbols(childFollowSet)) {
+					System.out.println("->" + temp.getFollowSet());
+					System.out.println("closure exists, skipping " + p.toString(grammar.getSymbolsTable()));
+					continue;
+				} else {
+					System.out.println("->NO CHANGE");
+				}
 			}
 
 			// TODO: childFollowSet reference or copy?
 			temp = new LAProductionRuleInstance(child, childFollowSet);
-			closureItems.put(temp, temp);
+			closureItems.put(child, temp);
 			closeOver(temp, grammar, kernelItems, closureItems, FIRST);
 		}
 	}
 
 	public static void outputStates(
 		Grammar g,
-		Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> states
+		Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> states
 	) {
 		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".lalr.tables"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			for (State<LAProductionRuleInstance> state : states.values()) {
-				writer.write(String.format("State %d: V%s", state.getId(), state.getViablePrefix()));
+				writer.write(String.format("State %d: V%s", state.getId(), ImmutableList.copyOf(state.getViablePrefix().stream().map(symbol -> g.getSymbolsTable().get(symbol)).iterator())));
 				if (state.getParent() != null) {
 					writer.write(String.format(" = goto(S%d, %s)",
 						state.getParent().getId(),
@@ -348,7 +359,7 @@ public class LALRParserStatesGenerator {
 			sj.toString(),
 			String.format("goto(S%d, %s)",
 				s.getTransition(lookahead).getId(),
-				g.getSymbolsTable().inverse().get(lookahead)
+				g.getSymbolsTable().get(lookahead)
 			),
 			(lookahead instanceof NonterminalSymbol) ? "" : "shift"
 		));

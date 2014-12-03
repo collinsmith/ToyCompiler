@@ -13,15 +13,15 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 	private final State<E> PARENT;
 	private final Map<Symbol, State<E>> TRANSITIONS;
 	private final ImmutableList<Symbol> VIABLE_PREFIX;
-	private final ImmutableMap<E, E> KERNEL_ITEMS;
-	private final ImmutableMap<E, E> CLOSURE_ITEMS;
+	private final ImmutableMap<ProductionRuleInstance, E> KERNEL_ITEMS;
+	private final ImmutableMap<ProductionRuleInstance, E> CLOSURE_ITEMS;
 
 	public State(
 		int id,
 		State<E> parent,
 		ImmutableList<Symbol> viablePrefix,
-		ImmutableMap<E, E> kernelItems,
-		ImmutableMap<E, E> closureItems
+		ImmutableMap<ProductionRuleInstance, E> kernelItems,
+		ImmutableMap<ProductionRuleInstance, E> closureItems
 	) {
 		this.ID = id;
 		this.PARENT = parent;
@@ -43,11 +43,11 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 		return VIABLE_PREFIX;
 	}
 
-	public ImmutableMap<E, E> getKernelItems() {
+	public ImmutableMap<ProductionRuleInstance, E> getKernelItems() {
 		return KERNEL_ITEMS;
 	}
 
-	public ImmutableMap<E, E> getClosureItems() {
+	public ImmutableMap<ProductionRuleInstance, E> getClosureItems() {
 		return CLOSURE_ITEMS;
 	}
 
@@ -70,10 +70,10 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 
 	@Override
 	public Iterator<E> iterator() {
-		return Iterators.concat(KERNEL_ITEMS.keySet().iterator(), CLOSURE_ITEMS.keySet().iterator());
+		return Iterators.concat(KERNEL_ITEMS.values().iterator(), CLOSURE_ITEMS.values().iterator());
 	}
 
-	public Metadata<E> createMetadata(ImmutableMap<E, E> kernelItems) {
+	public Metadata<ProductionRuleInstance, E> createMetadata(ImmutableMap<ProductionRuleInstance, E> kernelItems) {
 		boolean asserting = false;
 		assert asserting = true;
 		if (asserting) {
@@ -88,16 +88,16 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 		return new Metadata<>(this, kernelItems);
 	}
 
-	public static <E extends Instanceable<E>> Metadata<E> firstMetadata(ImmutableMap<E, E> kernelItems) {
+	public static <K extends Instanceable<K>, V extends Instanceable<V>> Metadata<K, V> firstMetadata(ImmutableMap<K, V> kernelItems) {
 		return new Metadata<>(null, kernelItems);
 	}
 
-	public static final class Metadata<E extends Instanceable<E>> {
-		private final State<E> PARENT;
-		private final ImmutableMap<E, E> KERNEL_ITEMS;
+	public static final class Metadata<K extends Instanceable<K>, V extends Instanceable<V>> {
+		private final State<V> PARENT;
+		private final ImmutableMap<K, V> KERNEL_ITEMS;
 		private final Symbol CURRENT;
 
-		private Metadata(State parent, ImmutableMap<E, E> kernelItems) {
+		private Metadata(State<V> parent, ImmutableMap<K, V> kernelItems) {
 			this.PARENT = parent;
 			this.KERNEL_ITEMS = kernelItems;
 			this.CURRENT = kernelItems.values().stream().findFirst().get().currentSymbol();
@@ -117,11 +117,11 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 			}
 		}
 
-		public State<E> getParent() {
+		public State<V> getParent() {
 			return PARENT;
 		}
 
-		public ImmutableMap<E, E> getKernelItems() {
+		public ImmutableMap<K, V> getKernelItems() {
 			return KERNEL_ITEMS;
 		}
 

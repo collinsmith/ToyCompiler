@@ -1,6 +1,5 @@
 package com.gmail.collinsmith70.toycompiler.parser;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -54,8 +53,9 @@ public class LAProductionRuleInstance implements Iterable<Symbol>, Instanceable<
 		return PARENT;
 	}
 
-	public ImmutableSet<TerminalSymbol> getFollowSet() {
-		return ImmutableSet.copyOf(FOLLOW);
+	public Set<TerminalSymbol> getFollowSet() {
+		//return ImmutableSet.copyOf(FOLLOW);
+		return FOLLOW;
 	}
 
 	public boolean addFollowSymbol(TerminalSymbol s) {
@@ -63,6 +63,19 @@ public class LAProductionRuleInstance implements Iterable<Symbol>, Instanceable<
 	}
 
 	public boolean addAllFollowSymbols(Collection<? extends TerminalSymbol> c) {
+		/*if (FOLLOW instanceof ImmutableSet) {
+			boolean changed = !FOLLOW.containsAll(c);
+			if (!changed) {
+				return false;
+			}
+			
+			FOLLOW = ImmutableSet.<TerminalSymbol>builder()
+				.addAll(FOLLOW)
+				.addAll(c)
+				.build();
+			return true;
+		}*/
+		
 		return FOLLOW.addAll(c);
 	}
 
