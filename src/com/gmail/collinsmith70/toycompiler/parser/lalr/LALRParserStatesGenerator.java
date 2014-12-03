@@ -252,20 +252,14 @@ public class LALRParserStatesGenerator {
 		Symbol l2 = p.lookahead(2);
 		Set<TerminalSymbol> childFollowSet;
 		if (l2 == null) {
-			if (p.getParent() == null) {
-				childFollowSet = p.getFollowSet();
-			} else {
-				childFollowSet = FIRST.get(p.getParent().getInstance().getProductionRule().getNonterminalSymbol());
-			}
-		} else {
 			childFollowSet = new HashSet<>(p.getFollowSet());
+			//childFollowSet = p.getFollowSet();
+		} else {
+			childFollowSet = new HashSet<>();
 			if (l2 instanceof TerminalSymbol) {
-				if (!childFollowSet.add((TerminalSymbol)l2)) {
-					return;
-				}
-			} else if (!childFollowSet.addAll(FIRST.get((NonterminalSymbol)l2))) {
-				System.out.println(3);
-				return;
+				childFollowSet.add((TerminalSymbol)l2);
+			} else {
+				childFollowSet.addAll(FIRST.get((NonterminalSymbol)l2));
 			}
 		}
 
@@ -275,12 +269,14 @@ public class LALRParserStatesGenerator {
 			temp = kernelItems.get(child);
 			if (temp != null) {
 				temp.addAllFollowSymbols(childFollowSet);
+				System.out.println("kernel exists, addall + " + childFollowSet);
 				continue;
 			}
 
 			temp = closureItems.get(child);
 			if (temp != null) {
 				temp.addAllFollowSymbols(childFollowSet);
+				System.out.println("closure exists, addall + " + childFollowSet);
 				continue;
 			}
 

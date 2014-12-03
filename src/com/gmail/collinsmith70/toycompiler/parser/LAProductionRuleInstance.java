@@ -71,6 +71,16 @@ public class LAProductionRuleInstance implements Iterable<Symbol>, Instanceable<
 		return INSTANCE.iterator();
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		return INSTANCE.equals(obj);
+	}
+
+	@Override
+	public int hashCode() {
+		return INSTANCE.hashCode();
+	}
+
 	public String toString(Map<Symbol, String> symbolTable) {
 		return INSTANCE.toString(symbolTable);
 	}
