@@ -1,0 +1,28 @@
+State 0: V[]
+I:   Sp -> . S                                        FOLLOW={_eof}                    goto(S1, null)
+     S -> . V _assignop E                             FOLLOW={_eof}                    goto(S2, null)
+     V -> . _id                                       FOLLOW={_eof,_assignop}          goto(S3, null)                   shift
+
+State 1: V[53] = goto(S0, 53)
+I:   Sp -> S .                                        reduce(0)
+
+State 2: V[56] = goto(S0, 56)
+I:   S -> V . _assignop E                             FOLLOW={_eof}                    goto(S4, null)                   shift
+
+State 3: V[51] = goto(S0, 51)
+I:   V -> _id .                                       reduce(7)
+
+State 4: V[56, 35] = goto(S2, 35)
+I:   S -> V _assignop . E                             FOLLOW={_eof}                    goto(Snull, null)
+     V -> . _id                                       FOLLOW={_id,_plus}               goto(Snull, null)                shift
+     F -> . _leftparen E _rightparen                  FOLLOW={_id,_plus}               goto(Snull, null)                shift
+     E -> . F                                         FOLLOW={_id}                     goto(Snull, null)
+     E -> . E _plus F                                 FOLLOW={_id}                     goto(Snull, null)
+     E -> . E _plus F                                 FOLLOW={_id,_plus}               goto(Snull, null)
+     F -> . _int                                      FOLLOW={_id}                     goto(Snull, null)                shift
+     F -> . _leftparen E _rightparen                  FOLLOW={_id}                     goto(Snull, null)                shift
+     F -> . V                                         FOLLOW={_id}                     goto(Snull, null)
+     E -> . F                                         FOLLOW={_id,_plus}               goto(Snull, null)
+     F -> . _int                                      FOLLOW={_id,_plus}               goto(Snull, null)                shift
+     V -> . _id                                       FOLLOW={_id}                     goto(Snull, null)                shift
+     F -> . V                                         FOLLOW={_id,_plus}               goto(Snull, null)

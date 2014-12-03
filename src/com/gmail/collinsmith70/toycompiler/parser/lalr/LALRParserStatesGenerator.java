@@ -206,7 +206,7 @@ public class LALRParserStatesGenerator {
 				Symbol lookahead = p.peekNextSymbol();
 				Set<LAProductionRuleInstance> productionsWithSameLookahead = new HashSet<>();
 				remainingProductions.stream()
-					.filter(sibling -> sibling.peekNextSymbol().equals(lookahead))
+					.filter(sibling -> lookahead.equals(sibling.peekNextSymbol()))
 					.forEachOrdered(sibling -> productionsWithSameLookahead.add(sibling));
 
 				remainingProductions.removeAll(productionsWithSameLookahead);
@@ -227,8 +227,8 @@ public class LALRParserStatesGenerator {
 		if (1 < reductions.size()) {
 			//numWithReduceReduce++;
 			grammar.getLogger().warning(String.format("State %d has %d reduce productions:", stateId, reductions.size()));
-			reductions.stream()
-				.forEachOrdered(reduceItem -> grammar.getLogger().warning(String.format("\t%s", reduceItem.toString(grammar.getSymbolsTable()))));
+			//reductions.stream()
+			//	.forEachOrdered(reduceItem -> grammar.getLogger().warning(String.format("\t%s", reduceItem.toString(grammar.getSymbolsTable()))));
 		}
 	}
 
@@ -239,6 +239,7 @@ public class LALRParserStatesGenerator {
 		Map<LAProductionRuleInstance, LAProductionRuleInstance> closureItems,
 		Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST
 	) {
+		//System.out.println(p.toString(grammar.getSymbolsTable()));
 		Symbol l1 = p.lookahead(1);
 		if (l1 == null) {
 			return;
@@ -251,12 +252,19 @@ public class LALRParserStatesGenerator {
 		Symbol l2 = p.lookahead(2);
 		Set<TerminalSymbol> childFollowSet;
 		if (l2 == null) {
-			childFollowSet = p.getFollowSet();
+			if (p.getParent() == null) {
+				childFollowSet = p.getFollowSet();
+			} else {
+				childFollowSet = FIRST.get(p.getParent().getInstance().getProductionRule().getNonterminalSymbol());
+			}
 		} else {
-			childFollowSet = new HashSet<>();
+			childFollowSet = new HashSet<>(p.getFollowSet());
 			if (l2 instanceof TerminalSymbol) {
-				childFollowSet.add((TerminalSymbol)l2);
+				if (!childFollowSet.add((TerminalSymbol)l2)) {
+					return;
+				}
 			} else if (!childFollowSet.addAll(FIRST.get((NonterminalSymbol)l2))) {
+				System.out.println(3);
 				return;
 			}
 		}
