@@ -244,12 +244,12 @@ public class LALRParserStatesGenerator {
 		System.out.println(p.toString(grammar.getSymbolsTable()));
 		Symbol l1 = p.lookahead(1);
 		if (l1 == null) {
-			System.out.println("reduction, skipping " + p.toString(grammar.getSymbolsTable()));
+			System.out.println("\treduction, skipping " + p.toString(grammar.getSymbolsTable()));
 			return;
 		}
 
 		if (!(l1 instanceof NonterminalSymbol)) {
-			System.out.println("terminal symbol, nothing to close over, skipping " + p.toString(grammar.getSymbolsTable()));
+			System.out.println("\tterminal symbol, nothing to close over, skipping " + p.toString(grammar.getSymbolsTable()) + "; FOLLOW = " + p.getFollowSet());
 			return;
 		}
 
@@ -275,25 +275,34 @@ public class LALRParserStatesGenerator {
 			if (temp != null) {
 				// TODO: maybe check if added, if same follow,...
 				temp.addAllFollowSymbols(childFollowSet);
-				System.out.println("kernel exists, skipping " + p.toString(grammar.getSymbolsTable()));
+				System.out.println("\tkernel exists, skipping " + child.toString(grammar.getSymbolsTable()));
 				continue;
 			}
 
 			temp = closureItems.get(child);
 			if (temp != null) {
-				System.out.print("\t" + temp.getFollowSet());
-				if (!temp.addAllFollowSymbols(childFollowSet)) {
+				System.out.println("\texisting closure = " + temp.toString(grammar.getSymbolsTable()) + "; current followset = " + temp.getFollowSet());
+				System.out.print("\t\tadd " + childFollowSet + " into " + temp.getFollowSet());
+				if (temp.addAllFollowSymbols(childFollowSet)) {
 					System.out.println("->" + temp.getFollowSet());
-					System.out.println("closure exists, skipping " + p.toString(grammar.getSymbolsTable()));
-					continue;
 				} else {
-					System.out.println("->NO CHANGE");
+					System.out.println("->NO CHANGE: " + temp.getFollowSet());
+					System.out.println("\t\t" + temp.toString(grammar.getSymbolsTable()) + " follow = " + temp.getFollowSet());
+					continue;
 				}
 			}
 
 			// TODO: childFollowSet reference or copy?
-			temp = new LAProductionRuleInstance(child, childFollowSet);
-			closureItems.put(child, temp);
+			System.out.println("\texisting at " + child.toString(grammar.getSymbolsTable()) + " = " + (closureItems.get(child) == null ? "null" : closureItems.get(child).toString(grammar.getSymbolsTable())));
+			temp = closureItems.get(child);
+			if (temp != null) {
+				temp.addAllFollowSymbols(childFollowSet);
+			} else {
+				temp = new LAProductionRuleInstance(child, childFollowSet);
+				closureItems.put(child, temp);
+				System.out.println("\tputting " + temp.toString(grammar.getSymbolsTable())+ " at " + child.toString(grammar.getSymbolsTable()) + "; FOLLOW = " + temp.getFollowSet());
+			}
+
 			closeOver(temp, grammar, kernelItems, closureItems, FIRST);
 		}
 	}
