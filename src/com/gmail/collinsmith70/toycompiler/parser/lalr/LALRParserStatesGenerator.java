@@ -239,6 +239,17 @@ public class LALRParserStatesGenerator {
 		Grammar grammar,
 		Map<ProductionRuleInstance, LAProductionRuleInstance> kernelItems,
 		Map<ProductionRuleInstance, LAProductionRuleInstance> closureItems,
+		Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST,
+		Set<TerminalSymbol> follow
+	) {
+		Symbol l1 = p.lookahead(1);
+	}
+
+	private void closeOver(
+		LAProductionRuleInstance p,
+		Grammar grammar,
+		Map<ProductionRuleInstance, LAProductionRuleInstance> kernelItems,
+		Map<ProductionRuleInstance, LAProductionRuleInstance> closureItems,
 		Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST
 	) {
 		System.out.println(p.toString(grammar.getSymbolsTable()));
