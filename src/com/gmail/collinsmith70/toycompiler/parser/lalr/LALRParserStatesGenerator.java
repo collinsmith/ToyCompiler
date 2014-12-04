@@ -161,16 +161,15 @@ public class LALRParserStatesGenerator {
 				existingState.getKernelItems()
 					.get(existingProductionRuleInstance.getInstance())
 					.addAllFollowSymbols(existingProductionRuleInstance.getFollowSet());
-				System.out.println("Adding Symbols to existing state");
 			}
 
 			return;
 		}
 
-		System.out.println("---------------------------------------");
+		//System.out.format("State %d ---------------------------------------%n", states.size());
 		Map<ProductionRuleInstance, LAProductionRuleInstance> closureItems = new HashMap<>();
 		kernelItems.values().stream()
-			.forEachOrdered(kernelItem -> closeOver(kernelItem, grammar, kernelItems, closureItems, FIRST));
+			.forEachOrdered(kernelItem -> closeOver(kernelItem, grammar, kernelItems, closureItems, FIRST, kernelItem.getFollowSet(), new HashSet<>()));
 
 		ImmutableList<Symbol> viablePrefix;
 		if (parent != null) {
@@ -228,7 +227,7 @@ public class LALRParserStatesGenerator {
 
 		if (1 < reductions.size()) {
 			//numWithReduceReduce++;
-			grammar.getLogger().warning(String.format("State %d has %d reduce productions:", stateId, reductions.size()));
+			grammar.getLogger().severe(String.format("State %d has %d reduce productions:", stateId, reductions.size()));
 			//reductions.stream()
 			//	.forEachOrdered(reduceItem -> grammar.getLogger().warning(String.format("\t%s", reduceItem.toString(grammar.getSymbolsTable()))));
 		}
@@ -240,12 +239,62 @@ public class LALRParserStatesGenerator {
 		Map<ProductionRuleInstance, LAProductionRuleInstance> kernelItems,
 		Map<ProductionRuleInstance, LAProductionRuleInstance> closureItems,
 		Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST,
-		Set<TerminalSymbol> follow
+		Set<TerminalSymbol> follow,
+		Set<ProductionRuleInstance> closureExisted
 	) {
 		Symbol l1 = p.lookahead(1);
+		if (l1 == null) {
+			// This production rule is a reduction
+			return;
+		}
+
+		if (!(l1 instanceof NonterminalSymbol)) {
+			// This production rule has been closed over
+			return;
+		}
+
+		Symbol l2 = p.lookahead(2);
+		if (l2 == null) {
+			follow = new HashSet<>(follow);
+		} else {
+			follow = new HashSet<>();
+			if (l2 instanceof TerminalSymbol) {
+				follow.add((TerminalSymbol)l2);
+			} else {
+				follow.addAll(FIRST.get((NonterminalSymbol)l2));
+			}
+		}
+
+		LAProductionRuleInstance temp;
+		Set<ProductionRuleInstance> children = createProductionRuleInstances(grammar.getProductionRulesMap().get((NonterminalSymbol)l1));
+		for (ProductionRuleInstance child : children) {
+			//temp = kernelItems.get(child);
+
+			temp = closureItems.get(child);
+			if (temp != null) {
+				//System.out.println("closure exists: " + temp.toString(grammar.getSymbolsTable()) + "; follow: " + temp.getFollowSet());
+				// A matching items exists within generated closures
+				if (temp.addAllFollowSymbols(follow)) {
+					//System.out.println("\tupdate follow: " + temp.getFollowSet());
+					// This production rule is producing new follow terminals
+					temp = new LAProductionRuleInstance(child, follow);
+					closeOver(temp, grammar, kernelItems, closureItems, FIRST, temp.getFollowSet(), closureExisted);
+				} else if (closureExisted.add(child)) {
+					// No new terminals could be added to the follow set, we've already closed over this production rule
+					closeOver(temp, grammar, kernelItems, closureItems, FIRST, temp.getFollowSet(), closureExisted);
+				}
+
+				continue;
+			}
+
+			temp = new LAProductionRuleInstance(child, follow);
+			assert closureItems.get(child) == null;
+			closureItems.put(child, temp);
+			closeOver(temp, grammar, kernelItems, closureItems, FIRST, temp.getFollowSet(), closureExisted);
+		}
 	}
 
-	private void closeOver(
+	private void closeOver2(
 		LAProductionRuleInstance p,
 		Grammar grammar,
 		Map<ProductionRuleInstance, LAProductionRuleInstance> kernelItems,
@@ -314,7 +363,7 @@ public class LALRParserStatesGenerator {
 				System.out.println("\tputting " + temp.toString(grammar.getSymbolsTable())+ " at " + child.toString(grammar.getSymbolsTable()) + "; FOLLOW = " + temp.getFollowSet());
 			}
 
-			closeOver(temp, grammar, kernelItems, closureItems, FIRST);
+			closeOver2(temp, grammar, kernelItems, closureItems, FIRST);
 		}
 	}
 

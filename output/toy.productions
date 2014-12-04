@@ -1,193 +1,193 @@
 [  ID] Nonterminal: Production Rules
-[ _52] Program:
-	  0	DeclList[_53] 
+[  52] Program:
+	  0	DeclList[53] 
 
-[ _53] DeclList:
-	  1	Decl[_54] 
-	  2	DeclList[_53] Decl[_54] 
+[  53] DeclList:
+	  1	Decl[54] 
+	  2	DeclList[53] Decl[54] 
 
-[ _54] Decl:
-	  3	FieldDecl[_55] 
-	  4	ClassDecl[_81] 
-	  5	MethodDecl[_63] 
-	  6	InterfaceDecl[_88] 
+[  54] Decl:
+	  3	FieldDecl[55] 
+	  4	ClassDecl[81] 
+	  5	MethodDecl[63] 
+	  6	InterfaceDecl[88] 
 
-[ _55] FieldDecl:
-	  7	TypeAndIdentifier[_56] _semicolon[36] 
+[  55] FieldDecl:
+	  7	TypeAndIdentifier[56] _semicolon[36] 
 
-[ _56] TypeAndIdentifier:
+[  56] TypeAndIdentifier:
 	  8	_id[51] _id[51] 
-	  9	SimpleType[_57] _id[51] 
-	 10	_id[51] ArrayType[_58] _id[51] 
+	  9	SimpleType[57] _id[51] 
+	 10	_id[51] ArrayType[58] _id[51] 
 
-[ _57] SimpleType:
-	 11	SimpleType[_57] _leftbracket[41] _rightbracket[42] 
-	 12	BasicType[_59] 
+[  57] SimpleType:
+	 11	SimpleType[57] _leftbracket[41] _rightbracket[42] 
+	 12	BasicType[59] 
 
-[ _58] ArrayType:
-	 13	ArrayType[_58] _leftbracket[41] _rightbracket[42] 
+[  58] ArrayType:
+	 13	ArrayType[58] _leftbracket[41] _rightbracket[42] 
 	 14	_leftbracket[41] _rightbracket[42] 
 
-[ _59] BasicType:
+[  59] BasicType:
 	 15	_int[12] 
 	 16	_bool[2] 
 	 17	_double[6] 
 	 18	_string[18] 
 
-[ _60] Name:
-	 19	SimpleName[_61] 
-	 20	QualifiedName[_62] 
+[  60] Name:
+	 19	SimpleName[61] 
+	 20	QualifiedName[62] 
 
-[ _61] SimpleName:
+[  61] SimpleName:
 	 21	_id[51] 
 
-[ _62] QualifiedName:
-	 22	Name[_60] _period[38] _id[51] 
+[  62] QualifiedName:
+	 22	Name[60] _period[38] _id[51] 
 
-[ _63] MethodDecl:
-	 23	Prototype[_64] Block[_67] 
+[  63] MethodDecl:
+	 23	Prototype[64] Block[67] 
 
-[ _64] Prototype:
-	 24	TypeAndIdentifier[_56] _leftparen[39] ArgumentListOpt[_65] 
-	 25	_void[19] _id[51] _leftparen[39] ArgumentListOpt[_65] 
+[  64] Prototype:
+	 24	TypeAndIdentifier[56] _leftparen[39] ArgumentListOpt[65] 
+	 25	_void[19] _id[51] _leftparen[39] ArgumentListOpt[65] 
 
-[ _65] ArgumentListOpt:
+[  65] ArgumentListOpt:
 	 26	_rightparen[40] 
-	 27	ArgumentList[_66] _rightparen[40] 
+	 27	ArgumentList[66] _rightparen[40] 
 
-[ _66] ArgumentList:
-	 28	TypeAndIdentifier[_56] 
-	 29	ArgumentList[_66] _comma[37] TypeAndIdentifier[_56] 
+[  66] ArgumentList:
+	 28	TypeAndIdentifier[56] 
+	 29	ArgumentList[66] _comma[37] TypeAndIdentifier[56] 
 
-[ _67] Block:
-	 30	_leftbrace[43] FieldDeclListOpt[_68] 
+[  67] Block:
+	 30	_leftbrace[43] FieldDeclListOpt[68] 
 
-[ _68] FieldDeclListOpt:
-	 31	StatementListOpt[_70] 
-	 32	FieldDeclList[_69] StatementListOpt[_70] 
+[  68] FieldDeclListOpt:
+	 31	StatementListOpt[70] 
+	 32	FieldDeclList[69] StatementListOpt[70] 
 
-[ _69] FieldDeclList:
-	 33	FieldDecl[_55] 
-	 34	FieldDeclList[_69] FieldDecl[_55] 
+[  69] FieldDeclList:
+	 33	FieldDecl[55] 
+	 34	FieldDeclList[69] FieldDecl[55] 
 
-[ _70] StatementListOpt:
+[  70] StatementListOpt:
 	 35	_rightbrace[44] 
-	 36	StatementList[_71] _rightbrace[44] 
+	 36	StatementList[71] _rightbrace[44] 
 
-[ _71] StatementList:
-	 37	Statement[_72] 
-	 38	StatementList[_71] Statement[_72] 
+[  71] StatementList:
+	 37	Statement[72] 
+	 38	StatementList[71] Statement[72] 
 
-[ _72] Statement:
+[  72] Statement:
 	 39	_semicolon[36] 
-	 40	Block[_67] 
+	 40	Block[67] 
 	 41	_break[3] _semicolon[36] 
-	 42	IfStatement[_73] 
-	 43	Expression[_92] _semicolon[36] 
-	 44	ForStatement[_75] 
-	 45	WhileStatement[_78] 
-	 46	_return[17] ReturnExpressionOpt[_79] 
-	 47	_println[15] _leftparen[39] ExpressionList[_80] _rightparen[40] _semicolon[36] 
+	 42	IfStatement[73] 
+	 43	Expression[92] _semicolon[36] 
+	 44	ForStatement[75] 
+	 45	WhileStatement[78] 
+	 46	_return[17] ReturnExpressionOpt[79] 
+	 47	_println[15] _leftparen[39] ExpressionList[80] _rightparen[40] _semicolon[36] 
 
-[ _73] IfStatement:
-	 48	_if[10] ParExpression[_74] Statement[_72] 
-	 49	_if[10] ParExpression[_74] Statement[_72] _else[7] Statement[_72] 
+[  73] IfStatement:
+	 48	_if[10] ParExpression[74] Statement[72] 
+	 49	_if[10] ParExpression[74] Statement[72] _else[7] Statement[72] 
 
-[ _74] ParExpression:
-	 50	_leftparen[39] Expression[_92] _rightparen[40] 
+[  74] ParExpression:
+	 50	_leftparen[39] Expression[92] _rightparen[40] 
 
-[ _75] ForStatement:
-	 51	_for[9] _leftparen[39] ForControl[_76] Statement[_72] 
+[  75] ForStatement:
+	 51	_for[9] _leftparen[39] ForControl[76] Statement[72] 
 
-[ _76] ForControl:
-	 52	ForControl1[_77] 
-	 53	Expression[_92] ForControl1[_77] 
+[  76] ForControl:
+	 52	ForControl1[77] 
+	 53	Expression[92] ForControl1[77] 
 
-[ _77] ForControl1:
-	 54	_semicolon[36] Expression[_92] _semicolon[36] _rightparen[40] 
-	 55	_semicolon[36] Expression[_92] _semicolon[36] Expression[_92] _rightparen[40] 
+[  77] ForControl1:
+	 54	_semicolon[36] Expression[92] _semicolon[36] _rightparen[40] 
+	 55	_semicolon[36] Expression[92] _semicolon[36] Expression[92] _rightparen[40] 
 
-[ _78] WhileStatement:
-	 56	_while[20] ParExpression[_74] Statement[_72] 
+[  78] WhileStatement:
+	 56	_while[20] ParExpression[74] Statement[72] 
 
-[ _79] ReturnExpressionOpt:
+[  79] ReturnExpressionOpt:
 	 57	_semicolon[36] 
-	 58	Expression[_92] _semicolon[36] 
+	 58	Expression[92] _semicolon[36] 
 
-[ _80] ExpressionList:
-	 59	Expression[_92] 
-	 60	ExpressionList[_80] _comma[37] Expression[_92] 
+[  80] ExpressionList:
+	 59	Expression[92] 
+	 60	ExpressionList[80] _comma[37] Expression[92] 
 
-[ _81] ClassDecl:
-	 61	_class[4] _id[51] Super[_82] 
+[  81] ClassDecl:
+	 61	_class[4] _id[51] Super[82] 
 
-[ _82] Super:
-	 62	Interfaces[_83] 
-	 63	_extends[8] _id[51] Interfaces[_83] 
+[  82] Super:
+	 62	Interfaces[83] 
+	 63	_extends[8] _id[51] Interfaces[83] 
 
-[ _83] Interfaces:
-	 64	_leftbrace[43] ClassBodyOpt[_85] 
-	 65	_implements[11] IdentifierList[_84] _leftbrace[43] ClassBodyOpt[_85] 
+[  83] Interfaces:
+	 64	_leftbrace[43] ClassBodyOpt[85] 
+	 65	_implements[11] IdentifierList[84] _leftbrace[43] ClassBodyOpt[85] 
 
-[ _84] IdentifierList:
+[  84] IdentifierList:
 	 66	_id[51] 
-	 67	IdentifierList[_84] _comma[37] _id[51] 
+	 67	IdentifierList[84] _comma[37] _id[51] 
 
-[ _85] ClassBodyOpt:
+[  85] ClassBodyOpt:
 	 68	_rightbrace[44] 
-	 69	MemberList[_86] _rightbrace[44] 
+	 69	MemberList[86] _rightbrace[44] 
 
-[ _86] MemberList:
-	 70	Member[_87] 
-	 71	MemberList[_86] Member[_87] 
+[  86] MemberList:
+	 70	Member[87] 
+	 71	MemberList[86] Member[87] 
 
-[ _87] Member:
-	 72	FieldDecl[_55] 
-	 73	MethodDecl[_63] 
+[  87] Member:
+	 72	FieldDecl[55] 
+	 73	MethodDecl[63] 
 
-[ _88] InterfaceDecl:
-	 74	_interface[13] _id[51] _leftbrace[43] PrototypeListOpt[_89] 
+[  88] InterfaceDecl:
+	 74	_interface[13] _id[51] _leftbrace[43] PrototypeListOpt[89] 
 
-[ _89] PrototypeListOpt:
+[  89] PrototypeListOpt:
 	 75	_rightbrace[44] 
-	 76	PrototypeList[_90] _rightbrace[44] 
+	 76	PrototypeList[90] _rightbrace[44] 
 
-[ _90] PrototypeList:
-	 77	PrototypeDecl[_91] 
-	 78	PrototypeList[_90] PrototypeDecl[_91] 
+[  90] PrototypeList:
+	 77	PrototypeDecl[91] 
+	 78	PrototypeList[90] PrototypeDecl[91] 
 
-[ _91] PrototypeDecl:
-	 79	Prototype[_64] _semicolon[36] 
+[  91] PrototypeDecl:
+	 79	Prototype[64] _semicolon[36] 
 
-[ _92] Expression:
-	 80	Name[_60] _assignop[35] Expression[_92] 
-	 81	Name[_60] IndexResolver[_101] _assignop[35] Expression[_92] 
-	 82	BinaryExpression[_93] 
+[  92] Expression:
+	 80	Name[60] _assignop[35] Expression[92] 
+	 81	Name[60] IndexResolver[101] _assignop[35] Expression[92] 
+	 82	BinaryExpression[93] 
 
-[ _93] BinaryExpression:
-	 83	BinaryExpression[_93] InfixOperator[_97] UnaryExpression[_94] 
-	 84	UnaryExpression[_94] 
+[  93] BinaryExpression:
+	 83	BinaryExpression[93] InfixOperator[97] UnaryExpression[94] 
+	 84	UnaryExpression[94] 
 
-[ _94] UnaryExpression:
-	 85	PrefixOperator[_96] UnaryExpression[_94] 
-	 86	Primary[_95] 
+[  94] UnaryExpression:
+	 85	PrefixOperator[96] UnaryExpression[94] 
+	 86	Primary[95] 
 
-[ _95] Primary:
-	 87	Name[_60] 
-	 88	Name[_60] IndexResolver[_101] 
-	 89	Literal[_98] 
-	 90	MethodCall[_99] 
-	 91	ParExpression[_74] 
+[  95] Primary:
+	 87	Name[60] 
+	 88	Name[60] IndexResolver[101] 
+	 89	Literal[98] 
+	 90	MethodCall[99] 
+	 91	ParExpression[74] 
 	 92	_readln[16] _leftparen[39] _rightparen[40] 
-	 93	_newarray[14] _leftparen[39] _integerliteral[47] _comma[37] SimpleType[_57] _rightparen[40] 
+	 93	_newarray[14] _leftparen[39] _integerliteral[47] _comma[37] SimpleType[57] _rightparen[40] 
 	 94	_newarray[14] _leftparen[39] _integerliteral[47] _comma[37] _id[51] _rightparen[40] 
-	 95	_newarray[14] _leftparen[39] _integerliteral[47] _comma[37] _id[51] ArrayType[_58] _rightparen[40] 
+	 95	_newarray[14] _leftparen[39] _integerliteral[47] _comma[37] _id[51] ArrayType[58] _rightparen[40] 
 
-[ _96] PrefixOperator:
+[  96] PrefixOperator:
 	 96	_not[34] 
 	 97	_minus[22] 
 
-[ _97] InfixOperator:
+[  97] InfixOperator:
 	 98	_or[33] 
 	 99	_and[32] 
 	100	_equal[30] 
@@ -201,21 +201,21 @@
 	108	_multiplication[23] 
 	109	_division[24] 
 
-[ _98] Literal:
+[  98] Literal:
 	110	_doubleliteral[48] 
 	111	_stringliteral[49] 
 	112	_integerliteral[47] 
 	113	_booleanliteral[46] 
 
-[ _99] MethodCall:
-	114	MethodCall2[_100] 
-	115	_id[51] _period[38] MethodCall2[_100] 
+[  99] MethodCall:
+	114	MethodCall2[100] 
+	115	_id[51] _period[38] MethodCall2[100] 
 
-[_100] MethodCall2:
+[ 100] MethodCall2:
 	116	_id[51] _leftparen[39] _rightparen[40] 
-	117	_id[51] _leftparen[39] ExpressionList[_80] _rightparen[40] 
+	117	_id[51] _leftparen[39] ExpressionList[80] _rightparen[40] 
 
-[_101] IndexResolver:
-	118	IndexResolver[_101] _leftbracket[41] Expression[_92] _rightbracket[42] 
-	119	_leftbracket[41] Expression[_92] _rightbracket[42] 
+[ 101] IndexResolver:
+	118	IndexResolver[101] _leftbracket[41] Expression[92] _rightbracket[42] 
+	119	_leftbracket[41] Expression[92] _rightbracket[42] 
 
