@@ -1,0 +1,2 @@
+FIRST(S) = { _double, _int }
+FIRST(C) = { _double, _int }

@@ -1,7 +1,7 @@
 package com.gmail.collinsmith70.toycompiler.parser;
 
-public class ShiftReduceConflict extends Conflict {
-	public ShiftReduceConflict(State<?> s) {
+public class ShiftReduceConflict<E extends Instanceable<E>> extends Conflict<E> {
+	public ShiftReduceConflict(State<E> s) {
 		super(s);
 	}
 

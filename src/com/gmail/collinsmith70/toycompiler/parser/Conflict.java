@@ -2,18 +2,17 @@ package com.gmail.collinsmith70.toycompiler.parser;
 
 import java.io.PrintStream;
 
-// TODO: Add generics to State<E> since this is no longer a RuntimeException
-public abstract class Conflict {
+public abstract class Conflict<E extends Instanceable<E>> {
 	@Override
 	public abstract String toString();
 
-	private final State<?> STATE;
+	private final State<E> STATE;
 
-	public Conflict(State<?> s) {
+	public Conflict(State<E> s) {
 		this.STATE = s;
 	}
 
-	public State<?> getState() {
+	public State<E> getState() {
 		return STATE;
 	}
 

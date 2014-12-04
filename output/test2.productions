@@ -1,0 +1,8 @@
+[  ID] Nonterminal: Production Rules
+[  52] S:
+	  0	C[53] C[53] 
+
+[  53] C:
+	  1	_int[12] C[53] 
+	  2	_double[6] 
+

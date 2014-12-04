@@ -110,17 +110,25 @@ public class LRParserTables {
 			}
 			writer.append(String.format("%n%n"));
 
-			writer.append(String.format("%-30s|%-12s|%-30s%n", "SHIFT", "REDUCE", "GOTO"));
-			writer.append(String.format("%-6s%-6s%-6s%-6s%-6s|%-6s%-6s|%-6s%-6s%-6s%-6s%-6s%n", "", "switch", "", "symbol", "next", "", "reduce", "", "switch", "", "symbol", "next"));
+			writer.append(String.format("%-35s |%-13s |%-35s%n", "SHIFT", "REDUCE", "GOTO"));
+			writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n", "", "switch", "", "symbol", "next", "", "reduce", "", "switch", "", "symbol", "next"));
 
-			// TODO this will only print "shift" number of tables and not
-			// the entirety of the tables
-			int i;
-			for (i = 0; i < SHIFT.SWITCH.length; i++) {
-				writer.append(String.format("%-6s%-6s%-6s%-6s%-6s|%-6s%-6s|%-6s%-6s%-6s%-6s%-6s%n",
-					String.format("S%d", i), convertValue(SHIFT.SWITCH[i]), i+1, convertValue(SHIFT.SHIFT[i+1][SYM]), convertValue(SHIFT.SHIFT[i+1][NXT]),
-					String.format("S%d", i), convertValue(REDUCE.REDUCE[i]),
-					String.format("S%d", i), convertValue(GOTO.SWITCH[i]), i+1, convertValue(GOTO.GOTO[i+1][SYM]), convertValue(GOTO.GOTO[i+1][NXT])
+			for (int i = 0; i < SHIFT.SHIFT.length; i++) {
+				writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n",
+					i < SHIFT.SWITCH.length ? String.format("S%d", i) : "",
+					i < SHIFT.SWITCH.length ? convertValue(SHIFT.SWITCH[i]) : "",
+					i+1,
+					convertValue(SHIFT.SHIFT[i][SYM]),
+					convertValue(SHIFT.SHIFT[i][NXT]),
+
+					i < REDUCE.REDUCE.length ? String.format("S%d", i) : "",
+					i < REDUCE.REDUCE.length ? convertValue(REDUCE.REDUCE[i]) : "",
+
+					i < GOTO.SWITCH.length ? String.format("S%d", i) : "",
+					i < GOTO.SWITCH.length ? convertValue(GOTO.SWITCH[i]) : "",
+					i < GOTO.GOTO.length ? i+1 : "",
+					i < GOTO.GOTO.length ? convertValue(GOTO.GOTO[i][SYM]) : "",
+					i < GOTO.GOTO.length ? convertValue(GOTO.GOTO[i][NXT]) : ""
 				));
 			}
 		} catch (IOException e) {

@@ -328,19 +328,20 @@ public class LALRParserStatesGenerator {
 		LAProductionRuleInstance p,
 		boolean isKernelItem
 	) throws IOException {
+		StringJoiner sj = new StringJoiner(",", "FOLLOW={", "}");
+		for (Symbol followSymbol : p.getFollowSet()) {
+			sj.add(g.getSymbolsTable().get(followSymbol));
+		}
+
 		if (!p.hasNext()) {
-			writer.write(String.format("%-4s %-48s reduce(%d)%n",
+			writer.write(String.format("%-4s %-48s %-32s reduce(%d)%n",
 				isKernelItem ? "I:" : "",
 				p.toString(g.getSymbolsTable()),
+				sj.toString(),
 				p.getInstance().getProductionRule().getId()
 			));
 
 			return;
-		}
-
-		StringJoiner sj = new StringJoiner(",", "FOLLOW={", "}");
-		for (Symbol followSymbol : p.getFollowSet()) {
-			sj.add(g.getSymbolsTable().get(followSymbol));
 		}
 
 		Symbol lookahead = p.peekNextSymbol();
@@ -383,8 +384,8 @@ public class LALRParserStatesGenerator {
 		ArrayList<Integer[]> shiftTableList = new ArrayList<>();
 		final Integer[] EMPTY_ELEMENT = new Integer[] { Integer.MIN_VALUE, Integer.MIN_VALUE };
 
-		Map<Set<ProductionRuleInstance>, ShiftReduceConflict> shiftReduceConflictsMap = new HashMap<>();
-		Map<Set<ProductionRuleInstance>, ReduceReduceConflict> reduceReduceConflictsMap = new HashMap<>();
+		Map<Set<ProductionRuleInstance>, ShiftReduceConflict<LAProductionRuleInstance>> shiftReduceConflictsMap = new HashMap<>();
+		Map<Set<ProductionRuleInstance>, ReduceReduceConflict<LAProductionRuleInstance>> reduceReduceConflictsMap = new HashMap<>();
 
 		int stateId;
 		Symbol nextSymbol;
@@ -402,7 +403,7 @@ public class LALRParserStatesGenerator {
 						reduceTable[stateId] = p.getInstance().getProductionRule().getId();
 						currentSymbol = p.currentSymbol();
 					} else {
-						reduceReduceConflictsMap.putIfAbsent(s.getKernelItems().keySet(), new ReduceReduceConflict(s));
+						reduceReduceConflictsMap.putIfAbsent(s.getKernelItems().keySet(), new ReduceReduceConflict<>(s));
 					}
 
 					continue;
@@ -426,7 +427,7 @@ public class LALRParserStatesGenerator {
 			}
 
 			if (reduceTable[stateId] != Integer.MIN_VALUE && shiftSwitchTable[stateId] != Integer.MIN_VALUE) {
-				shiftReduceConflictsMap.putIfAbsent(s.getKernelItems().keySet(), new ShiftReduceConflict(s));
+				shiftReduceConflictsMap.putIfAbsent(s.getKernelItems().keySet(), new ShiftReduceConflict<>(s));
 			}
 
 			if (shiftSwitchTable[stateId] != Integer.MIN_VALUE) {
