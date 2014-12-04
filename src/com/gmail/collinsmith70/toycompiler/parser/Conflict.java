@@ -2,6 +2,7 @@ package com.gmail.collinsmith70.toycompiler.parser;
 
 import java.io.PrintStream;
 
+// TODO: Add generics to State<E> since this is no longer a RuntimeException
 public abstract class Conflict {
 	@Override
 	public abstract String toString();
