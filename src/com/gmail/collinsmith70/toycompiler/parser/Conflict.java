@@ -18,7 +18,6 @@ public abstract class Conflict<E extends Instanceable<E>> {
 
 	public void dump(PrintStream stream) {
 		stream.format("State %d has a %s conflict:%n", STATE.getId(), toString());
-		// TODO: Implement the table output
-		// STATE.dump(stream);
+		STATE.dump(stream);
 	}
 }

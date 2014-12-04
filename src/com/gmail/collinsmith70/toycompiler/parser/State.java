@@ -3,10 +3,13 @@ package com.gmail.collinsmith70.toycompiler.parser;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
+import java.io.PrintStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 public class State<E extends Instanceable<E>> implements Iterable<E> {
 	private final int ID;
@@ -68,21 +71,21 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 		TRANSITIONS.put(s, Objects.requireNonNull(state));
 	}
 
+	public void dump(PrintStream stream) {
+		// TODO: Implement the state output
+	}
+
 	@Override
 	public Iterator<E> iterator() {
 		return Iterators.concat(KERNEL_ITEMS.values().iterator(), CLOSURE_ITEMS.values().iterator());
 	}
 
 	public Metadata<ProductionRuleInstance, E> createMetadata(ImmutableMap<ProductionRuleInstance, E> kernelItems) {
-		boolean asserting = false;
-		assert asserting = true;
-		if (asserting) {
-			/**
-			 * TODO: This would be a good point to assert that all
-			 * ProductionInstance elements of kernelItems exist within
-			 * KERNEL_ITEMS and CLOSURE_ITEMS, otherwise this can't be
-			 * used to create a child.
-			 */
+		Set<ProductionRuleInstance> copy = new HashSet<>(kernelItems.keySet());
+		copy.removeAll(KERNEL_ITEMS.keySet());
+		copy.removeAll(CLOSURE_ITEMS.keySet());
+		if (!copy.isEmpty()) {
+			throw new IllegalArgumentException("Some kernel items do not exist within this State");
 		}
 
 		return new Metadata<>(this, kernelItems);
