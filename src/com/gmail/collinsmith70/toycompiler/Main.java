@@ -4,6 +4,7 @@ import com.gmail.collinsmith70.toycompiler.lexer.Scanner;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
 import com.gmail.collinsmith70.toycompiler.parser.Grammar;
 import com.gmail.collinsmith70.toycompiler.parser.LAProductionRuleInstance;
+import com.gmail.collinsmith70.toycompiler.parser.LRParserTables;
 import com.gmail.collinsmith70.toycompiler.parser.ProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser.State;
 import com.gmail.collinsmith70.toycompiler.parser.lalr.LALRParserStatesGenerator;
@@ -23,18 +24,20 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("US-ASCII"));
+			//Grammar g = Grammar.generate(Paths.get(".", "res", "toy.grammar"), Charset.forName("US-ASCII"));
 			g.output();
 			LALRParserStatesGenerator lalrParserStatesGenerator = new LALRParserStatesGenerator();
 			Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> parserStates = lalrParserStatesGenerator.generateParserTables(g);
 			LALRParserStatesGenerator.outputStates(g, parserStates);
-			//Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("US-ASCII"));
-			//g.outputGrammar();
-			//LALRParserStatesGenerator lalrParserStatesGenerator = new LALRParserStatesGenerator();
-			//Map<Set<LAProductionRuleInstance>, State<LAProductionRuleInstance>> parserStates = lalrParserStatesGenerator.generateParserTables(g);
-			//LALRParserStatesGenerator.outputStates(g, parserStates);
-			//SLRParserStatesGenerator slrParserStatesGenerator = new SLRParserStatesGenerator();
-			//Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> parserStates = slrParserStatesGenerator.generateParserTables(g);
-			//SLRParserStatesGenerator.outputStates(g, parserStates);
+
+			g.getLogger().info("Compiling parser states into tables...");
+			long dt = System.currentTimeMillis();
+			LRParserTables tables = LALRParserStatesGenerator.compile(g, parserStates);
+			g.getLogger().info(String.format("Tables compiled in %dms",
+				System.currentTimeMillis()-dt
+			));
+
+			tables.output(g);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

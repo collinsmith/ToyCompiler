@@ -11,25 +11,18 @@ public class LAProductionRuleInstance implements Iterable<Symbol>, Instanceable<
 	private final ProductionRuleInstance INSTANCE;
 	private final LAProductionRuleInstance PARENT;
 	private final Set<TerminalSymbol> FOLLOW;
-	//private final Set<LAProductionRuleInstance> CHILDREN;
 
 	public LAProductionRuleInstance(ProductionRuleInstance instance, Set<TerminalSymbol> followSet) {
 		this.INSTANCE = Objects.requireNonNull(instance, "Instance objects for LAProductionRuleInstance objects cannot be null.");
 		this.PARENT = null;
 		this.FOLLOW = Objects.requireNonNull(followSet, "Lookahead sets for LAProductionRuleInstance objects cannot be null.");
-		//this.CHILDREN = new HashSet<>();
 	}
 
 	private LAProductionRuleInstance(LAProductionRuleInstance p) {
 		this.INSTANCE = p.INSTANCE.next();
 		this.PARENT = p;
 		this.FOLLOW = new HashSet<>(p.FOLLOW);
-		//this.CHILDREN = new HashSet<>();
 	}
-
-	//public Set<LAProductionRuleInstance> getChildren() {
-	//	return ImmutableSet.copyOf(CHILDREN);
-	//}
 
 	@Override
 	public boolean hasNext(int n) {
@@ -39,9 +32,7 @@ public class LAProductionRuleInstance implements Iterable<Symbol>, Instanceable<
 	@Override
 	public LAProductionRuleInstance next() {
 		assert hasNext() : "The succeeding generation of this production is redundant. Read position is already at the end.";
-		LAProductionRuleInstance child = new LAProductionRuleInstance(this);
-		//CHILDREN.add(child);
-		return child;
+		return new LAProductionRuleInstance(this);
 	}
 
 	@Override

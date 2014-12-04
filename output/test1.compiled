@@ -1,0 +1,29 @@
+Shift   : switch = 14
+          shift = 21
+Reduce  : reduce = 14
+Goto    : switch = 14
+          goto = 16
+
+
+14 tables
+1 shift-reduce conflicts
+	[5]
+0 reduce-reduce conflicts
+
+
+SHIFT                         |REDUCE      |GOTO                          
+      switch      symbolnext  |      reduce|      switch      symbolnext  
+S0    0     1                 |S0          |S0    0     1     56    2     
+S1          2     35    4     |S1    0     |S1          2                 
+S2    2     3                 |S2          |S2          3     54    5     
+S3          4     39    7     |S3    7     |S3          4     55    6     
+S4    4     5     12    9     |S4          |S4    3     5     56    8     
+S5    8     6     51    3     |S5    1     |S5          6     54    5     
+S6          7                 |S6    2     |S6          7                 
+S7    10    8     21    10    |S7          |S7    8     8     54    11    
+S8          9                 |S8    4     |S8          9     55    6     
+S9          10    39    7     |S9    5     |S9          10    56    8     
+S10   14    11    12    9     |S10         |S10   13    11    54    11    
+S11   18    12    51    3     |S11         |S11         12                
+S12         13                |S12   3     |S12         13    55    12    
+S13         14    39    7     |S13   6     |S13         14    56    8     

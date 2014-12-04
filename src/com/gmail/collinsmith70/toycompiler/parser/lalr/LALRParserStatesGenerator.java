@@ -2,9 +2,12 @@ package com.gmail.collinsmith70.toycompiler.parser.lalr;
 
 import com.gmail.collinsmith70.toycompiler.parser.Grammar;
 import com.gmail.collinsmith70.toycompiler.parser.LAProductionRuleInstance;
+import com.gmail.collinsmith70.toycompiler.parser.LRParserTables;
 import com.gmail.collinsmith70.toycompiler.parser.NonterminalSymbol;
 import com.gmail.collinsmith70.toycompiler.parser.ProductionRule;
 import com.gmail.collinsmith70.toycompiler.parser.ProductionRuleInstance;
+import com.gmail.collinsmith70.toycompiler.parser.ReduceReduceConflict;
+import com.gmail.collinsmith70.toycompiler.parser.ShiftReduceConflict;
 import com.gmail.collinsmith70.toycompiler.parser.State;
 import com.gmail.collinsmith70.toycompiler.parser.Symbol;
 import com.gmail.collinsmith70.toycompiler.parser.TerminalSymbol;
@@ -18,6 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,17 +40,6 @@ public class LALRParserStatesGenerator {
 		Preconditions.checkNotNull(g);
 
 		long dt;
-		/*g.getLogger().info("Creating production rule instances...");
-		dt = System.currentTimeMillis();
-		BiMap<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> productionRuleInstances = HashBiMap.create();
-		g.getProductionRulesMap().entrySet().stream()
-			.forEachOrdered(entry -> productionRuleInstances.put(entry.getKey(), createProductionRuleInstances(entry.getValue())));
-		ImmutableBiMap<NonterminalSymbol, ImmutableSet<ProductionRuleInstance>> immutableProductionRuleInstances = ImmutableBiMap.copyOf(productionRuleInstances);
-		g.getLogger().info(String.format("Production rule instances generated in %dms; %d production rules",
-			System.currentTimeMillis()-dt,
-			immutableProductionRuleInstances.size()
-		));*/
-
 		g.getLogger().info("Computing FIRST(1) sets...");
 		dt = System.currentTimeMillis();
 		final Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST = computeFirstSets(g);
@@ -272,15 +265,17 @@ public class LALRParserStatesGenerator {
 
 			temp = closureItems.get(child);
 			if (temp != null) {
-				//System.out.println("closure exists: " + temp.toString(grammar.getSymbolsTable()) + "; follow: " + temp.getFollowSet());
 				// A matching items exists within generated closures
 				if (temp.addAllFollowSymbols(follow)) {
-					//System.out.println("\tupdate follow: " + temp.getFollowSet());
-					// This production rule is producing new follow terminals
+					// This production rule is producing new follow
+					// terminals
 					temp = new LAProductionRuleInstance(child, follow);
 					closeOver(temp, grammar, kernelItems, closureItems, FIRST, temp.getFollowSet(), closureExisted);
 				} else if (closureExisted.add(child)) {
-					// No new terminals could be added to the follow set, we've already closed over this production rule
+					// No new terminals could be added to the follow
+					// set, we've already closed over this production
+					// rule, but children must be updated with the
+					// new follow set, so close over one last time
 					closeOver(temp, grammar, kernelItems, closureItems, FIRST, temp.getFollowSet(), closureExisted);
 				}
 
@@ -291,79 +286,6 @@ public class LALRParserStatesGenerator {
 			assert closureItems.get(child) == null;
 			closureItems.put(child, temp);
 			closeOver(temp, grammar, kernelItems, closureItems, FIRST, temp.getFollowSet(), closureExisted);
-		}
-	}
-
-	private void closeOver2(
-		LAProductionRuleInstance p,
-		Grammar grammar,
-		Map<ProductionRuleInstance, LAProductionRuleInstance> kernelItems,
-		Map<ProductionRuleInstance, LAProductionRuleInstance> closureItems,
-		Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST
-	) {
-		System.out.println(p.toString(grammar.getSymbolsTable()));
-		Symbol l1 = p.lookahead(1);
-		if (l1 == null) {
-			System.out.println("\treduction, skipping " + p.toString(grammar.getSymbolsTable()));
-			return;
-		}
-
-		if (!(l1 instanceof NonterminalSymbol)) {
-			System.out.println("\tterminal symbol, nothing to close over, skipping " + p.toString(grammar.getSymbolsTable()) + "; FOLLOW = " + p.getFollowSet());
-			return;
-		}
-
-		Symbol l2 = p.lookahead(2);
-		Set<TerminalSymbol> childFollowSet;
-		if (l2 == null) {
-			// TODO: which?
-			childFollowSet = new HashSet<>(p.getFollowSet());
-			//childFollowSet = p.getFollowSet();
-		} else {
-			childFollowSet = new HashSet<>();
-			if (l2 instanceof TerminalSymbol) {
-				childFollowSet.add((TerminalSymbol)l2);
-			} else {
-				childFollowSet.addAll(FIRST.get((NonterminalSymbol)l2));
-			}
-		}
-
-		LAProductionRuleInstance temp, map;
-		Set<ProductionRuleInstance> children = createProductionRuleInstances(grammar.getProductionRulesMap().get((NonterminalSymbol)l1));
-		for (ProductionRuleInstance child : children) {
-			temp = kernelItems.get(child);
-			if (temp != null) {
-				// TODO: maybe check if added, if same follow,...
-				temp.addAllFollowSymbols(childFollowSet);
-				System.out.println("\tkernel exists, skipping " + child.toString(grammar.getSymbolsTable()));
-				continue;
-			}
-
-			temp = closureItems.get(child);
-			if (temp != null) {
-				System.out.println("\texisting closure = " + temp.toString(grammar.getSymbolsTable()) + "; current followset = " + temp.getFollowSet());
-				System.out.print("\t\tadd " + childFollowSet + " into " + temp.getFollowSet());
-				if (temp.addAllFollowSymbols(childFollowSet)) {
-					System.out.println("->" + temp.getFollowSet());
-				} else {
-					System.out.println("->NO CHANGE: " + temp.getFollowSet());
-					System.out.println("\t\t" + temp.toString(grammar.getSymbolsTable()) + " follow = " + temp.getFollowSet());
-					continue;
-				}
-			}
-
-			// TODO: childFollowSet reference or copy?
-			System.out.println("\texisting at " + child.toString(grammar.getSymbolsTable()) + " = " + (closureItems.get(child) == null ? "null" : closureItems.get(child).toString(grammar.getSymbolsTable())));
-			temp = closureItems.get(child);
-			if (temp != null) {
-				temp.addAllFollowSymbols(childFollowSet);
-			} else {
-				temp = new LAProductionRuleInstance(child, childFollowSet);
-				closureItems.put(child, temp);
-				System.out.println("\tputting " + temp.toString(grammar.getSymbolsTable())+ " at " + child.toString(grammar.getSymbolsTable()) + "; FOLLOW = " + temp.getFollowSet());
-			}
-
-			closeOver2(temp, grammar, kernelItems, closureItems, FIRST);
 		}
 	}
 
@@ -448,5 +370,110 @@ public class LALRParserStatesGenerator {
 		} catch (IOException e) {
 			g.getLogger().throwing(LALRParserStatesGenerator.class.toString(), "outputFirstSets()", e);
 		}
+	}
+
+	public static LRParserTables compile(Grammar g, Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> states) {
+		int numTables = states.size();
+
+		int[] reduceTable = new int[numTables];
+		int[] shiftSwitchTable = new int[numTables];
+		int[] gotoSwitchTable = new int[numTables];
+
+		ArrayList<Integer[]> gotoTableList = new ArrayList<>();
+		ArrayList<Integer[]> shiftTableList = new ArrayList<>();
+		final Integer[] EMPTY_ELEMENT = new Integer[] { Integer.MIN_VALUE, Integer.MIN_VALUE };
+
+		Map<Set<ProductionRuleInstance>, ShiftReduceConflict> shiftReduceConflictsMap = new HashMap<>();
+		Map<Set<ProductionRuleInstance>, ReduceReduceConflict> reduceReduceConflictsMap = new HashMap<>();
+
+		int stateId;
+		Symbol nextSymbol;
+		Symbol currentSymbol = null;
+		State<LAProductionRuleInstance> nextState = null;
+		for (State<LAProductionRuleInstance> s : states.values()) {
+			stateId = s.getId();
+			reduceTable[stateId] = Integer.MIN_VALUE;
+			shiftSwitchTable[stateId] = Integer.MIN_VALUE;
+			gotoSwitchTable[stateId] = Integer.MIN_VALUE;
+
+			for (LAProductionRuleInstance p : s) {
+				if (!p.hasNext()) {
+					if (reduceTable[stateId] == Integer.MIN_VALUE) {
+						reduceTable[stateId] = p.getInstance().getProductionRule().getId();
+						currentSymbol = p.currentSymbol();
+					} else {
+						reduceReduceConflictsMap.putIfAbsent(s.getKernelItems().keySet(), new ReduceReduceConflict(s));
+					}
+
+					continue;
+				}
+
+				nextSymbol = p.peekNextSymbol();
+				nextState = s.getTransition(nextSymbol);
+				if (nextSymbol instanceof NonterminalSymbol) {
+					if (gotoSwitchTable[stateId] == Integer.MIN_VALUE) {
+						gotoSwitchTable[stateId] = gotoTableList.size();
+					}
+
+					gotoTableList.add(new Integer[] { nextSymbol.getId(), nextState.getId() });
+				} else {
+					if (shiftSwitchTable[stateId] == Integer.MIN_VALUE) {
+						shiftSwitchTable[stateId] = shiftTableList.size();
+					}
+
+					shiftTableList.add(new Integer[] { nextSymbol.getId(), nextState.getId() });
+				}
+			}
+
+			if (reduceTable[stateId] != Integer.MIN_VALUE && shiftSwitchTable[stateId] != Integer.MIN_VALUE) {
+				shiftReduceConflictsMap.putIfAbsent(s.getKernelItems().keySet(), new ShiftReduceConflict(s));
+			}
+
+			if (shiftSwitchTable[stateId] != Integer.MIN_VALUE) {
+				shiftTableList.add(EMPTY_ELEMENT);
+			}
+
+			if (gotoSwitchTable[stateId] != Integer.MIN_VALUE) {
+				gotoTableList.add(EMPTY_ELEMENT);
+			}
+		}
+
+		int[][] shiftTable = new int[shiftTableList.size()][2];
+		for (int i = 0; i < shiftTable.length; i++) {
+			shiftTable[i][LRParserTables.SYM] = shiftTableList.get(i)[LRParserTables.SYM];
+			shiftTable[i][LRParserTables.NXT] = shiftTableList.get(i)[LRParserTables.NXT];
+		}
+
+		int[][] gotoTable = new int[gotoTableList.size()][2];
+		for (int i = 0; i < gotoTable.length; i++) {
+			gotoTable[i][LRParserTables.SYM] = gotoTableList.get(i)[LRParserTables.SYM];
+			gotoTable[i][LRParserTables.NXT] = gotoTableList.get(i)[LRParserTables.NXT];
+		}
+
+		int productionId;
+		int numProduction = g.getProductionRules().size();
+		int[] nonterminalIdTable = new int[numProduction];
+		int[] rhsSizeTable = new int[numProduction];
+		for (ProductionRule p : g.getProductionRules()) {
+			productionId = p.getId();
+			nonterminalIdTable[productionId] = p.getNonterminalSymbol().getId();
+			rhsSizeTable[productionId] = p.getRHS().size();
+		}
+
+		int[] shiftReduceConflicts = shiftReduceConflictsMap.values().stream()
+			.mapToInt(conflict -> conflict.getState().getId())
+			.toArray();
+
+		int[] reduceReduceConflicts = reduceReduceConflictsMap.values().stream()
+			.mapToInt(conflict -> conflict.getState().getId())
+			.toArray();
+
+		return new LRParserTables(
+			new LRParserTables.ShiftTable(shiftSwitchTable, shiftTable),
+			new LRParserTables.ReduceTable(reduceTable),
+			new LRParserTables.GotoTable(gotoSwitchTable, gotoTable),
+			new LRParserTables.ProductionRulesTable(nonterminalIdTable, rhsSizeTable),
+			new LRParserTables.ShiftReduceConflictsTable(shiftReduceConflicts),
+			new LRParserTables.ReduceReduceConflictsTable(reduceReduceConflicts));
 	}
 }

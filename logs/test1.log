@@ -52,3 +52,281 @@
 2014-12-04 00:57:21 INFO    FIRST(1) sets computed in 3ms
 2014-12-04 00:57:21 INFO    Generating parser states...
 2014-12-04 00:57:21 INFO    Parser states generated in 41ms; 14 states
+2014-12-04 14:05:20 INFO    Generating symbols table...
+2014-12-04 14:05:20 INFO    Symbols table generated in 47ms; 57 symbols (52 terminal symbols, 5 nonterminal symbols)
+2014-12-04 14:05:20 INFO    Generating productions table...
+2014-12-04 14:05:20 WARNING _eof (0) is unreachable
+2014-12-04 14:05:20 WARNING _eol (1) is unreachable
+2014-12-04 14:05:20 WARNING _bool (2) is unreachable
+2014-12-04 14:05:20 WARNING _break (3) is unreachable
+2014-12-04 14:05:20 WARNING _class (4) is unreachable
+2014-12-04 14:05:20 WARNING _continue (5) is unreachable
+2014-12-04 14:05:20 WARNING _double (6) is unreachable
+2014-12-04 14:05:20 WARNING _else (7) is unreachable
+2014-12-04 14:05:20 WARNING _extends (8) is unreachable
+2014-12-04 14:05:20 WARNING _for (9) is unreachable
+2014-12-04 14:05:20 WARNING _if (10) is unreachable
+2014-12-04 14:05:20 WARNING _implements (11) is unreachable
+2014-12-04 14:05:20 WARNING _interface (13) is unreachable
+2014-12-04 14:05:20 WARNING _newarray (14) is unreachable
+2014-12-04 14:05:20 WARNING _println (15) is unreachable
+2014-12-04 14:05:20 WARNING _readln (16) is unreachable
+2014-12-04 14:05:20 WARNING _return (17) is unreachable
+2014-12-04 14:05:20 WARNING _string (18) is unreachable
+2014-12-04 14:05:20 WARNING _void (19) is unreachable
+2014-12-04 14:05:20 WARNING _while (20) is unreachable
+2014-12-04 14:05:20 WARNING _minus (22) is unreachable
+2014-12-04 14:05:20 WARNING _multiplication (23) is unreachable
+2014-12-04 14:05:20 WARNING _division (24) is unreachable
+2014-12-04 14:05:20 WARNING _modulus (25) is unreachable
+2014-12-04 14:05:20 WARNING _less (26) is unreachable
+2014-12-04 14:05:20 WARNING _lessequal (27) is unreachable
+2014-12-04 14:05:20 WARNING _greater (28) is unreachable
+2014-12-04 14:05:20 WARNING _greaterequal (29) is unreachable
+2014-12-04 14:05:20 WARNING _equal (30) is unreachable
+2014-12-04 14:05:20 WARNING _notequal (31) is unreachable
+2014-12-04 14:05:20 WARNING _and (32) is unreachable
+2014-12-04 14:05:20 WARNING _or (33) is unreachable
+2014-12-04 14:05:20 WARNING _not (34) is unreachable
+2014-12-04 14:05:20 WARNING _semicolon (36) is unreachable
+2014-12-04 14:05:20 WARNING _comma (37) is unreachable
+2014-12-04 14:05:20 WARNING _period (38) is unreachable
+2014-12-04 14:05:20 WARNING _leftbracket (41) is unreachable
+2014-12-04 14:05:20 WARNING _rightbracket (42) is unreachable
+2014-12-04 14:05:20 WARNING _leftbrace (43) is unreachable
+2014-12-04 14:05:20 WARNING _rightbrace (44) is unreachable
+2014-12-04 14:05:20 WARNING _characterliteral (45) is unreachable
+2014-12-04 14:05:20 WARNING _booleanliteral (46) is unreachable
+2014-12-04 14:05:20 WARNING _integerliteral (47) is unreachable
+2014-12-04 14:05:20 WARNING _doubleliteral (48) is unreachable
+2014-12-04 14:05:20 WARNING _stringliteral (49) is unreachable
+2014-12-04 14:05:20 WARNING _nullliteral (50) is unreachable
+2014-12-04 14:05:20 INFO    Productions table and list created in 94ms; 8 productions (46 unreachable symbols)
+2014-12-04 14:05:20 INFO    Computing FIRST(1) sets...
+2014-12-04 14:05:20 INFO    FIRST(1) sets computed in 0ms
+2014-12-04 14:05:20 INFO    Generating parser states...
+2014-12-04 14:05:20 INFO    Parser states generated in 31ms; 14 states
+2014-12-04 14:07:49 INFO    Generating symbols table...
+2014-12-04 14:07:49 INFO    Symbols table generated in 31ms; 57 symbols (52 terminal symbols, 5 nonterminal symbols)
+2014-12-04 14:07:49 INFO    Generating productions table...
+2014-12-04 14:07:49 WARNING _eof (0) is unreachable
+2014-12-04 14:07:49 WARNING _eol (1) is unreachable
+2014-12-04 14:07:49 WARNING _bool (2) is unreachable
+2014-12-04 14:07:49 WARNING _break (3) is unreachable
+2014-12-04 14:07:49 WARNING _class (4) is unreachable
+2014-12-04 14:07:49 WARNING _continue (5) is unreachable
+2014-12-04 14:07:49 WARNING _double (6) is unreachable
+2014-12-04 14:07:49 WARNING _else (7) is unreachable
+2014-12-04 14:07:49 WARNING _extends (8) is unreachable
+2014-12-04 14:07:49 WARNING _for (9) is unreachable
+2014-12-04 14:07:49 WARNING _if (10) is unreachable
+2014-12-04 14:07:49 WARNING _implements (11) is unreachable
+2014-12-04 14:07:49 WARNING _interface (13) is unreachable
+2014-12-04 14:07:49 WARNING _newarray (14) is unreachable
+2014-12-04 14:07:49 WARNING _println (15) is unreachable
+2014-12-04 14:07:49 WARNING _readln (16) is unreachable
+2014-12-04 14:07:49 WARNING _return (17) is unreachable
+2014-12-04 14:07:49 WARNING _string (18) is unreachable
+2014-12-04 14:07:49 WARNING _void (19) is unreachable
+2014-12-04 14:07:49 WARNING _while (20) is unreachable
+2014-12-04 14:07:49 WARNING _minus (22) is unreachable
+2014-12-04 14:07:49 WARNING _multiplication (23) is unreachable
+2014-12-04 14:07:49 WARNING _division (24) is unreachable
+2014-12-04 14:07:49 WARNING _modulus (25) is unreachable
+2014-12-04 14:07:49 WARNING _less (26) is unreachable
+2014-12-04 14:07:49 WARNING _lessequal (27) is unreachable
+2014-12-04 14:07:49 WARNING _greater (28) is unreachable
+2014-12-04 14:07:49 WARNING _greaterequal (29) is unreachable
+2014-12-04 14:07:49 WARNING _equal (30) is unreachable
+2014-12-04 14:07:49 WARNING _notequal (31) is unreachable
+2014-12-04 14:07:49 WARNING _and (32) is unreachable
+2014-12-04 14:07:49 WARNING _or (33) is unreachable
+2014-12-04 14:07:49 WARNING _not (34) is unreachable
+2014-12-04 14:07:49 WARNING _semicolon (36) is unreachable
+2014-12-04 14:07:49 WARNING _comma (37) is unreachable
+2014-12-04 14:07:49 WARNING _period (38) is unreachable
+2014-12-04 14:07:49 WARNING _leftbracket (41) is unreachable
+2014-12-04 14:07:49 WARNING _rightbracket (42) is unreachable
+2014-12-04 14:07:49 WARNING _leftbrace (43) is unreachable
+2014-12-04 14:07:49 WARNING _rightbrace (44) is unreachable
+2014-12-04 14:07:49 WARNING _characterliteral (45) is unreachable
+2014-12-04 14:07:49 WARNING _booleanliteral (46) is unreachable
+2014-12-04 14:07:49 WARNING _integerliteral (47) is unreachable
+2014-12-04 14:07:49 WARNING _doubleliteral (48) is unreachable
+2014-12-04 14:07:49 WARNING _stringliteral (49) is unreachable
+2014-12-04 14:07:49 WARNING _nullliteral (50) is unreachable
+2014-12-04 14:07:49 INFO    Productions table and list created in 94ms; 8 productions (46 unreachable symbols)
+2014-12-04 14:07:49 INFO    Computing FIRST(1) sets...
+2014-12-04 14:07:49 INFO    FIRST(1) sets computed in 0ms
+2014-12-04 14:07:49 INFO    Generating parser states...
+2014-12-04 14:07:49 INFO    Parser states generated in 31ms; 14 states
+2014-12-04 14:07:49 INFO    Compiling parser states into tables...
+2014-12-04 14:07:49 INFO    Tables compiled in 16ms
+2014-12-04 14:09:00 INFO    Generating symbols table...
+2014-12-04 14:09:00 INFO    Symbols table generated in 47ms; 57 symbols (52 terminal symbols, 5 nonterminal symbols)
+2014-12-04 14:09:00 INFO    Generating productions table...
+2014-12-04 14:09:00 WARNING _eof (0) is unreachable
+2014-12-04 14:09:00 WARNING _eol (1) is unreachable
+2014-12-04 14:09:00 WARNING _bool (2) is unreachable
+2014-12-04 14:09:00 WARNING _break (3) is unreachable
+2014-12-04 14:09:00 WARNING _class (4) is unreachable
+2014-12-04 14:09:00 WARNING _continue (5) is unreachable
+2014-12-04 14:09:00 WARNING _double (6) is unreachable
+2014-12-04 14:09:00 WARNING _else (7) is unreachable
+2014-12-04 14:09:00 WARNING _extends (8) is unreachable
+2014-12-04 14:09:00 WARNING _for (9) is unreachable
+2014-12-04 14:09:00 WARNING _if (10) is unreachable
+2014-12-04 14:09:00 WARNING _implements (11) is unreachable
+2014-12-04 14:09:00 WARNING _interface (13) is unreachable
+2014-12-04 14:09:00 WARNING _newarray (14) is unreachable
+2014-12-04 14:09:00 WARNING _println (15) is unreachable
+2014-12-04 14:09:00 WARNING _readln (16) is unreachable
+2014-12-04 14:09:00 WARNING _return (17) is unreachable
+2014-12-04 14:09:00 WARNING _string (18) is unreachable
+2014-12-04 14:09:00 WARNING _void (19) is unreachable
+2014-12-04 14:09:00 WARNING _while (20) is unreachable
+2014-12-04 14:09:00 WARNING _minus (22) is unreachable
+2014-12-04 14:09:00 WARNING _multiplication (23) is unreachable
+2014-12-04 14:09:00 WARNING _division (24) is unreachable
+2014-12-04 14:09:00 WARNING _modulus (25) is unreachable
+2014-12-04 14:09:00 WARNING _less (26) is unreachable
+2014-12-04 14:09:00 WARNING _lessequal (27) is unreachable
+2014-12-04 14:09:00 WARNING _greater (28) is unreachable
+2014-12-04 14:09:00 WARNING _greaterequal (29) is unreachable
+2014-12-04 14:09:00 WARNING _equal (30) is unreachable
+2014-12-04 14:09:00 WARNING _notequal (31) is unreachable
+2014-12-04 14:09:00 WARNING _and (32) is unreachable
+2014-12-04 14:09:00 WARNING _or (33) is unreachable
+2014-12-04 14:09:00 WARNING _not (34) is unreachable
+2014-12-04 14:09:00 WARNING _semicolon (36) is unreachable
+2014-12-04 14:09:00 WARNING _comma (37) is unreachable
+2014-12-04 14:09:00 WARNING _period (38) is unreachable
+2014-12-04 14:09:00 WARNING _leftbracket (41) is unreachable
+2014-12-04 14:09:00 WARNING _rightbracket (42) is unreachable
+2014-12-04 14:09:00 WARNING _leftbrace (43) is unreachable
+2014-12-04 14:09:00 WARNING _rightbrace (44) is unreachable
+2014-12-04 14:09:00 WARNING _characterliteral (45) is unreachable
+2014-12-04 14:09:00 WARNING _booleanliteral (46) is unreachable
+2014-12-04 14:09:00 WARNING _integerliteral (47) is unreachable
+2014-12-04 14:09:00 WARNING _doubleliteral (48) is unreachable
+2014-12-04 14:09:00 WARNING _stringliteral (49) is unreachable
+2014-12-04 14:09:00 WARNING _nullliteral (50) is unreachable
+2014-12-04 14:09:01 INFO    Productions table and list created in 109ms; 8 productions (46 unreachable symbols)
+2014-12-04 14:09:01 INFO    Computing FIRST(1) sets...
+2014-12-04 14:09:01 INFO    FIRST(1) sets computed in 0ms
+2014-12-04 14:09:01 INFO    Generating parser states...
+2014-12-04 14:09:01 INFO    Parser states generated in 31ms; 14 states
+2014-12-04 14:09:01 INFO    Compiling parser states into tables...
+2014-12-04 14:09:01 INFO    Tables compiled in 0ms
+2014-12-04 14:09:29 INFO    Generating symbols table...
+2014-12-04 14:09:29 INFO    Symbols table generated in 47ms; 57 symbols (52 terminal symbols, 5 nonterminal symbols)
+2014-12-04 14:09:29 INFO    Generating productions table...
+2014-12-04 14:09:29 WARNING _eof (0) is unreachable
+2014-12-04 14:09:29 WARNING _eol (1) is unreachable
+2014-12-04 14:09:29 WARNING _bool (2) is unreachable
+2014-12-04 14:09:29 WARNING _break (3) is unreachable
+2014-12-04 14:09:29 WARNING _class (4) is unreachable
+2014-12-04 14:09:29 WARNING _continue (5) is unreachable
+2014-12-04 14:09:29 WARNING _double (6) is unreachable
+2014-12-04 14:09:29 WARNING _else (7) is unreachable
+2014-12-04 14:09:29 WARNING _extends (8) is unreachable
+2014-12-04 14:09:29 WARNING _for (9) is unreachable
+2014-12-04 14:09:29 WARNING _if (10) is unreachable
+2014-12-04 14:09:29 WARNING _implements (11) is unreachable
+2014-12-04 14:09:29 WARNING _interface (13) is unreachable
+2014-12-04 14:09:29 WARNING _newarray (14) is unreachable
+2014-12-04 14:09:29 WARNING _println (15) is unreachable
+2014-12-04 14:09:29 WARNING _readln (16) is unreachable
+2014-12-04 14:09:29 WARNING _return (17) is unreachable
+2014-12-04 14:09:29 WARNING _string (18) is unreachable
+2014-12-04 14:09:29 WARNING _void (19) is unreachable
+2014-12-04 14:09:29 WARNING _while (20) is unreachable
+2014-12-04 14:09:29 WARNING _minus (22) is unreachable
+2014-12-04 14:09:29 WARNING _multiplication (23) is unreachable
+2014-12-04 14:09:29 WARNING _division (24) is unreachable
+2014-12-04 14:09:29 WARNING _modulus (25) is unreachable
+2014-12-04 14:09:29 WARNING _less (26) is unreachable
+2014-12-04 14:09:29 WARNING _lessequal (27) is unreachable
+2014-12-04 14:09:29 WARNING _greater (28) is unreachable
+2014-12-04 14:09:29 WARNING _greaterequal (29) is unreachable
+2014-12-04 14:09:29 WARNING _equal (30) is unreachable
+2014-12-04 14:09:29 WARNING _notequal (31) is unreachable
+2014-12-04 14:09:29 WARNING _and (32) is unreachable
+2014-12-04 14:09:29 WARNING _or (33) is unreachable
+2014-12-04 14:09:29 WARNING _not (34) is unreachable
+2014-12-04 14:09:29 WARNING _semicolon (36) is unreachable
+2014-12-04 14:09:29 WARNING _comma (37) is unreachable
+2014-12-04 14:09:29 WARNING _period (38) is unreachable
+2014-12-04 14:09:29 WARNING _leftbracket (41) is unreachable
+2014-12-04 14:09:29 WARNING _rightbracket (42) is unreachable
+2014-12-04 14:09:29 WARNING _leftbrace (43) is unreachable
+2014-12-04 14:09:29 WARNING _rightbrace (44) is unreachable
+2014-12-04 14:09:29 WARNING _characterliteral (45) is unreachable
+2014-12-04 14:09:29 WARNING _booleanliteral (46) is unreachable
+2014-12-04 14:09:29 WARNING _integerliteral (47) is unreachable
+2014-12-04 14:09:29 WARNING _doubleliteral (48) is unreachable
+2014-12-04 14:09:29 WARNING _stringliteral (49) is unreachable
+2014-12-04 14:09:29 WARNING _nullliteral (50) is unreachable
+2014-12-04 14:09:29 INFO    Productions table and list created in 93ms; 8 productions (46 unreachable symbols)
+2014-12-04 14:09:29 INFO    Computing FIRST(1) sets...
+2014-12-04 14:09:29 INFO    FIRST(1) sets computed in 0ms
+2014-12-04 14:09:29 INFO    Generating parser states...
+2014-12-04 14:09:29 INFO    Parser states generated in 47ms; 14 states
+2014-12-04 14:09:29 INFO    Compiling parser states into tables...
+2014-12-04 14:09:29 INFO    Tables compiled in 15ms
+2014-12-04 14:18:00 INFO    Generating symbols table...
+2014-12-04 14:18:01 INFO    Symbols table generated in 47ms; 57 symbols (52 terminal symbols, 5 nonterminal symbols)
+2014-12-04 14:18:01 INFO    Generating productions table...
+2014-12-04 14:18:01 WARNING _eof (0) is unreachable
+2014-12-04 14:18:01 WARNING _eol (1) is unreachable
+2014-12-04 14:18:01 WARNING _bool (2) is unreachable
+2014-12-04 14:18:01 WARNING _break (3) is unreachable
+2014-12-04 14:18:01 WARNING _class (4) is unreachable
+2014-12-04 14:18:01 WARNING _continue (5) is unreachable
+2014-12-04 14:18:01 WARNING _double (6) is unreachable
+2014-12-04 14:18:01 WARNING _else (7) is unreachable
+2014-12-04 14:18:01 WARNING _extends (8) is unreachable
+2014-12-04 14:18:01 WARNING _for (9) is unreachable
+2014-12-04 14:18:01 WARNING _if (10) is unreachable
+2014-12-04 14:18:01 WARNING _implements (11) is unreachable
+2014-12-04 14:18:01 WARNING _interface (13) is unreachable
+2014-12-04 14:18:01 WARNING _newarray (14) is unreachable
+2014-12-04 14:18:01 WARNING _println (15) is unreachable
+2014-12-04 14:18:01 WARNING _readln (16) is unreachable
+2014-12-04 14:18:01 WARNING _return (17) is unreachable
+2014-12-04 14:18:01 WARNING _string (18) is unreachable
+2014-12-04 14:18:01 WARNING _void (19) is unreachable
+2014-12-04 14:18:01 WARNING _while (20) is unreachable
+2014-12-04 14:18:01 WARNING _minus (22) is unreachable
+2014-12-04 14:18:01 WARNING _multiplication (23) is unreachable
+2014-12-04 14:18:01 WARNING _division (24) is unreachable
+2014-12-04 14:18:01 WARNING _modulus (25) is unreachable
+2014-12-04 14:18:01 WARNING _less (26) is unreachable
+2014-12-04 14:18:01 WARNING _lessequal (27) is unreachable
+2014-12-04 14:18:01 WARNING _greater (28) is unreachable
+2014-12-04 14:18:01 WARNING _greaterequal (29) is unreachable
+2014-12-04 14:18:01 WARNING _equal (30) is unreachable
+2014-12-04 14:18:01 WARNING _notequal (31) is unreachable
+2014-12-04 14:18:01 WARNING _and (32) is unreachable
+2014-12-04 14:18:01 WARNING _or (33) is unreachable
+2014-12-04 14:18:01 WARNING _not (34) is unreachable
+2014-12-04 14:18:01 WARNING _semicolon (36) is unreachable
+2014-12-04 14:18:01 WARNING _comma (37) is unreachable
+2014-12-04 14:18:01 WARNING _period (38) is unreachable
+2014-12-04 14:18:01 WARNING _leftbracket (41) is unreachable
+2014-12-04 14:18:01 WARNING _rightbracket (42) is unreachable
+2014-12-04 14:18:01 WARNING _leftbrace (43) is unreachable
+2014-12-04 14:18:01 WARNING _rightbrace (44) is unreachable
+2014-12-04 14:18:01 WARNING _characterliteral (45) is unreachable
+2014-12-04 14:18:01 WARNING _booleanliteral (46) is unreachable
+2014-12-04 14:18:01 WARNING _integerliteral (47) is unreachable
+2014-12-04 14:18:01 WARNING _doubleliteral (48) is unreachable
+2014-12-04 14:18:01 WARNING _stringliteral (49) is unreachable
+2014-12-04 14:18:01 WARNING _nullliteral (50) is unreachable
+2014-12-04 14:18:01 INFO    Productions table and list created in 94ms; 8 productions (46 unreachable symbols)
+2014-12-04 14:18:01 INFO    Computing FIRST(1) sets...
+2014-12-04 14:18:01 INFO    FIRST(1) sets computed in 0ms
+2014-12-04 14:18:01 INFO    Generating parser states...
+2014-12-04 14:18:01 INFO    Parser states generated in 32ms; 14 states
+2014-12-04 14:18:01 INFO    Compiling parser states into tables...
+2014-12-04 14:18:01 INFO    Tables compiled in 17ms
