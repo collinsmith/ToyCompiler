@@ -10,8 +10,8 @@ I:   S -> C . C                                       FOLLOW={_eof}             
 
 State 2: V[_int] = goto(S0, 12)
 I:   C -> _int . C                                    FOLLOW={_eof,_double,_int}       goto(S5, C)                      
-     C -> . _int C                                    FOLLOW={_double,_int}            goto(S2, _int)                   shift
-     C -> . _double                                   FOLLOW={_double,_int}            goto(S3, _double)                shift
+     C -> . _int C                                    FOLLOW={_eof,_double,_int}       goto(S2, _int)                   shift
+     C -> . _double                                   FOLLOW={_eof,_double,_int}       goto(S3, _double)                shift
 
 State 3: V[_double] = goto(S0, 6)
 I:   C -> _double .                                   FOLLOW={_eof,_double,_int}       reduce(2)

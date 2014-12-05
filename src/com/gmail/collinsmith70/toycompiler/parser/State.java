@@ -3,6 +3,8 @@ package com.gmail.collinsmith70.toycompiler.parser;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
+import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,9 +12,12 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 public class State<E extends Instanceable<E>> implements Iterable<E> {
+	private final Grammar GRAMMAR;
+	
 	private final int ID;
 	private final State<E> PARENT;
 	private final Map<Symbol, State<E>> TRANSITIONS;
@@ -21,12 +26,14 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 	private final ImmutableMap<ProductionRuleInstance, E> CLOSURE_ITEMS;
 
 	public State(
+		Grammar grammar,
 		int id,
 		State<E> parent,
 		ImmutableList<Symbol> viablePrefix,
 		ImmutableMap<ProductionRuleInstance, E> kernelItems,
 		ImmutableMap<ProductionRuleInstance, E> closureItems
 	) {
+		this.GRAMMAR = grammar;
 		this.ID = id;
 		this.PARENT = parent;
 		this.TRANSITIONS = new HashMap<>();
@@ -73,9 +80,60 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 	}
 
 	public void dump(PrintStream stream) {
-		// TODO: Implement the state output
+		stream.format("State %d: V%s", getId(), ImmutableList.copyOf(getViablePrefix().stream().map(symbol -> GRAMMAR.getSymbolsTable().get(symbol)).iterator()));
+		if (getParent() != null) {
+			stream.format(" = goto(S%d, %s)",
+				getParent().getId(),
+				getViablePrefix().get(getViablePrefix().size()-1)
+			);
+		}
+
+		stream.format("%n");
+
+		for (E p : getKernelItems().values()) {
+			writeProduction(stream, p, true);
+		}
+
+		for (E p : getClosureItems().values()) {
+			writeProduction(stream, p, false);
+		}
+
+		stream.format("%n");
+		stream.flush();
 	}
 
+	private void writeProduction(
+		PrintStream stream,
+		E pr,
+		boolean isKernelItem
+	) {
+		if (!(pr instanceof LAProductionRuleInstance)) return;
+		LAProductionRuleInstance p = (LAProductionRuleInstance)pr;
+		StringJoiner sj = new StringJoiner(",", "FOLLOW={", "}");
+		for (Symbol followSymbol : p.getFollowSet()) {
+			sj.add(GRAMMAR.getSymbolsTable().get(followSymbol));
+		}
+
+		if (!p.hasNext()) {
+			stream.format("%-4s %-48s %-32s reduce(%d)%n",
+				isKernelItem ? "I:" : "",
+				p.toString(GRAMMAR.getSymbolsTable()),
+				sj.toString(),
+				p.getInstance().getProductionRule().getId()
+			);
+
+			return;
+		}
+
+		Symbol lookahead = p.peekNextSymbol();
+		stream.format("%-4s %-48s %-32s %s%n",
+			isKernelItem ? "I:" : "",
+			p.toString(GRAMMAR.getSymbolsTable()),
+			sj.toString(),
+			(lookahead instanceof NonterminalSymbol) ? "" : "shift"
+		);
+	}
+	
 	@Override
 	public Iterator<E> iterator() {
 		return Iterators.concat(KERNEL_ITEMS.values().iterator(), CLOSURE_ITEMS.values().iterator());
