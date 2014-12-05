@@ -24,8 +24,8 @@ public class Main {
 	public static void main(String[] args) {
 		try {
 			//Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("US-ASCII"));
-			Grammar g = Grammar.generate(Paths.get(".", "res", "test2.grammar"), Charset.forName("US-ASCII"));
-			//Grammar g = Grammar.generate(Paths.get(".", "res", "toy.grammar"), Charset.forName("US-ASCII"));
+			//Grammar g = Grammar.generate(Paths.get(".", "res", "test2.grammar"), Charset.forName("US-ASCII"));
+			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.grammar"), Charset.forName("US-ASCII"));
 			g.output();
 			LALRParserStatesGenerator lalrParserStatesGenerator = new LALRParserStatesGenerator();
 			Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> parserStates = lalrParserStatesGenerator.generateParserTables(g);

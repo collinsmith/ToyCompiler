@@ -20,5 +20,5 @@ State 4: V[C, C] = goto(S1, 53)
 I:   S -> C C .                                       FOLLOW={_eof}                    reduce(0)
 
 State 5: V[_int, C] = goto(S2, 53)
-I:   C -> _int C .                                    FOLLOW={_double,_int}            reduce(1)
+I:   C -> _int C .                                    FOLLOW={_eof,_double,_int}       reduce(1)
 

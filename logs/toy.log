@@ -14,3 +14,19 @@
 2014-12-04 14:16:40 INFO    Parser states generated in 124ms; 204 states
 2014-12-04 14:16:40 INFO    Compiling parser states into tables...
 2014-12-04 14:16:40 INFO    Tables compiled in 16ms
+2014-12-05 12:50:10 INFO    Generating symbols table...
+2014-12-05 12:50:10 INFO    Symbols table generated in 53ms; 102 symbols (52 terminal symbols, 50 nonterminal symbols)
+2014-12-05 12:50:10 INFO    Generating productions table...
+2014-12-05 12:50:10 WARNING _eof (0) is unreachable
+2014-12-05 12:50:10 WARNING _eol (1) is unreachable
+2014-12-05 12:50:10 WARNING _continue (5) is unreachable
+2014-12-05 12:50:10 WARNING _modulus (25) is unreachable
+2014-12-05 12:50:10 WARNING _characterliteral (45) is unreachable
+2014-12-05 12:50:10 WARNING _nullliteral (50) is unreachable
+2014-12-05 12:50:10 INFO    Productions table and list created in 79ms; 120 productions (6 unreachable symbols)
+2014-12-05 12:50:10 INFO    Computing FIRST(1) sets...
+2014-12-05 12:50:10 INFO    FIRST(1) sets computed in 5ms
+2014-12-05 12:50:10 INFO    Generating parser states...
+2014-12-05 12:50:10 INFO    Parser states generated in 210ms; 204 states
+2014-12-05 12:50:11 INFO    Compiling parser states into tables...
+2014-12-05 12:50:11 INFO    Tables compiled in 18ms

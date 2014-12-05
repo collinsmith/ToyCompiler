@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.StringJoiner;
 import java.util.concurrent.LinkedBlockingDeque;
@@ -151,26 +150,52 @@ public class LALRParserStatesGenerator {
 		State<LAProductionRuleInstance> existingState = states.get(kernelItems.keySet());//TODO: tagged
 		if (existingState != null) {
 			parent.putTransition(currentSymbol, existingState);
-			System.out.println("KERNEL ITEMS:");
-			for (Entry<ProductionRuleInstance, LAProductionRuleInstance> entry : kernelItems.entrySet()) {
-				System.out.println(entry.getKey().toString(grammar.getSymbolsTable()));
-				System.out.println("\t" + entry.getValue().toString(grammar.getSymbolsTable()));
-			}
-			
-			System.out.println("Existing state productions:");
+
+			boolean changed = false;
 			HashSet<ProductionRuleInstance> temp = new HashSet<>();
 			// I'm updating the kernel follow set, but not the children
 			for (LAProductionRuleInstance p : existingState.getKernelItems().values()) {
 				Set<TerminalSymbol> copy = new HashSet<>(p.getFollowSet());
 				if (p.addAllFollowSymbols(kernelItems.get(p.getInstance()).getFollowSet())) {
-					System.out.println(p.toString(grammar.getSymbolsTable()) + " FOLLOW " + copy + " -> " + p.getFollowSet());
+					changed = true;
 					closeOver(p, grammar, existingState.getKernelItems(), existingState.getClosureItems(), FIRST, p.getFollowSet(), temp);
 				}
-				
-				// TODO: update child states with new follow sets
 			}
-			
-			existingState.dump(System.out);
+
+			// If this state was updated, update all child states
+			if (!changed) {
+				return;
+			}
+
+			Deque<LAProductionRuleInstance> remainingProductions = new LinkedBlockingDeque<>();
+			remainingProductions.addAll(existingState.getKernelItems().values());
+			remainingProductions.addAll(existingState.getClosureItems().values());
+
+			LAProductionRuleInstance p;
+			while (!remainingProductions.isEmpty()) {
+				p = remainingProductions.pollFirst();
+				if (!p.hasNext()) {
+					continue;
+				}
+
+				Symbol lookahead = p.peekNextSymbol();
+				Set<LAProductionRuleInstance> productionsWithSameLookahead = new HashSet<>();
+				remainingProductions.stream()
+					.filter(sibling -> lookahead.equals(sibling.peekNextSymbol()))
+					.forEachOrdered(sibling -> productionsWithSameLookahead.add(sibling));
+
+				remainingProductions.removeAll(productionsWithSameLookahead);
+				productionsWithSameLookahead.add(p);
+
+				Map<ProductionRuleInstance, LAProductionRuleInstance> nextKernelItems = new HashMap<>();
+				productionsWithSameLookahead.stream()
+					.map(production -> production.next())
+					.forEachOrdered(production -> nextKernelItems.put(production.getInstance(), production));
+
+				State.Metadata<ProductionRuleInstance, LAProductionRuleInstance> childMetadata = existingState.createMetadata(ImmutableMap.copyOf(nextKernelItems));
+				deque.offerFirst(childMetadata);
+			}
+
 			return;
 		}
 
@@ -243,51 +268,6 @@ public class LALRParserStatesGenerator {
 		}
 	}
 
-	/*private void closeOver(
-		LAProductionRuleInstance p,
-		Grammar grammar,
-		Map<ProductionRuleInstance, LAProductionRuleInstance> kernelItems,
-		Map<ProductionRuleInstance, LAProductionRuleInstance> closureItems,
-		Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST
-	) {
-		Symbol l1 = p.lookahead(1);
-		if (l1 == null) {
-			// production rule is a reduction
-			return;
-		}
-		
-		if (l1 instanceof TerminalSymbol) {
-			// next symbol is a terminal symbol and can't be closed over
-			return;
-		}
-		
-		Symbol l2 = p.lookahead(2);
-		Set<TerminalSymbol> follow = new HashSet<>();
-		if (l2 == null) {
-			// closures will have follow of this production
-			follow.addAll(p.getFollowSet());
-		} else if (l2 instanceof TerminalSymbol) {
-			// closures will be followed by l2
-			follow.add((TerminalSymbol)l2);
-		} else {
-			// closures will be followed by FIRST(l2)
-			follow.addAll(FIRST.get((NonterminalSymbol)l2));
-		}
-		
-		LAProductionRuleInstance temp;
-		ImmutableSet<ProductionRuleInstance> children = createProductionRuleInstances(grammar.getProductionRulesMap().get((NonterminalSymbol)l2));
-		for (ProductionRuleInstance child : children) {
-			temp = closureItems.get(child);
-			if (temp != null) {
-				
-			}
-			
-			temp = new LAProductionRuleInstance(child, follow);
-			closureItems.put(child, temp);
-			closeOver(temp, grammar, kernelItems, closureItems, FIRST);
-		}
-	}*/
-	
 	private void closeOver(
 		LAProductionRuleInstance p,
 		Grammar grammar,
@@ -326,12 +306,9 @@ public class LALRParserStatesGenerator {
 			//temp = kernelItems.get(child);
 
 			temp = closureItems.get(child);
-			System.out.println("checking: " + child);
 			if (temp != null) {
-				System.out.println("closure exists for " + temp.toString(grammar.getSymbolsTable()) + "; follow: " + temp.getFollowSet());
 				// A matching items exists within generated closures
 				if (temp.addAllFollowSymbols(follow)) {
-					System.out.println("\tfollow updated " + temp.getFollowSet());
 					// This production rule is producing new follow
 					// terminals
 					temp = new LAProductionRuleInstance(child, follow);
@@ -341,9 +318,7 @@ public class LALRParserStatesGenerator {
 					// set, we've already closed over this production
 					// rule, but children must be updated with the
 					// new follow set, so close over one last time
-					System.out.println("\tsame follow, closing over once... ");
 					closeOver(temp, grammar, kernelItems, closureItems, FIRST, temp.getFollowSet(), closureExisted);
-					System.out.println("\tfollow after closing: " + temp.toString(grammar.getSymbolsTable()) + " = " + temp.getFollowSet());
 				}
 
 				continue;

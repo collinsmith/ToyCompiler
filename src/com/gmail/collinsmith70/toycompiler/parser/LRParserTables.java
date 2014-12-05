@@ -117,7 +117,7 @@ public class LRParserTables {
 				writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n",
 					i < SHIFT.SWITCH.length ? String.format("S%d", i) : "",
 					i < SHIFT.SWITCH.length ? convertValue(SHIFT.SWITCH[i]) : "",
-					i+1,
+					i,
 					convertValue(SHIFT.SHIFT[i][SYM]),
 					convertValue(SHIFT.SHIFT[i][NXT]),
 
@@ -126,7 +126,7 @@ public class LRParserTables {
 
 					i < GOTO.SWITCH.length ? String.format("S%d", i) : "",
 					i < GOTO.SWITCH.length ? convertValue(GOTO.SWITCH[i]) : "",
-					i < GOTO.GOTO.length ? i+1 : "",
+					i < GOTO.GOTO.length ? i : "",
 					i < GOTO.GOTO.length ? convertValue(GOTO.GOTO[i][SYM]) : "",
 					i < GOTO.GOTO.length ? convertValue(GOTO.GOTO[i][NXT]) : ""
 				));

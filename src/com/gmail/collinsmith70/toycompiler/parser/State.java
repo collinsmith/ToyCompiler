@@ -3,8 +3,6 @@ package com.gmail.collinsmith70.toycompiler.parser;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
-import java.io.BufferedWriter;
-import java.io.IOException;
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class State<E extends Instanceable<E>> implements Iterable<E> {
 	private final Grammar GRAMMAR;
-	
+
 	private final int ID;
 	private final State<E> PARENT;
 	private final Map<Symbol, State<E>> TRANSITIONS;
@@ -71,10 +69,10 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 	}
 
 	public void putTransition(Symbol s, State<E> state) {
-		if (transitionExists(s)) {
-			// TODO: throw better exception
-			throw new RuntimeException();
-		}
+		//if (getTransition(s) != state) {
+		//	// TODO: throw better exception
+		//	throw new RuntimeException();
+		//}
 
 		TRANSITIONS.put(s, Objects.requireNonNull(state));
 	}
@@ -133,7 +131,7 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 			(lookahead instanceof NonterminalSymbol) ? "" : "shift"
 		);
 	}
-	
+
 	@Override
 	public Iterator<E> iterator() {
 		return Iterators.concat(KERNEL_ITEMS.values().iterator(), CLOSURE_ITEMS.values().iterator());
