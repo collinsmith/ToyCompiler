@@ -49,6 +49,7 @@ public class LAProductionRuleInstance implements Iterable<Symbol>, Instanceable<
 		return INSTANCE;
 	}
 
+	@Override
 	public LAProductionRuleInstance getParent() {
 		return PARENT;
 	}

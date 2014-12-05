@@ -2,6 +2,7 @@ package com.gmail.collinsmith70.toycompiler.parser;
 
 public interface Instanceable<E extends Instanceable<E>> {
 	E next();
+	E getParent();
 	boolean hasNext(int n);
 	Symbol currentSymbol();
 	Symbol lookahead(int n);

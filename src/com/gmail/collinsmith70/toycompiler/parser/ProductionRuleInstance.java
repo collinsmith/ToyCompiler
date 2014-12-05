@@ -8,20 +8,28 @@ import java.util.Objects;
 public class ProductionRuleInstance implements Iterable<Symbol>, Instanceable<ProductionRuleInstance> {
 	private final ProductionRule PRODUCTION_RULE;
 	private final int POSITION;
+	private final ProductionRuleInstance PARENT;
 
 	public ProductionRuleInstance(ProductionRule productionRule) {
 		this.PRODUCTION_RULE = productionRule;
 		this.POSITION = 0;
+		this.PARENT = null;
 	}
 
 	private ProductionRuleInstance(ProductionRuleInstance p) {
 		assert p != null && p.hasNext(1);
 		this.PRODUCTION_RULE = p.PRODUCTION_RULE;
 		this.POSITION = p.POSITION+1;
+		this.PARENT = p;
 	}
 
 	public ProductionRule getProductionRule() {
 		return PRODUCTION_RULE;
+	}
+	
+	@Override
+	public ProductionRuleInstance getParent() {
+		return PARENT;
 	}
 
 	@Override

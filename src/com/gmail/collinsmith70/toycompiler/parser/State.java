@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class State<E extends Instanceable<E>> implements Iterable<E> {
 	private final int ID;
@@ -81,11 +82,13 @@ public class State<E extends Instanceable<E>> implements Iterable<E> {
 	}
 
 	public Metadata<ProductionRuleInstance, E> createMetadata(ImmutableMap<ProductionRuleInstance, E> kernelItems) {
-		Set<ProductionRuleInstance> copy = new HashSet<>(kernelItems.keySet());
+		Set<ProductionRuleInstance> copy = kernelItems.keySet().stream()
+			.map(kernelItem -> kernelItem.getParent())
+			.collect(Collectors.toCollection(HashSet::new));
 		copy.removeAll(KERNEL_ITEMS.keySet());
 		copy.removeAll(CLOSURE_ITEMS.keySet());
 		if (!copy.isEmpty()) {
-			throw new IllegalArgumentException("Some kernel items do not exist within this State");
+			throw new IllegalArgumentException("Some kernel items parents do not exist within this State");
 		}
 
 		return new Metadata<>(this, kernelItems);

@@ -161,8 +161,9 @@ public class LALRParserStatesGenerator {
 
 		//System.out.format("State %d ---------------------------------------%n", states.size());
 		Map<ProductionRuleInstance, LAProductionRuleInstance> closureItems = new HashMap<>();
+		Set<ProductionRuleInstance> temp = new HashSet<>();
 		kernelItems.values().stream()
-			.forEachOrdered(kernelItem -> closeOver(kernelItem, grammar, kernelItems, closureItems, FIRST, kernelItem.getFollowSet(), new HashSet<>()));
+			.forEachOrdered(kernelItem -> closeOver(kernelItem, grammar, kernelItems, closureItems, FIRST, kernelItem.getFollowSet(), temp));
 
 		ImmutableList<Symbol> viablePrefix;
 		if (parent != null) {
