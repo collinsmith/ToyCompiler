@@ -76,11 +76,12 @@ public class Main {
 		Charset charset = Charset.forName("US-ASCII");
 		try (BufferedWriter writer = Files.newBufferedWriter(outFile, charset, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			try (BufferedReader br = Files.newBufferedReader(p, charset)) {
-				System.out.format("Analyzing %s...%n", fileName);
+				System.out.format("Analyzing %s...", fileName);
 				long dt = System.currentTimeMillis();
 				TokenStream tokenStream = new TokenStream(TOY_SCANNER, br);
-				parser.parse(tokenStream, writer);
-				System.out.format("%s scanned and parsed in %dms%n", fileName, System.currentTimeMillis()-dt);
+				boolean accepted = parser.parse(tokenStream, writer);
+				System.out.print(accepted ? "ACCEPTED" : "REJECTED");
+				System.out.format("%n%s scanned and parsed in %dms%n", fileName, System.currentTimeMillis()-dt);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
