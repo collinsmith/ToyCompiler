@@ -6,10 +6,15 @@ import java.io.Reader;
 public class TokenStream {
 	private final Scanner SCANNER;
 	private final LineNumberReader READER;
+	private final boolean IGNORE_EOL_TOKEN;
 
 	private Token peek;
 
 	public TokenStream(Scanner scanner, Reader reader) {
+		this(scanner, reader, true);
+	}
+	
+	public TokenStream(Scanner scanner, Reader reader, boolean ignoreEOLToken) {
 		if (!reader.markSupported()) {
 			throw new IllegalArgumentException("Reader must support marking for lexical analyzing");
 		}
@@ -17,6 +22,7 @@ public class TokenStream {
 		this.SCANNER = scanner;
 		this.READER = new LineNumberReader(reader);
 		READER.setLineNumber(1);
+		this.IGNORE_EOL_TOKEN = ignoreEOLToken;
 	}
 
 	public boolean hasNext() {
@@ -38,6 +44,12 @@ public class TokenStream {
 			return next;
 		}
 
+		if (IGNORE_EOL_TOKEN) {
+			Token next;
+			while ((next = SCANNER.next(READER)).getTokenType() == TokenType.DefaultTokenTypes._eol) {}
+			return next;
+		}
+		
 		return SCANNER.next(READER);
 	}
 }

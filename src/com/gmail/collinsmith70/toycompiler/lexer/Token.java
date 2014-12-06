@@ -1,5 +1,7 @@
 package com.gmail.collinsmith70.toycompiler.lexer;
 
+import java.util.Objects;
+
 public class Token {
 	private final TokenType TYPE;
 	private final Object VALUE;
@@ -9,7 +11,7 @@ public class Token {
 	}
 
 	public Token(TokenType type, Object value) {
-		this.TYPE = type;
+		this.TYPE = Objects.requireNonNull(type);
 		this.VALUE = value;
 	}
 
@@ -19,5 +21,10 @@ public class Token {
 
 	public Object getValue() {
 		return VALUE;
+	}
+
+	@Override
+	public String toString() {
+		return VALUE == null ? TYPE.name() : String.format("%s[%s]", TYPE.name(), VALUE);
 	}
 }

@@ -12,6 +12,9 @@ import java.util.Arrays;
 public class LRParserTables {
 	public static final int SYM = 0;
 	public static final int NXT = 1;
+	
+	public static final int RDCE = 0;
+	public static final int SWCH = 1;
 
 	private final ShiftTable SHIFT;
 	private final ReduceTable REDUCE;
@@ -29,7 +32,7 @@ public class LRParserTables {
 		ShiftReduceConflictsTable shiftReduceConflicts,
 		ReduceReduceConflictsTable reduceReduceConflicts
 	) {
-		if (shiftTable.SWITCH.length != reduceTable.REDUCE.length || reduceTable.REDUCE.length != gotoTable.SWITCH.length) {
+		if (shiftTable.SWITCH.length != reduceTable.REDUCE_SWITCH.length || reduceTable.REDUCE_SWITCH.length != gotoTable.SWITCH.length) {
 			throw new IllegalArgumentException("Table sizes do not match!");
 		}
 
@@ -57,7 +60,21 @@ public class LRParserTables {
 	}
 
 	public int reduce(int stateId) {
-		return REDUCE.REDUCE[stateId];
+		return REDUCE.REDUCE_SWITCH[stateId][RDCE];
+	}
+	
+	public int reduce(int stateId, int lookaheadSymbolId) {
+		int id = REDUCE.REDUCE_SWITCH[stateId][SWCH];
+		if (id == Integer.MIN_VALUE) {
+			return Integer.MIN_VALUE;
+		}
+
+		int cache;
+		while ((cache = REDUCE.LOOKAHEAD[id]) != Integer.MIN_VALUE && cache != lookaheadSymbolId) {
+			id++;
+		}
+
+		return cache == lookaheadSymbolId ? REDUCE.REDUCE_SWITCH[stateId][RDCE] : Integer.MIN_VALUE;
 	}
 
 	public int transition(int stateId, int symbolId) {
@@ -94,7 +111,8 @@ public class LRParserTables {
 		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".compiled"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			writer.append(String.format("%-8s: switch = %d%n",	"Shift",	SHIFT.SWITCH.length));
 			writer.append(String.format("%-8s  shift = %d%n",	"",		SHIFT.SHIFT.length));
-			writer.append(String.format("%-8s: reduce = %d%n",	"Reduce",	REDUCE.REDUCE.length));
+			writer.append(String.format("%-8s: reduce = %d%n",	"Reduce",	REDUCE.REDUCE_SWITCH.length));
+			writer.append(String.format("%-8s: lookahead = %d%n",	"",		REDUCE.LOOKAHEAD.length));
 			writer.append(String.format("%-8s: switch = %d%n",	"Goto",	GOTO.SWITCH.length));
 			writer.append(String.format("%-8s  goto = %d%n",	"",		GOTO.GOTO.length));
 			writer.append(String.format("%n%n"));
@@ -110,19 +128,27 @@ public class LRParserTables {
 			}
 			writer.append(String.format("%n%n"));
 
-			writer.append(String.format("%-35s |%-13s |%-35s%n", "SHIFT", "REDUCE", "GOTO"));
-			writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n", "", "switch", "", "symbol", "next", "", "reduce", "", "switch", "", "symbol", "next"));
+			writer.append(String.format("%-35s |%-35s |%-35s%n", "SHIFT", "REDUCE", "GOTO"));
+			writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n",
+				"", "switch", "", "symbol", "next",
+				"", "reduce", "switch", "", "LA",
+				"", "switch", "", "symbol", "next"
+			));
 
-			for (int i = 0; i < SHIFT.SHIFT.length; i++) {
-				writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n",
+			int maxLen = Integer.max(SHIFT.SHIFT.length, Integer.max(REDUCE.LOOKAHEAD.length, GOTO.GOTO.length));
+			for (int i = 0; i < maxLen; i++) {
+				writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n",
 					i < SHIFT.SWITCH.length ? String.format("S%d", i) : "",
 					i < SHIFT.SWITCH.length ? convertValue(SHIFT.SWITCH[i]) : "",
-					i,
-					convertValue(SHIFT.SHIFT[i][SYM]),
-					convertValue(SHIFT.SHIFT[i][NXT]),
+					i < SHIFT.SHIFT.length ? i : "",
+					i < SHIFT.SHIFT.length ? convertValue(SHIFT.SHIFT[i][SYM]) : "",
+					i < SHIFT.SHIFT.length ? convertValue(SHIFT.SHIFT[i][NXT]) : "",
 
-					i < REDUCE.REDUCE.length ? String.format("S%d", i) : "",
-					i < REDUCE.REDUCE.length ? convertValue(REDUCE.REDUCE[i]) : "",
+					i < REDUCE.REDUCE_SWITCH.length ? String.format("S%d", i) : "",
+					i < REDUCE.REDUCE_SWITCH.length ? convertValue(REDUCE.REDUCE_SWITCH[i][RDCE]) : "",
+					i < REDUCE.REDUCE_SWITCH.length ? convertValue(REDUCE.REDUCE_SWITCH[i][SWCH]) : "",
+					i < REDUCE.LOOKAHEAD.length ? i : "",
+					i < REDUCE.LOOKAHEAD.length ? convertValue(REDUCE.LOOKAHEAD[i]) : "",
 
 					i < GOTO.SWITCH.length ? String.format("S%d", i) : "",
 					i < GOTO.SWITCH.length ? convertValue(GOTO.SWITCH[i]) : "",
@@ -155,10 +181,12 @@ public class LRParserTables {
 	}
 
 	public static class ReduceTable {
-		private final int[] REDUCE;
+		private final int[][] REDUCE_SWITCH;
+		private final int[] LOOKAHEAD;
 
-		public ReduceTable(int[] reduceTable) {
-			this.REDUCE = reduceTable;
+		public ReduceTable(int[][] reduceSwitchTable, int[] lookaheadTable) {
+			this.REDUCE_SWITCH = reduceSwitchTable;
+			this.LOOKAHEAD = lookaheadTable;
 		}
 	}
 

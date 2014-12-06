@@ -418,13 +418,16 @@ public class LALRParserStatesGenerator {
 	public static LRParserTables compile(Grammar g, Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> states) {
 		int numTables = states.size();
 
-		int[] reduceTable = new int[numTables];
+		int[][] reduceSwitchTable = new int[numTables][2];
 		int[] shiftSwitchTable = new int[numTables];
 		int[] gotoSwitchTable = new int[numTables];
 
 		ArrayList<Integer[]> gotoTableList = new ArrayList<>();
 		ArrayList<Integer[]> shiftTableList = new ArrayList<>();
 		final Integer[] EMPTY_ELEMENT = new Integer[] { Integer.MIN_VALUE, Integer.MIN_VALUE };
+		
+		ArrayList<Integer> reduceLookaheadList = new ArrayList<>();
+		final Integer EMPTY_LOOKAHEAD = Integer.MIN_VALUE;
 
 		Map<Set<ProductionRuleInstance>, ShiftReduceConflict<LAProductionRuleInstance>> shiftReduceConflictsMap = new HashMap<>();
 		Map<Set<ProductionRuleInstance>, ReduceReduceConflict<LAProductionRuleInstance>> reduceReduceConflictsMap = new HashMap<>();
@@ -435,14 +438,20 @@ public class LALRParserStatesGenerator {
 		State<LAProductionRuleInstance> nextState = null;
 		for (State<LAProductionRuleInstance> s : states.values()) {
 			stateId = s.getId();
-			reduceTable[stateId] = Integer.MIN_VALUE;
+			reduceSwitchTable[stateId][LRParserTables.RDCE] = Integer.MIN_VALUE;
+			reduceSwitchTable[stateId][LRParserTables.SWCH] = Integer.MIN_VALUE;
 			shiftSwitchTable[stateId] = Integer.MIN_VALUE;
 			gotoSwitchTable[stateId] = Integer.MIN_VALUE;
 
 			for (LAProductionRuleInstance p : s) {
 				if (!p.hasNext()) {
-					if (reduceTable[stateId] == Integer.MIN_VALUE) {
-						reduceTable[stateId] = p.getInstance().getProductionRule().getId();
+					if (reduceSwitchTable[stateId][LRParserTables.RDCE] == Integer.MIN_VALUE) {
+						reduceSwitchTable[stateId][LRParserTables.RDCE] = p.getInstance().getProductionRule().getId();
+						reduceSwitchTable[stateId][LRParserTables.SWCH] = reduceLookaheadList.size();
+						p.getFollowSet().stream()
+							.mapToInt(symbol -> symbol.getId())
+							.forEachOrdered(symbolId -> reduceLookaheadList.add(symbolId));
+						reduceLookaheadList.add(EMPTY_LOOKAHEAD);
 						currentSymbol = p.currentSymbol();
 					} else {
 						reduceReduceConflictsMap.putIfAbsent(s.getKernelItems().keySet(), new ReduceReduceConflict<>(s));
@@ -468,7 +477,7 @@ public class LALRParserStatesGenerator {
 				}
 			}
 
-			if (reduceTable[stateId] != Integer.MIN_VALUE && shiftSwitchTable[stateId] != Integer.MIN_VALUE) {
+			if (reduceSwitchTable[stateId][LRParserTables.RDCE] != Integer.MIN_VALUE && shiftSwitchTable[stateId] != Integer.MIN_VALUE) {
 				shiftReduceConflictsMap.putIfAbsent(s.getKernelItems().keySet(), new ShiftReduceConflict<>(s));
 			}
 
@@ -487,6 +496,11 @@ public class LALRParserStatesGenerator {
 			shiftTable[i][LRParserTables.NXT] = shiftTableList.get(i)[LRParserTables.NXT];
 		}
 
+		int[] lookaheadTable = new int[reduceLookaheadList.size()];
+		for (int i = 0; i < lookaheadTable.length; i++) {
+			lookaheadTable[i] = reduceLookaheadList.get(i);
+		}
+		
 		int[][] gotoTable = new int[gotoTableList.size()][2];
 		for (int i = 0; i < gotoTable.length; i++) {
 			gotoTable[i][LRParserTables.SYM] = gotoTableList.get(i)[LRParserTables.SYM];
@@ -513,7 +527,7 @@ public class LALRParserStatesGenerator {
 
 		return new LRParserTables(
 			new LRParserTables.ShiftTable(shiftSwitchTable, shiftTable),
-			new LRParserTables.ReduceTable(reduceTable),
+			new LRParserTables.ReduceTable(reduceSwitchTable, lookaheadTable),
 			new LRParserTables.GotoTable(gotoSwitchTable, gotoTable),
 			new LRParserTables.ProductionRulesTable(nonterminalIdTable, rhsSizeTable),
 			new LRParserTables.ShiftReduceConflictsTable(shiftReduceConflicts),

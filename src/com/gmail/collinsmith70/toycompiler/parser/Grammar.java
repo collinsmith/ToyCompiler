@@ -71,6 +71,8 @@ public final class Grammar {
 			LOGGER.addHandler(new ConsoleHandler());
 			LOGGER.severe("Log file could not be generated. Switching to console.");
 		}
+		
+		LOGGER.info("Loading grammar for " + GRAMMAR_NAME);
 
 		this.numTerminalSymbols = Integer.MIN_VALUE;
 		this.numNonterminalSymbols = Integer.MIN_VALUE;

@@ -1,17 +1,26 @@
 package com.gmail.collinsmith70.toycompiler;
 
 import com.gmail.collinsmith70.toycompiler.lexer.Scanner;
+import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
 import com.gmail.collinsmith70.toycompiler.parser.Grammar;
 import com.gmail.collinsmith70.toycompiler.parser.LAProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser.LRParserTables;
+import com.gmail.collinsmith70.toycompiler.parser.Parser;
 import com.gmail.collinsmith70.toycompiler.parser.ProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser.State;
+import com.gmail.collinsmith70.toycompiler.parser.lalr.LALRParser;
 import com.gmail.collinsmith70.toycompiler.parser.lalr.LALRParserStatesGenerator;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +28,7 @@ public class Main {
 	private static final Path OUTPUT_PATH = Paths.get(".", "output");
 	private static final Scanner TOY_SCANNER = new ToyScanner();
 
-	//private static Parser parser;
+	private static Parser parser;
 
 	public static void main(String[] args) {
 		try {
@@ -39,17 +48,9 @@ public class Main {
 			));
 
 			tables.output(g);
+			parser = new LALRParser(tables);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-
-		/*try {
-			SLRParserGenerator parserGenerator = new SLRParserGenerator(Paths.get(".", "res", "toy.cfg.txt"));
-			parserGenerator.outputCFG();
-			parserGenerator.outputStates();
-			parser = new SLRParser(parserGenerator.getGeneratedTables());
-		} catch (IOException e) {
-			System.out.println("Unable to open toy.cfg.txt");
 		}
 
 		Arrays.stream(args)
@@ -66,12 +67,12 @@ public class Main {
 				} catch (IOException e) {
 					System.out.format("Unreadable source: \"%s\"", arg);
 				}
-			});*/
+			});
 	}
 
-	/*private static void compile(Path p) {
+	private static void compile(Path p) {
 		String fileName = p.getFileName().toString();
-		Path outFile = OUTPUT_PATH.resolve(fileName.substring(0, fileName.lastIndexOf('.')) + ".output.txt");
+		Path outFile = OUTPUT_PATH.resolve("parsetrees").resolve(fileName.substring(0, fileName.lastIndexOf('.')) + ".parsetree");
 		Charset charset = Charset.forName("US-ASCII");
 		try (BufferedWriter writer = Files.newBufferedWriter(outFile, charset, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			try (BufferedReader br = Files.newBufferedReader(p, charset)) {
@@ -86,5 +87,5 @@ public class Main {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}*/
+	}
 }
