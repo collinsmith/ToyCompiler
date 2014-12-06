@@ -20,9 +20,12 @@ class cs411 {
 	bool flag;
 	string s;
 	int [] a;
-	flag = true;
-	Funny = 0X89aB; funny = 123456.0123;
-	s = "hello world";
-	while (x = (Funny/10) <0) println (s, " have fun !");
-	a = newarray (20, int);
+
+	void method() {
+		flag = true;
+		Funny = 0X89aB; funny = 123456.0123;
+		s = "hello world";
+		while (x = (Funny/10) <0) println (s, " have fun !");
+		a = newarray (20, int);
+	}
 }
