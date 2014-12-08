@@ -51,8 +51,11 @@ public class LALRParser implements Parser {
 					continue Get_Next_Token;
 				}
 
-				//productionId = TABLES.reduce(state, TABLES.tokenId(stream.peek()));
+				productionId = TABLES.reduce(state, TABLES.tokenId(stream.peek()));
+				System.out.println("Token: " + t + "; lookahead: " + stream.peek());
+				System.out.println("reduce: " + productionId);
 				productionId = TABLES.reduce(state);
+				System.out.println("\treduce: " + productionId);
 				switch (productionId) {
 					case Integer.MIN_VALUE:
 						accepted = false;

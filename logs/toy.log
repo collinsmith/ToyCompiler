@@ -386,3 +386,37 @@
 2014-12-06 13:08:03 INFO    Parser states generated in 1106ms; 204 states
 2014-12-06 13:08:04 INFO    Compiling parser states into tables...
 2014-12-06 13:08:05 INFO    Tables compiled in 457ms
+2014-12-08 02:10:52 INFO    Loading grammar for toy
+2014-12-08 02:10:52 INFO    Generating symbols table...
+2014-12-08 02:10:53 INFO    Symbols table generated in 156ms; 102 symbols (52 terminal symbols, 50 nonterminal symbols)
+2014-12-08 02:10:53 INFO    Generating productions table...
+2014-12-08 02:10:53 WARNING _eof (0) is unreachable
+2014-12-08 02:10:53 WARNING _eol (1) is unreachable
+2014-12-08 02:10:53 WARNING _continue (5) is unreachable
+2014-12-08 02:10:53 WARNING _modulus (25) is unreachable
+2014-12-08 02:10:53 WARNING _characterliteral (45) is unreachable
+2014-12-08 02:10:53 WARNING _nullliteral (50) is unreachable
+2014-12-08 02:10:53 INFO    Productions table and list created in 484ms; 120 productions (6 unreachable symbols)
+2014-12-08 02:10:53 INFO    Computing FIRST(1) sets...
+2014-12-08 02:10:54 INFO    FIRST(1) sets computed in 62ms
+2014-12-08 02:10:54 INFO    Generating parser states...
+2014-12-08 02:10:55 INFO    Parser states generated in 1351ms; 204 states
+2014-12-08 02:10:56 INFO    Compiling parser states into tables...
+2014-12-08 02:10:56 INFO    Tables compiled in 109ms
+2014-12-08 02:12:03 INFO    Loading grammar for toy
+2014-12-08 02:12:03 INFO    Generating symbols table...
+2014-12-08 02:12:03 INFO    Symbols table generated in 125ms; 102 symbols (52 terminal symbols, 50 nonterminal symbols)
+2014-12-08 02:12:03 INFO    Generating productions table...
+2014-12-08 02:12:03 WARNING _eof (0) is unreachable
+2014-12-08 02:12:03 WARNING _eol (1) is unreachable
+2014-12-08 02:12:03 WARNING _continue (5) is unreachable
+2014-12-08 02:12:03 WARNING _modulus (25) is unreachable
+2014-12-08 02:12:03 WARNING _characterliteral (45) is unreachable
+2014-12-08 02:12:03 WARNING _nullliteral (50) is unreachable
+2014-12-08 02:12:04 INFO    Productions table and list created in 266ms; 120 productions (6 unreachable symbols)
+2014-12-08 02:12:04 INFO    Computing FIRST(1) sets...
+2014-12-08 02:12:04 INFO    FIRST(1) sets computed in 31ms
+2014-12-08 02:12:04 INFO    Generating parser states...
+2014-12-08 02:12:05 INFO    Parser states generated in 1266ms; 204 states
+2014-12-08 02:12:07 INFO    Compiling parser states into tables...
+2014-12-08 02:12:07 INFO    Tables compiled in 78ms
