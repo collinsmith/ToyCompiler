@@ -3,7 +3,7 @@ package com.gmail.collinsmith70.toycompiler.parser.lalr;
 import com.gmail.collinsmith70.toycompiler.lexer.Token;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenType;
-import com.gmail.collinsmith70.toycompiler.parser.LRParserTables;
+import com.gmail.collinsmith70.toycompiler.parser.LALRParserTables;
 import com.gmail.collinsmith70.toycompiler.parser.Parser;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
@@ -11,16 +11,16 @@ import java.io.Writer;
 import java.util.Objects;
 
 public class LALRParser implements Parser {
-	private final LRParserTables TABLES;
-	
-	public LALRParser(LRParserTables tables) {
+	private final LALRParserTables TABLES;
+
+	public LALRParser(LALRParserTables tables) {
 		this.TABLES = Objects.requireNonNull(tables);
 	}
 
 	@Override
 	public boolean parse(TokenStream stream, Writer writer) throws IOException {
 		Preconditions.checkNotNull(stream);
-		
+
 		int top = 0;
 		int state = 0;
 		int[] stack = new int[256];
@@ -52,10 +52,10 @@ public class LALRParser implements Parser {
 				}
 
 				productionId = TABLES.reduce(state, TABLES.tokenId(stream.peek()));
-				System.out.println("Token: " + t + "; lookahead: " + stream.peek());
-				System.out.println("reduce: " + productionId);
-				productionId = TABLES.reduce(state);
-				System.out.println("\treduce: " + productionId);
+				//System.out.println("State: " + state + "; Token: " + t + "; lookahead: " + stream.peek());
+				//System.out.println("reduce: " + productionId);
+				//productionId = TABLES.reduce(state);
+				//System.out.println("\treduce: " + productionId);
 				switch (productionId) {
 					case Integer.MIN_VALUE:
 						accepted = false;

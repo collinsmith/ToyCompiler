@@ -9,13 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 
-public class LRParserTables {
-	public static final int SYM = 0;
-	public static final int NXT = 1;
-	
-	public static final int RDCE = 0;
-	public static final int SWCH = 1;
-
+public class LALRParserTables {
 	private final ShiftTable SHIFT;
 	private final ReduceTable REDUCE;
 	private final GotoTable GOTO;
@@ -24,7 +18,7 @@ public class LRParserTables {
 	private final ShiftReduceConflictsTable SHIFT_REDUCE_CONFLICTS;
 	private final ReduceReduceConflictsTable REDUCE_REDUCE_CONFLICTS;
 
-	public LRParserTables(
+	public LALRParserTables(
 		ShiftTable shiftTable,
 		ReduceTable reduceTable,
 		GotoTable gotoTable,
@@ -32,7 +26,7 @@ public class LRParserTables {
 		ShiftReduceConflictsTable shiftReduceConflicts,
 		ReduceReduceConflictsTable reduceReduceConflicts
 	) {
-		if (shiftTable.SWITCH.length != reduceTable.REDUCE_SWITCH.length || reduceTable.REDUCE_SWITCH.length != gotoTable.SWITCH.length) {
+		if (shiftTable.SWITCH.length != reduceTable.SWITCH.length || reduceTable.SWITCH.length != gotoTable.SWITCH.length) {
 			throw new IllegalArgumentException("Table sizes do not match!");
 		}
 
@@ -52,29 +46,30 @@ public class LRParserTables {
 		}
 
 		int cache;
-		while ((cache = SHIFT.SHIFT[id][SYM]) != Integer.MIN_VALUE && cache != symbolId) {
+		while ((cache = SHIFT.SHIFT[id][ShiftTable.SYM]) != Integer.MIN_VALUE && cache != symbolId) {
 			id++;
 		}
 
-		return cache == symbolId ? SHIFT.SHIFT[id][NXT] : Integer.MIN_VALUE;
+		return cache == symbolId ? SHIFT.SHIFT[id][ShiftTable.NXT] : Integer.MIN_VALUE;
 	}
 
 	public int reduce(int stateId) {
-		return REDUCE.REDUCE_SWITCH[stateId][RDCE];
+		int id = REDUCE.SWITCH[stateId];
+		return id == Integer.MIN_VALUE ? Integer.MIN_VALUE : REDUCE.LOOKAHEAD_REDUCE[id][ReduceTable.RED];
 	}
-	
+
 	public int reduce(int stateId, int lookaheadSymbolId) {
-		int id = REDUCE.REDUCE_SWITCH[stateId][SWCH];
+		int id = REDUCE.SWITCH[stateId];
 		if (id == Integer.MIN_VALUE) {
 			return Integer.MIN_VALUE;
 		}
 
 		int cache;
-		while ((cache = REDUCE.LOOKAHEAD[id]) != Integer.MIN_VALUE && cache != lookaheadSymbolId) {
+		while ((cache = REDUCE.LOOKAHEAD_REDUCE[id][ReduceTable.LA1]) != Integer.MIN_VALUE && cache != lookaheadSymbolId) {
 			id++;
 		}
 
-		return cache == lookaheadSymbolId ? REDUCE.REDUCE_SWITCH[stateId][RDCE] : Integer.MIN_VALUE;
+		return cache == lookaheadSymbolId ? REDUCE.LOOKAHEAD_REDUCE[id][ReduceTable.RED] : Integer.MIN_VALUE;
 	}
 
 	public int transition(int stateId, int symbolId) {
@@ -84,11 +79,11 @@ public class LRParserTables {
 		}
 
 		int cache;
-		while ((cache = GOTO.GOTO[id][SYM]) != Integer.MIN_VALUE && cache != symbolId) {
+		while ((cache = GOTO.GOTO[id][GotoTable.SYM]) != Integer.MIN_VALUE && cache != symbolId) {
 			id++;
 		}
 
-		return cache == symbolId ? GOTO.GOTO[id][NXT] : Integer.MIN_VALUE;
+		return cache == symbolId ? GOTO.GOTO[id][GotoTable.NXT] : Integer.MIN_VALUE;
 	}
 
 	public int nonterminal(int productionId) {
@@ -111,50 +106,50 @@ public class LRParserTables {
 		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".compiled"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			writer.append(String.format("%-8s: switch = %d%n",	"Shift",	SHIFT.SWITCH.length));
 			writer.append(String.format("%-8s  shift = %d%n",	"",		SHIFT.SHIFT.length));
-			writer.append(String.format("%-8s: reduce = %d%n",	"Reduce",	REDUCE.REDUCE_SWITCH.length));
-			writer.append(String.format("%-8s: lookahead = %d%n",	"",		REDUCE.LOOKAHEAD.length));
+			writer.append(String.format("%-8s: switch = %d%n",	"Reduce",	REDUCE.SWITCH.length));
+			writer.append(String.format("%-8s: lookahead = %d%n",	"",		REDUCE.LOOKAHEAD_REDUCE.length));
 			writer.append(String.format("%-8s: switch = %d%n",	"Goto",	GOTO.SWITCH.length));
 			writer.append(String.format("%-8s  goto = %d%n",	"",		GOTO.GOTO.length));
 			writer.append(String.format("%n%n"));
 
 			writer.append(String.format("%d tables%n", SHIFT.SWITCH.length));
-			writer.append(String.format("%d shift-reduce conflicts%n", SHIFT_REDUCE_CONFLICTS.SHIFT_REDUCE_CONFLICT.length));
+			writer.append(String.format("%d shift-reduce conflicts [STATE]%n", SHIFT_REDUCE_CONFLICTS.SHIFT_REDUCE_CONFLICT.length));
 			if (SHIFT_REDUCE_CONFLICTS.SHIFT_REDUCE_CONFLICT.length > 0) {
 				writer.append(String.format("\t%s%n", Arrays.toString(SHIFT_REDUCE_CONFLICTS.SHIFT_REDUCE_CONFLICT)));
 			}
-			writer.append(String.format("%d reduce-reduce conflicts%n", REDUCE_REDUCE_CONFLICTS.REDUCE_REDUCE_CONFLICT.length));
+			writer.append(String.format("%d reduce-reduce conflicts [STATE, LOOKAHEAD]%n", REDUCE_REDUCE_CONFLICTS.REDUCE_REDUCE_CONFLICT.length));
 			if (REDUCE_REDUCE_CONFLICTS.REDUCE_REDUCE_CONFLICT.length > 0) {
-				writer.append(String.format("\t%s%n", Arrays.toString(REDUCE_REDUCE_CONFLICTS.REDUCE_REDUCE_CONFLICT)));
+				writer.append(String.format("\t%s%n", Arrays.deepToString(REDUCE_REDUCE_CONFLICTS.REDUCE_REDUCE_CONFLICT)));
 			}
 			writer.append(String.format("%n%n"));
 
 			writer.append(String.format("%-35s |%-35s |%-35s%n", "SHIFT", "REDUCE", "GOTO"));
-			writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n",
-				"", "switch", "", "symbol", "next",
-				"", "reduce", "switch", "", "LA",
-				"", "switch", "", "symbol", "next"
+			writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n",
+				"", "switch", "", "symbol", "goto",
+				"", "switch", "", "symbol", "LA",
+				"", "switch", "", "symbol", "goto"
 			));
 
-			int maxLen = Integer.max(SHIFT.SHIFT.length, Integer.max(REDUCE.LOOKAHEAD.length, GOTO.GOTO.length));
+			int maxLen = Integer.max(SHIFT.SHIFT.length, Integer.max(REDUCE.LOOKAHEAD_REDUCE.length, GOTO.GOTO.length));
 			for (int i = 0; i < maxLen; i++) {
 				writer.append(String.format("%-6s %-6s |%-6s %-6s %-6s |%-6s %-6s %-6s |%-6s %-6s |%-6s %-6s |%-6s %-6s %-6s%n",
 					i < SHIFT.SWITCH.length ? String.format("S%d", i) : "",
 					i < SHIFT.SWITCH.length ? convertValue(SHIFT.SWITCH[i]) : "",
 					i < SHIFT.SHIFT.length ? i : "",
-					i < SHIFT.SHIFT.length ? convertValue(SHIFT.SHIFT[i][SYM]) : "",
-					i < SHIFT.SHIFT.length ? convertValue(SHIFT.SHIFT[i][NXT]) : "",
+					i < SHIFT.SHIFT.length ? convertValue(SHIFT.SHIFT[i][ShiftTable.SYM]) : "",
+					i < SHIFT.SHIFT.length ? convertValue(SHIFT.SHIFT[i][ShiftTable.NXT]) : "",
 
-					i < REDUCE.REDUCE_SWITCH.length ? String.format("S%d", i) : "",
-					i < REDUCE.REDUCE_SWITCH.length ? convertValue(REDUCE.REDUCE_SWITCH[i][RDCE]) : "",
-					i < REDUCE.REDUCE_SWITCH.length ? convertValue(REDUCE.REDUCE_SWITCH[i][SWCH]) : "",
-					i < REDUCE.LOOKAHEAD.length ? i : "",
-					i < REDUCE.LOOKAHEAD.length ? convertValue(REDUCE.LOOKAHEAD[i]) : "",
+					i < REDUCE.SWITCH.length ? String.format("S%d", i) : "",
+					i < REDUCE.SWITCH.length ? convertValue(REDUCE.SWITCH[i]) : "",
+					i < REDUCE.LOOKAHEAD_REDUCE.length ? i : "",
+					i < REDUCE.LOOKAHEAD_REDUCE.length ? convertValue(REDUCE.LOOKAHEAD_REDUCE[i][ReduceTable.LA1]) : "",
+					i < REDUCE.LOOKAHEAD_REDUCE.length ? convertValue(REDUCE.LOOKAHEAD_REDUCE[i][ReduceTable.RED]) : "",
 
 					i < GOTO.SWITCH.length ? String.format("S%d", i) : "",
 					i < GOTO.SWITCH.length ? convertValue(GOTO.SWITCH[i]) : "",
 					i < GOTO.GOTO.length ? i : "",
-					i < GOTO.GOTO.length ? convertValue(GOTO.GOTO[i][SYM]) : "",
-					i < GOTO.GOTO.length ? convertValue(GOTO.GOTO[i][NXT]) : ""
+					i < GOTO.GOTO.length ? convertValue(GOTO.GOTO[i][GotoTable.SYM]) : "",
+					i < GOTO.GOTO.length ? convertValue(GOTO.GOTO[i][GotoTable.NXT]) : ""
 				));
 			}
 		} catch (IOException e) {
@@ -171,6 +166,9 @@ public class LRParserTables {
 	}
 
 	public static class ShiftTable {
+		public static final int SYM = 0;
+		public static final int NXT = 1;
+
 		private final int[] SWITCH;
 		private final int[][] SHIFT;
 
@@ -181,16 +179,22 @@ public class LRParserTables {
 	}
 
 	public static class ReduceTable {
-		private final int[][] REDUCE_SWITCH;
-		private final int[] LOOKAHEAD;
+		public static final int LA1 = 0;
+		public static final int RED = 1;
 
-		public ReduceTable(int[][] reduceSwitchTable, int[] lookaheadTable) {
-			this.REDUCE_SWITCH = reduceSwitchTable;
-			this.LOOKAHEAD = lookaheadTable;
+		private final int[] SWITCH;
+		private final int[][] LOOKAHEAD_REDUCE;
+
+		public ReduceTable(int[] switchTable, int[][] lookaheadReduceTable) {
+			this.SWITCH = switchTable;
+			this.LOOKAHEAD_REDUCE = lookaheadReduceTable;
 		}
 	}
 
 	public static class GotoTable {
+		public static final int SYM = 0;
+		public static final int NXT = 1;
+
 		private final int[] SWITCH;
 		private final int[][] GOTO;
 
@@ -219,9 +223,12 @@ public class LRParserTables {
 	}
 
 	public static class ReduceReduceConflictsTable {
-		private final int[] REDUCE_REDUCE_CONFLICT;
+		public static final int STA = 0;
+		public static final int LA1 = 1;
 
-		public ReduceReduceConflictsTable(int[] reduceReduceConflict) {
+		private final int[][] REDUCE_REDUCE_CONFLICT;
+
+		public ReduceReduceConflictsTable(int[][] reduceReduceConflict) {
 			this.REDUCE_REDUCE_CONFLICT = reduceReduceConflict;
 		}
 	}

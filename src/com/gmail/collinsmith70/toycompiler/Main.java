@@ -5,7 +5,7 @@ import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
 import com.gmail.collinsmith70.toycompiler.parser.Grammar;
 import com.gmail.collinsmith70.toycompiler.parser.LAProductionRuleInstance;
-import com.gmail.collinsmith70.toycompiler.parser.LRParserTables;
+import com.gmail.collinsmith70.toycompiler.parser.LALRParserTables;
 import com.gmail.collinsmith70.toycompiler.parser.Parser;
 import com.gmail.collinsmith70.toycompiler.parser.ProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser.State;
@@ -42,7 +42,7 @@ public class Main {
 
 			g.getLogger().info("Compiling parser states into tables...");
 			long dt = System.currentTimeMillis();
-			LRParserTables tables = LALRParserStatesGenerator.compile(g, parserStates);
+			LALRParserTables tables = LALRParserStatesGenerator.compile(g, parserStates);
 			g.getLogger().info(String.format("Tables compiled in %dms",
 				System.currentTimeMillis()-dt
 			));

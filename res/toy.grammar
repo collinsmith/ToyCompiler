@@ -15,32 +15,21 @@ FieldDecl:
 TypeAndIdentifier ;
 
 TypeAndIdentifier:
-_id _id
-SimpleType _id
-_id ArrayType _id
+Type _id
+
+Type:
+Type [ ]
+SimpleType
+_id
 
 SimpleType:
-SimpleType [ ]
-BasicType
-
-ArrayType:
-ArrayType [ ]
-[ ]
-
-BasicType:
 int
 bool
 double
 string
 
 Name:
-SimpleName
-QualifiedName
-
-SimpleName:
 _id
-
-QualifiedName:
 Name . _id
 
 MethodDecl:
@@ -178,9 +167,7 @@ Literal
 MethodCall
 ParExpression
 readln ( )
-newarray ( _integerliteral , SimpleType )
-newarray ( _integerliteral , _id )
-newarray ( _integerliteral , _id ArrayType )
+newarray ( _integerliteral , Type )
 
 PrefixOperator:
 !
@@ -207,12 +194,10 @@ _integerliteral
 _booleanliteral
 
 MethodCall:
-MethodCall2
-_id . MethodCall2
-
-MethodCall2:
 _id ( )
 _id ( ExpressionList )
+MethodCall . _id ( )
+MethodCall . _id ( ExpressionList )
 
 IndexResolver:
 IndexResolver [ Expression ]

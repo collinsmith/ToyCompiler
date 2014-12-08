@@ -420,3 +420,214 @@
 2014-12-08 02:12:05 INFO    Parser states generated in 1266ms; 204 states
 2014-12-08 02:12:07 INFO    Compiling parser states into tables...
 2014-12-08 02:12:07 INFO    Tables compiled in 78ms
+2014-12-08 13:22:43 INFO    Loading grammar for toy
+2014-12-08 13:22:43 INFO    Generating symbols table...
+2014-12-08 13:22:43 INFO    Symbols table generated in 78ms; 102 symbols (52 terminal symbols, 50 nonterminal symbols)
+2014-12-08 13:22:43 INFO    Generating productions table...
+2014-12-08 13:22:43 WARNING _eof (0) is unreachable
+2014-12-08 13:22:43 WARNING _eol (1) is unreachable
+2014-12-08 13:22:43 WARNING _continue (5) is unreachable
+2014-12-08 13:22:43 WARNING _modulus (25) is unreachable
+2014-12-08 13:22:43 WARNING _characterliteral (45) is unreachable
+2014-12-08 13:22:43 WARNING _nullliteral (50) is unreachable
+2014-12-08 13:22:43 INFO    Productions table and list created in 109ms; 120 productions (6 unreachable symbols)
+2014-12-08 13:22:43 INFO    Computing FIRST(1) sets...
+2014-12-08 13:22:43 INFO    FIRST(1) sets computed in 0ms
+2014-12-08 13:22:43 INFO    Generating parser states...
+2014-12-08 13:22:43 INFO    Parser states generated in 265ms; 204 states
+2014-12-08 13:22:44 INFO    Compiling parser states into tables...
+2014-12-08 13:22:44 INFO    Tables compiled in 31ms
+2014-12-08 13:23:12 INFO    Loading grammar for toy
+2014-12-08 13:23:12 INFO    Generating symbols table...
+2014-12-08 13:23:12 INFO    Symbols table generated in 47ms; 102 symbols (52 terminal symbols, 50 nonterminal symbols)
+2014-12-08 13:23:12 INFO    Generating productions table...
+2014-12-08 13:23:12 WARNING _eof (0) is unreachable
+2014-12-08 13:23:12 WARNING _eol (1) is unreachable
+2014-12-08 13:23:12 WARNING _continue (5) is unreachable
+2014-12-08 13:23:12 WARNING _modulus (25) is unreachable
+2014-12-08 13:23:12 WARNING _characterliteral (45) is unreachable
+2014-12-08 13:23:12 WARNING _nullliteral (50) is unreachable
+2014-12-08 13:23:12 INFO    Productions table and list created in 78ms; 120 productions (6 unreachable symbols)
+2014-12-08 13:23:12 INFO    Computing FIRST(1) sets...
+2014-12-08 13:23:12 INFO    FIRST(1) sets computed in 15ms
+2014-12-08 13:23:12 INFO    Generating parser states...
+2014-12-08 13:23:13 INFO    Parser states generated in 359ms; 204 states
+2014-12-08 13:23:13 INFO    Compiling parser states into tables...
+2014-12-08 13:23:13 INFO    Tables compiled in 47ms
+2014-12-08 13:25:44 INFO    Loading grammar for toy
+2014-12-08 13:25:44 INFO    Generating symbols table...
+2014-12-08 13:25:44 INFO    Symbols table generated in 62ms; 102 symbols (52 terminal symbols, 50 nonterminal symbols)
+2014-12-08 13:25:44 INFO    Generating productions table...
+2014-12-08 13:25:44 WARNING _eof (0) is unreachable
+2014-12-08 13:25:44 WARNING _eol (1) is unreachable
+2014-12-08 13:25:44 WARNING _continue (5) is unreachable
+2014-12-08 13:25:44 WARNING _modulus (25) is unreachable
+2014-12-08 13:25:44 WARNING _characterliteral (45) is unreachable
+2014-12-08 13:25:44 WARNING _nullliteral (50) is unreachable
+2014-12-08 13:25:44 INFO    Productions table and list created in 94ms; 120 productions (6 unreachable symbols)
+2014-12-08 13:25:44 INFO    Computing FIRST(1) sets...
+2014-12-08 13:25:44 INFO    FIRST(1) sets computed in 31ms
+2014-12-08 13:25:44 INFO    Generating parser states...
+2014-12-08 13:25:45 INFO    Parser states generated in 249ms; 204 states
+2014-12-08 13:25:45 INFO    Compiling parser states into tables...
+2014-12-08 13:25:45 INFO    Tables compiled in 16ms
+2014-12-08 13:27:51 INFO    Loading grammar for toy
+2014-12-08 13:27:51 INFO    Generating symbols table...
+2014-12-08 13:27:51 INFO    Symbols table generated in 47ms; 102 symbols (52 terminal symbols, 50 nonterminal symbols)
+2014-12-08 13:27:51 INFO    Generating productions table...
+2014-12-08 13:27:51 WARNING _eof (0) is unreachable
+2014-12-08 13:27:51 WARNING _eol (1) is unreachable
+2014-12-08 13:27:51 WARNING _continue (5) is unreachable
+2014-12-08 13:27:51 WARNING _modulus (25) is unreachable
+2014-12-08 13:27:51 WARNING _characterliteral (45) is unreachable
+2014-12-08 13:27:51 WARNING _nullliteral (50) is unreachable
+2014-12-08 13:27:51 INFO    Productions table and list created in 78ms; 120 productions (6 unreachable symbols)
+2014-12-08 13:27:51 INFO    Computing FIRST(1) sets...
+2014-12-08 13:27:51 INFO    FIRST(1) sets computed in 16ms
+2014-12-08 13:27:51 INFO    Generating parser states...
+2014-12-08 13:27:51 INFO    Parser states generated in 250ms; 204 states
+2014-12-08 13:27:51 INFO    Compiling parser states into tables...
+2014-12-08 13:27:51 INFO    Tables compiled in 32ms
+2014-12-08 13:30:23 INFO    Loading grammar for toy
+2014-12-08 13:30:23 INFO    Generating symbols table...
+2014-12-08 13:30:23 INFO    Symbols table generated in 46ms; 102 symbols (52 terminal symbols, 50 nonterminal symbols)
+2014-12-08 13:30:23 INFO    Generating productions table...
+2014-12-08 13:30:23 WARNING _eof (0) is unreachable
+2014-12-08 13:30:23 WARNING _eol (1) is unreachable
+2014-12-08 13:30:23 WARNING _continue (5) is unreachable
+2014-12-08 13:30:23 WARNING _modulus (25) is unreachable
+2014-12-08 13:30:23 WARNING _characterliteral (45) is unreachable
+2014-12-08 13:30:23 WARNING _nullliteral (50) is unreachable
+2014-12-08 13:30:23 INFO    Productions table and list created in 78ms; 120 productions (6 unreachable symbols)
+2014-12-08 13:30:23 INFO    Computing FIRST(1) sets...
+2014-12-08 13:30:23 INFO    FIRST(1) sets computed in 16ms
+2014-12-08 13:30:23 INFO    Generating parser states...
+2014-12-08 13:30:23 INFO    Parser states generated in 187ms; 204 states
+2014-12-08 13:30:24 INFO    Compiling parser states into tables...
+2014-12-08 13:30:24 INFO    Tables compiled in 16ms
+2014-12-08 13:38:29 INFO    Loading grammar for toy
+2014-12-08 13:38:29 INFO    Generating symbols table...
+2014-12-08 13:38:29 INFO    Symbols table generated in 47ms; 101 symbols (52 terminal symbols, 49 nonterminal symbols)
+2014-12-08 13:38:29 INFO    Generating productions table...
+2014-12-08 13:38:29 WARNING _eof (0) is unreachable
+2014-12-08 13:38:29 WARNING _eol (1) is unreachable
+2014-12-08 13:38:29 WARNING _continue (5) is unreachable
+2014-12-08 13:38:29 WARNING _modulus (25) is unreachable
+2014-12-08 13:38:29 WARNING _characterliteral (45) is unreachable
+2014-12-08 13:38:29 WARNING _nullliteral (50) is unreachable
+2014-12-08 13:38:29 INFO    Productions table and list created in 62ms; 115 productions (6 unreachable symbols)
+2014-12-08 13:38:29 INFO    Computing FIRST(1) sets...
+2014-12-08 13:38:29 INFO    FIRST(1) sets computed in 0ms
+2014-12-08 13:38:29 INFO    Generating parser states...
+2014-12-08 13:38:30 SEVERE  State 78 has 2 reduce productions:
+2014-12-08 13:38:30 INFO    Parser states generated in 187ms; 193 states
+2014-12-08 13:38:30 INFO    Compiling parser states into tables...
+2014-12-08 13:38:30 INFO    Tables compiled in 31ms
+2014-12-08 13:39:06 INFO    Loading grammar for toy
+2014-12-08 13:39:07 INFO    Generating symbols table...
+2014-12-08 13:39:07 INFO    Symbols table generated in 63ms; 101 symbols (52 terminal symbols, 49 nonterminal symbols)
+2014-12-08 13:39:07 INFO    Generating productions table...
+2014-12-08 13:39:07 WARNING _eof (0) is unreachable
+2014-12-08 13:39:07 WARNING _eol (1) is unreachable
+2014-12-08 13:39:07 WARNING _continue (5) is unreachable
+2014-12-08 13:39:07 WARNING _modulus (25) is unreachable
+2014-12-08 13:39:07 WARNING _characterliteral (45) is unreachable
+2014-12-08 13:39:07 WARNING _nullliteral (50) is unreachable
+2014-12-08 13:39:07 INFO    Productions table and list created in 94ms; 115 productions (6 unreachable symbols)
+2014-12-08 13:39:07 INFO    Computing FIRST(1) sets...
+2014-12-08 13:39:07 INFO    FIRST(1) sets computed in 15ms
+2014-12-08 13:39:07 INFO    Generating parser states...
+2014-12-08 13:39:07 SEVERE  State 78 has 2 reduce productions:
+2014-12-08 13:39:07 INFO    Parser states generated in 297ms; 193 states
+2014-12-08 13:39:07 INFO    Compiling parser states into tables...
+2014-12-08 13:39:07 INFO    Tables compiled in 16ms
+2014-12-08 13:41:25 INFO    Loading grammar for toy
+2014-12-08 13:41:25 INFO    Generating symbols table...
+2014-12-08 13:41:25 INFO    Symbols table generated in 31ms; 99 symbols (52 terminal symbols, 47 nonterminal symbols)
+2014-12-08 13:41:25 INFO    Generating productions table...
+2014-12-08 13:41:25 WARNING _eof (0) is unreachable
+2014-12-08 13:41:25 WARNING _eol (1) is unreachable
+2014-12-08 13:41:25 WARNING _continue (5) is unreachable
+2014-12-08 13:41:25 WARNING _modulus (25) is unreachable
+2014-12-08 13:41:25 WARNING _characterliteral (45) is unreachable
+2014-12-08 13:41:25 WARNING _nullliteral (50) is unreachable
+2014-12-08 13:41:25 INFO    Productions table and list created in 78ms; 113 productions (6 unreachable symbols)
+2014-12-08 13:41:25 INFO    Computing FIRST(1) sets...
+2014-12-08 13:41:25 INFO    FIRST(1) sets computed in 0ms
+2014-12-08 13:41:25 INFO    Generating parser states...
+2014-12-08 13:41:25 SEVERE  State 59 has 2 reduce productions:
+2014-12-08 13:41:25 INFO    Parser states generated in 187ms; 191 states
+2014-12-08 13:41:25 INFO    Compiling parser states into tables...
+2014-12-08 13:41:25 INFO    Tables compiled in 16ms
+2014-12-08 13:44:49 INFO    Loading grammar for toy
+2014-12-08 13:44:49 INFO    Generating symbols table...
+2014-12-08 13:44:49 INFO    Symbols table generated in 46ms; 98 symbols (52 terminal symbols, 46 nonterminal symbols)
+2014-12-08 13:44:49 INFO    Generating productions table...
+2014-12-08 13:44:49 WARNING _eof (0) is unreachable
+2014-12-08 13:44:49 WARNING _eol (1) is unreachable
+2014-12-08 13:44:49 WARNING _continue (5) is unreachable
+2014-12-08 13:44:49 WARNING _modulus (25) is unreachable
+2014-12-08 13:44:49 WARNING _characterliteral (45) is unreachable
+2014-12-08 13:44:49 WARNING _nullliteral (50) is unreachable
+2014-12-08 13:44:49 INFO    Productions table and list created in 78ms; 113 productions (6 unreachable symbols)
+2014-12-08 13:44:49 INFO    Computing FIRST(1) sets...
+2014-12-08 13:44:49 INFO    FIRST(1) sets computed in 0ms
+2014-12-08 13:44:49 INFO    Generating parser states...
+2014-12-08 13:44:49 SEVERE  State 65 has 2 reduce productions:
+2014-12-08 13:44:49 INFO    Parser states generated in 203ms; 193 states
+2014-12-08 13:44:50 INFO    Compiling parser states into tables...
+2014-12-08 13:44:50 INFO    Tables compiled in 15ms
+2014-12-08 14:00:22 INFO    Loading grammar for toy
+2014-12-08 14:00:22 INFO    Generating symbols table...
+2014-12-08 14:00:22 INFO    Symbols table generated in 32ms; 98 symbols (52 terminal symbols, 46 nonterminal symbols)
+2014-12-08 14:00:22 INFO    Generating productions table...
+2014-12-08 14:00:22 WARNING _eof (0) is unreachable
+2014-12-08 14:00:22 WARNING _eol (1) is unreachable
+2014-12-08 14:00:22 WARNING _continue (5) is unreachable
+2014-12-08 14:00:22 WARNING _modulus (25) is unreachable
+2014-12-08 14:00:22 WARNING _characterliteral (45) is unreachable
+2014-12-08 14:00:22 WARNING _nullliteral (50) is unreachable
+2014-12-08 14:00:22 INFO    Productions table and list created in 78ms; 113 productions (6 unreachable symbols)
+2014-12-08 14:00:22 INFO    Computing FIRST(1) sets...
+2014-12-08 14:00:22 INFO    FIRST(1) sets computed in 0ms
+2014-12-08 14:00:22 INFO    Generating parser states...
+2014-12-08 14:00:22 SEVERE  State 65 has 2 reduce productions:
+2014-12-08 14:00:22 INFO    Parser states generated in 204ms; 193 states
+2014-12-08 14:00:22 INFO    Compiling parser states into tables...
+2014-12-08 14:00:22 INFO    Tables compiled in 31ms
+2014-12-08 14:01:08 INFO    Loading grammar for toy
+2014-12-08 14:01:08 INFO    Generating symbols table...
+2014-12-08 14:01:08 INFO    Symbols table generated in 46ms; 98 symbols (52 terminal symbols, 46 nonterminal symbols)
+2014-12-08 14:01:08 INFO    Generating productions table...
+2014-12-08 14:01:08 WARNING _eof (0) is unreachable
+2014-12-08 14:01:08 WARNING _eol (1) is unreachable
+2014-12-08 14:01:08 WARNING _continue (5) is unreachable
+2014-12-08 14:01:08 WARNING _modulus (25) is unreachable
+2014-12-08 14:01:08 WARNING _characterliteral (45) is unreachable
+2014-12-08 14:01:08 WARNING _nullliteral (50) is unreachable
+2014-12-08 14:01:08 INFO    Productions table and list created in 78ms; 113 productions (6 unreachable symbols)
+2014-12-08 14:01:08 INFO    Computing FIRST(1) sets...
+2014-12-08 14:01:08 INFO    FIRST(1) sets computed in 0ms
+2014-12-08 14:01:08 INFO    Generating parser states...
+2014-12-08 14:01:08 SEVERE  State 65 has 2 reduce productions:
+2014-12-08 14:01:08 INFO    Parser states generated in 187ms; 193 states
+2014-12-08 14:01:08 INFO    Compiling parser states into tables...
+2014-12-08 14:01:08 INFO    Tables compiled in 15ms
+2014-12-08 14:03:23 INFO    Loading grammar for toy
+2014-12-08 14:03:23 INFO    Generating symbols table...
+2014-12-08 14:03:23 INFO    Symbols table generated in 31ms; 98 symbols (52 terminal symbols, 46 nonterminal symbols)
+2014-12-08 14:03:23 INFO    Generating productions table...
+2014-12-08 14:03:23 WARNING _eof (0) is unreachable
+2014-12-08 14:03:23 WARNING _eol (1) is unreachable
+2014-12-08 14:03:23 WARNING _continue (5) is unreachable
+2014-12-08 14:03:23 WARNING _modulus (25) is unreachable
+2014-12-08 14:03:23 WARNING _characterliteral (45) is unreachable
+2014-12-08 14:03:23 WARNING _nullliteral (50) is unreachable
+2014-12-08 14:03:23 INFO    Productions table and list created in 63ms; 113 productions (6 unreachable symbols)
+2014-12-08 14:03:23 INFO    Computing FIRST(1) sets...
+2014-12-08 14:03:23 INFO    FIRST(1) sets computed in 16ms
+2014-12-08 14:03:23 INFO    Generating parser states...
+2014-12-08 14:03:24 SEVERE  State 65 has 2 reduce productions:
+2014-12-08 14:03:24 INFO    Parser states generated in 187ms; 193 states
+2014-12-08 14:03:24 INFO    Compiling parser states into tables...
+2014-12-08 14:03:24 INFO    Tables compiled in 15ms
