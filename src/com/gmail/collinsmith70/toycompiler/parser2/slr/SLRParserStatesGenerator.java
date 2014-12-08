@@ -138,7 +138,7 @@ public class SLRParserStatesGenerator extends AbstractParserStatesGenerator {
 		Grammar g,
 		Map<Set<ProductionRuleInstance>, State<ProductionRuleInstance>> states
 	) {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".slr.tables"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".slr.tables"), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			for (State<ProductionRuleInstance> state : states.values()) {
 				writer.write(String.format("State %d: V%s", state.getId(), state.getViablePrefixes()));
 				if (state.getParent() != null) {

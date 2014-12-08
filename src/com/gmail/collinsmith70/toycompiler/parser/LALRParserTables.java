@@ -103,7 +103,7 @@ public class LALRParserTables {
 	}
 
 	public void output(Grammar g) {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".compiled"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".compiled"), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			writer.append(String.format("%-8s: switch = %d%n",	"Shift",	SHIFT.SWITCH.length));
 			writer.append(String.format("%-8s  shift = %d%n",	"",		SHIFT.SHIFT.length));
 			writer.append(String.format("%-8s: switch = %d%n",	"Reduce",	REDUCE.SWITCH.length));

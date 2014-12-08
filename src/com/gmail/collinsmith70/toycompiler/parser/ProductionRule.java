@@ -7,7 +7,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public class ProductionRule implements Iterable<Symbol>, Comparable<ProductionRule> {
-	public static final String RHS_DELIMITER = "->";
+	//public static final String RHS_DELIMITER = "->";
+	public static final String RHS_DELIMITER = "\u2192";
 
 	private final int ID;
 	private final NonterminalSymbol NONTERMINAL;

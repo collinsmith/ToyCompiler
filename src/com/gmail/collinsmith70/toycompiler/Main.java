@@ -4,8 +4,8 @@ import com.gmail.collinsmith70.toycompiler.lexer.Scanner;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
 import com.gmail.collinsmith70.toycompiler.parser.Grammar;
-import com.gmail.collinsmith70.toycompiler.parser.LAProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser.LALRParserTables;
+import com.gmail.collinsmith70.toycompiler.parser.LAProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser.Parser;
 import com.gmail.collinsmith70.toycompiler.parser.ProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser.State;
@@ -32,9 +32,9 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
-			//Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("US-ASCII"));
-			//Grammar g = Grammar.generate(Paths.get(".", "res", "test2.grammar"), Charset.forName("US-ASCII"));
-			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.grammar"), Charset.forName("US-ASCII"));
+			//Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("UTF-8"));
+			//Grammar g = Grammar.generate(Paths.get(".", "res", "test2.grammar"), Charset.forName("UTF-8"));
+			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.grammar"), Charset.forName("UTF-8"));
 			g.output();
 			LALRParserStatesGenerator lalrParserStatesGenerator = new LALRParserStatesGenerator();
 			Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> parserStates = lalrParserStatesGenerator.generateParserTables(g);
@@ -73,7 +73,7 @@ public class Main {
 	private static void compile(Path p) {
 		String fileName = p.getFileName().toString();
 		Path outFile = OUTPUT_PATH.resolve("parsetrees").resolve(fileName.substring(0, fileName.lastIndexOf('.')) + ".parsetree");
-		Charset charset = Charset.forName("US-ASCII");
+		Charset charset = Charset.forName("UTF-8");
 		try (BufferedWriter writer = Files.newBufferedWriter(outFile, charset, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			try (BufferedReader br = Files.newBufferedReader(p, charset)) {
 				System.out.format("Analyzing %s...", fileName);

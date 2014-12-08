@@ -71,7 +71,7 @@ public final class Grammar {
 			LOGGER.addHandler(new ConsoleHandler());
 			LOGGER.severe("Log file could not be generated. Switching to console.");
 		}
-		
+
 		LOGGER.info("Loading grammar for " + GRAMMAR_NAME);
 
 		this.numTerminalSymbols = Integer.MIN_VALUE;
@@ -300,7 +300,7 @@ public final class Grammar {
 	}
 
 	private void outputSymbols() {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".symbols"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".symbols"), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			BiMap.Entry<String, Symbol>[] entries = SYMBOLS.entrySet().toArray(new BiMap.Entry[0]);
 			Arrays.sort(entries, (Map.Entry<String, Symbol> o1, Map.Entry<String, Symbol> o2) -> o1.getValue().compareTo(o2.getValue()));
 
@@ -336,7 +336,7 @@ public final class Grammar {
 	}
 
 	private void outputProductionRules() {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".productions"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".productions"), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			BiMap.Entry<NonterminalSymbol, Set<ProductionRule>>[] entries = PRODUCTION_RULES_MAP.entrySet().toArray(new BiMap.Entry[0]);
 			Arrays.sort(entries, (Map.Entry<NonterminalSymbol, Set<ProductionRule>> o1, Map.Entry<NonterminalSymbol, Set<ProductionRule>> o2) -> o1.getKey().compareTo(o2.getKey()));
 

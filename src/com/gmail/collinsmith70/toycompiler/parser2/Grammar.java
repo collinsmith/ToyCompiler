@@ -339,7 +339,7 @@ public class Grammar {
 	}
 
 	private void outputSymbols() {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".symbols"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".symbols"), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			BiMap.Entry<String, Symbol>[] entries = SYMBOLS.entrySet().toArray(new BiMap.Entry[0]);
 			Arrays.sort(entries, (Map.Entry<String, Symbol> o1, Map.Entry<String, Symbol> o2) -> o1.getValue().compareTo(o2.getValue()));
 
@@ -375,7 +375,7 @@ public class Grammar {
 	}
 
 	private void outputProductionRules() {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".productions"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", GRAMMAR_NAME + ".productions"), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			BiMap.Entry<Symbol, Set<ProductionRule>>[] entries = PRODUCTION_RULES_MAP.entrySet().toArray(new BiMap.Entry[0]);
 			Arrays.sort(entries, (Map.Entry<Symbol, Set<ProductionRule>> o1, Map.Entry<Symbol, Set<ProductionRule>> o2) -> o1.getKey().compareTo(o2.getKey()));
 

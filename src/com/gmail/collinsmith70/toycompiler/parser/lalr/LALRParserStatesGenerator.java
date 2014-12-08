@@ -335,7 +335,7 @@ public class LALRParserStatesGenerator {
 		Grammar g,
 		Map<Set<ProductionRuleInstance>, State<LAProductionRuleInstance>> states
 	) {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".lalr.tables"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".lalr.tables"), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			for (State<LAProductionRuleInstance> state : states.values()) {
 				writer.write(String.format("State %d: V%s", state.getId(), ImmutableList.copyOf(state.getViablePrefix().stream().map(symbol -> g.getSymbolsTable().get(symbol)).iterator())));
 				if (state.getParent() != null) {
@@ -400,7 +400,7 @@ public class LALRParserStatesGenerator {
 	}
 
 	private void outputFirstSets(Grammar g, Map<NonterminalSymbol, Set<TerminalSymbol>> FIRST) {
-		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".firstsets"), Charset.forName("US-ASCII"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
+		try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(".", "output", g.getName() + ".firstsets"), Charset.forName("UTF-8"), StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
 			for (NonterminalSymbol s : FIRST.keySet()) {
 				StringJoiner sj = new StringJoiner(", ", "{ ", " }");
 				for (Symbol symbol : FIRST.get(s)) {
