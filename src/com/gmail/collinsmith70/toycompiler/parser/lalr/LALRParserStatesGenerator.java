@@ -370,13 +370,13 @@ public class LALRParserStatesGenerator {
 		LAProductionRuleInstance p,
 		boolean isKernelItem
 	) throws IOException {
-		StringJoiner sj = new StringJoiner(",", "FOLLOW={", "}");
+		StringJoiner sj = new StringJoiner(",", "FOLLOW={ ", " }");
 		for (Symbol followSymbol : p.getFollowSet()) {
 			sj.add(g.getSymbolsTable().get(followSymbol));
 		}
 
 		if (!p.hasNext()) {
-			writer.write(String.format("%-4s %-48s %-32s reduce(%d)%n",
+			writer.write(String.format("%-4s %-96s %s REDUCE(%d)%n",
 				isKernelItem ? "I:" : "",
 				p.toString(g.getSymbolsTable()),
 				sj.toString(),
@@ -387,15 +387,15 @@ public class LALRParserStatesGenerator {
 		}
 
 		Symbol lookahead = p.peekNextSymbol();
-		writer.write(String.format("%-4s %-48s %-32s %-32s %s%n",
+		writer.write(String.format("%-4s %-96s %s %s %s%n",
 			isKernelItem ? "I:" : "",
 			p.toString(g.getSymbolsTable()),
 			sj.toString(),
-			String.format("goto(S%d, %s)",
+			String.format("GOTO(S%d, %s)",
 				s.getTransition(lookahead).getId(),
 				g.getSymbolsTable().get(lookahead)
 			),
-			(lookahead instanceof NonterminalSymbol) ? "" : "shift"
+			(lookahead instanceof NonterminalSymbol) ? "" : "SHIFT"
 		));
 	}
 
