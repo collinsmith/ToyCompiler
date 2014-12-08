@@ -26,7 +26,7 @@ public class ProductionRuleInstance implements Iterable<Symbol>, Instanceable<Pr
 	public ProductionRule getProductionRule() {
 		return PRODUCTION_RULE;
 	}
-	
+
 	@Override
 	public ProductionRuleInstance getParent() {
 		return PARENT;
@@ -98,7 +98,7 @@ public class ProductionRuleInstance implements Iterable<Symbol>, Instanceable<Pr
 		int i = 0;
 		for (Symbol s : PRODUCTION_RULE.getRHS()) {
 			if (i == POSITION) {
-				sb.append(" .");
+				sb.append(" \u2022");
 			}
 
 			sb.append(' ');
@@ -107,7 +107,7 @@ public class ProductionRuleInstance implements Iterable<Symbol>, Instanceable<Pr
 		}
 
 		if (POSITION == PRODUCTION_RULE.getRHS().size()) {
-			sb.append(" .");
+			sb.append(" \u2022");
 		}
 
 		return sb.toString();
@@ -120,7 +120,7 @@ public class ProductionRuleInstance implements Iterable<Symbol>, Instanceable<Pr
 		int i = 0;
 		for (Symbol s : PRODUCTION_RULE.getRHS()) {
 			if (i == POSITION) {
-				sb.append(" .");
+				sb.append(" \u2022");
 			}
 
 			sb.append(' ');
@@ -129,7 +129,7 @@ public class ProductionRuleInstance implements Iterable<Symbol>, Instanceable<Pr
 		}
 
 		if (POSITION == PRODUCTION_RULE.getRHS().size()) {
-			sb.append(" .");
+			sb.append(" \u2022");
 		}
 
 		return sb.toString();

@@ -811,3 +811,21 @@
 2014-12-08 14:24:14 INFO    Parser states generated in 187ms; 193 states
 2014-12-08 14:24:14 INFO    Compiling parser states into tables...
 2014-12-08 14:24:14 INFO    Tables compiled in 16ms
+2014-12-08 14:27:26 INFO    Loading grammar for toy
+2014-12-08 14:27:26 INFO    Generating symbols table...
+2014-12-08 14:27:26 INFO    Symbols table generated in 47ms; 98 symbols (52 terminal symbols, 46 nonterminal symbols)
+2014-12-08 14:27:26 INFO    Generating productions table...
+2014-12-08 14:27:27 WARNING _eof (0) is unreachable
+2014-12-08 14:27:27 WARNING _eol (1) is unreachable
+2014-12-08 14:27:27 WARNING _continue (5) is unreachable
+2014-12-08 14:27:27 WARNING _modulus (25) is unreachable
+2014-12-08 14:27:27 WARNING _characterliteral (45) is unreachable
+2014-12-08 14:27:27 WARNING _nullliteral (50) is unreachable
+2014-12-08 14:27:27 INFO    Productions table and list created in 78ms; 113 productions (6 unreachable symbols)
+2014-12-08 14:27:27 INFO    Computing FIRST(1) sets...
+2014-12-08 14:27:27 INFO    FIRST(1) sets computed in 0ms
+2014-12-08 14:27:27 INFO    Generating parser states...
+2014-12-08 14:27:27 SEVERE  State 65 has 2 reduce productions:
+2014-12-08 14:27:27 INFO    Parser states generated in 187ms; 193 states
+2014-12-08 14:27:27 INFO    Compiling parser states into tables...
+2014-12-08 14:27:27 INFO    Tables compiled in 16ms
