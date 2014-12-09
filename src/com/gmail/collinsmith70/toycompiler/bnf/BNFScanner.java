@@ -10,8 +10,8 @@ public class BNFScanner implements Scanner<Token> {
 
 	@Override
 	public Token next(Reader r) {
+		int i = -1;
 		try {
-			int i = -1;
 			reader: while (true) {
 				i = r.read();
 				if (i == -1) {
@@ -24,7 +24,7 @@ public class BNFScanner implements Scanner<Token> {
 					.append(i);
 
 				if (i == '|') {
-					return BNFLexeme._or.getDefaultToken();
+					return BNFLexeme._alternation.getDefaultToken();
 				} else if (i == ':') {
 					i = r.read();
 					sb.append(i);
@@ -37,59 +37,45 @@ public class BNFScanner implements Scanner<Token> {
 					}
 
 					return new Token(null, sb.toString());
-				}
-
-				boolean enclosed = isEnclosableCharacter(i);
-				int match = i;
-
-				while (true) {
-					i = r.read();
-					if (!isIdentifierCharacter(i)) {
-						break;
+				} else if (i == '<') {
+					while (true) {
+						i = r.read();
+						sb.append(i);
+						if (!isIdentifierCharacter(i)) {
+							break;
+						}						
 					}
-
-					sb.append(i);
-				}
-
-				if (enclosed) {
-					if (isEnclosableTerminatorCharacter(i)) {
-						if (match == i) {
-							return new Token(BNFLexeme._terminalSymbol, sb.toString());
-						} else {
-							if (match == '<' && i == '>') {
-								return new Token(BNFLexeme._nonterminalSymbol, sb.toString());
-							} else {
-								// enclosable mismatch exception
-								return new Token(null, sb.toString());
-							}
-						}
+					
+					if (i == '>') {
+						return new Token(BNFLexeme._nonterminalSymbol, sb.substring(1, sb.length()));
 					} else {
-						// missing enclosable terminator
-						return new Token(null, sb.toString());
+						throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol termination character did not match \">\"");
 					}
-				} else {
-					if (!isEnclosableTerminatorCharacter(i)) {
-						return new Token(BNFLexeme._nonterminalSymbol, sb.toString());
+				} else if (isIdentifierCharacter(i)) {
+					while (true) {
+						i = r.read();
+						sb.append(i);
+						if (!isIdentifierCharacter(i)) {
+							break;
+						}						
+					}
+					
+					if (Character.isWhitespace(i)) {
+						return new Token(BNFLexeme._terminalSymbol, sb.substring(0, sb.length()));
 					} else {
-						// missing enclosable initializer
-						return new Token(null, sb.toString());
+						throw new UndefinedLexemeException(sb.toString(), i);
 					}
 				}
 			}
 		} catch (IOException e) {
 		}
-	}
+		
+		if (i == -1) {
+			return Lexeme._eof.getDefaultToken();
+		}
 
-	private static boolean isEnclosableCharacter(int codePoint) {
-		return isQuoteCharacter(codePoint) || codePoint == '<';
-	}
-
-	private static boolean isEnclosableTerminatorCharacter(int codePoint) {
-		return isQuoteCharacter(codePoint) || codePoint == '>';
-	}
-
-	private static boolean isQuoteCharacter(int codePoint) {
-		return codePoint == '\"' || codePoint == '\'';
+		assert false : "There is a scanned case which is not accounted for!";
+		throw new UndefinedLexemeException();
 	}
 
 	private static boolean isIdentifierCharacter(int codePoint) {
