@@ -24,6 +24,7 @@ public class BNFScanner implements Scanner<Token> {
 					.append(i);
 
 				if (i == '|') {
+					assert "|".matches(BNFLexeme._alternation.getRegex());
 					return BNFLexeme._alternation.getDefaultToken();
 				} else if (i == ':') {
 					i = r.read();
@@ -32,11 +33,12 @@ public class BNFScanner implements Scanner<Token> {
 						i = r.read();
 						sb.append(i);
 						if (i == '=') {
+							assert sb.toString().matches(BNFLexeme._assignop.getRegex());
 							return BNFLexeme._assignop.getDefaultToken();
 						}
 					}
 
-					return new Token(null, sb.toString());
+					throw new UndefinedLexemeException(sb.toString());
 				} else if (i == '<') {
 					while (true) {
 						i = r.read();
@@ -47,7 +49,8 @@ public class BNFScanner implements Scanner<Token> {
 					}
 					
 					if (i == '>') {
-						return new Token(BNFLexeme._nonterminalSymbol, sb.substring(1, sb.length()));
+						assert sb.toString().matches(BNFLexeme._nonterminalSymbol.getRegex());
+						return new Token(BNFLexeme._nonterminalSymbol, sb.substring(1, sb.length()-1));
 					} else {
 						throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol termination character did not match \">\"");
 					}
@@ -61,7 +64,8 @@ public class BNFScanner implements Scanner<Token> {
 					}
 					
 					if (Character.isWhitespace(i)) {
-						return new Token(BNFLexeme._terminalSymbol, sb.substring(0, sb.length()));
+						assert sb.substring(0, sb.length()-1).matches(BNFLexeme._terminalSymbol.getRegex());
+						return new Token(BNFLexeme._terminalSymbol, sb.substring(0, sb.length()-1));
 					} else {
 						throw new UndefinedLexemeException(sb.toString(), i);
 					}

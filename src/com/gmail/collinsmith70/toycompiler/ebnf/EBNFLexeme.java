@@ -6,6 +6,8 @@ import com.gmail.collinsmith70.toycompiler.bnf.Token;
 public enum EBNFLexeme implements Lexeme {
 	_terminalSymbol		("(\".+\"|'.+')"),
 	_nonterminalSymbol		("((\\p{L}\\p{M}*)+'?|\\<(\\p{L}\\p{M}*)+'?\\>)"),
+	_assignop			("="),
+	_alternation		("|"),
 	_terminator			("(\\.|;)"),
 	_leftparen			("\\("),
 	_rightparen			("\\)"),

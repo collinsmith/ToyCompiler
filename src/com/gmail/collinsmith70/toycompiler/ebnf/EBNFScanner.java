@@ -28,50 +28,103 @@ public class EBNFScanner implements Scanner<Token> {
 
 				StringBuilder sb = new StringBuilder()
 					.append(i);
-
-				if (i == '|') {
-					return BNFLexeme._alternation.getDefaultToken();
-				} else if (i == ':') {
-					i = r.read();
-					sb.append(i);
-					if (i == ':') {
+				
+				switch (i) {
+					case '=':
+						assert "=".matches(EBNFLexeme._assignop.getRegex());
+						return EBNFLexeme._assignop.getDefaultToken();
+					case '|':
+						assert "|".matches(EBNFLexeme._alternation.getRegex());
+						return EBNFLexeme._alternation.getDefaultToken();
+					case '.':
+					case ';':
+						assert sb.toString().matches(EBNFLexeme._terminator.getRegex());
+						return EBNFLexeme._terminator.getDefaultToken();
+					case '(':
+						r.mark(1);
 						i = r.read();
-						sb.append(i);
-						if (i == '=') {
-							return BNFLexeme._assignop.getDefaultToken();
-						}
-					}
-
-					return new Token(null, sb.toString());
-				} else if (isEnclosableCharacter(i)) {
-					int match = i;
-					while (true) {
-						i = r.read();
-						sb.append(i);
-						if (!isIdentifierCharacter(i)) {
-							break;
-						}						
-					}
-
-					if (isEnclosableTerminatorCharacter(i)) {
-						if (match == i) {
-							return new Token(BNFLexeme._terminalSymbol, sb.substring(1, sb.length()));
-						} else {
-							if (match == '<' && i == '>') {
-								return new Token(BNFLexeme._nonterminalSymbol, sb.substring(1, sb.length()));
-							} else {
-								switch (match) {
-									case '\"': throw new LexemeFormatException(BNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination character did not match \"\"\"");
-									case '\'': throw new LexemeFormatException(BNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination character did not match \"\'\"");
-									case '<': throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol termination character did not match \">\"");
+						if (i == '*') {
+							while (true) {
+								i = r.read();
+								sb.append(i);
+								if (i == '*') {
+									r.mark(1);
+									i = r.read();
+									sb.append(i);
+									if (i == ')') {
+										assert sb.toString().matches(EBNFLexeme._comment.getRegex());
+										return EBNFLexeme._comment.getDefaultToken();
+									}
+									
+									sb.deleteCharAt(sb.length()-1);
+									r.reset();
 								}
 							}
 						}
-					} else {
-						throw new UndefinedLexemeException(sb.toString(), i);
-					}
+						
+						r.reset();
+						assert sb.toString().matches(EBNFLexeme._leftparen.getRegex());
+						return EBNFLexeme._leftparen.getDefaultToken();
+					case ')':
+						assert sb.toString().matches(EBNFLexeme._rightparen.getRegex());
+						return EBNFLexeme._rightparen.getDefaultToken();
+					case '[':
+						assert sb.toString().matches(EBNFLexeme._leftbracket.getRegex());
+						return EBNFLexeme._leftbracket.getDefaultToken();
+					case ']':
+						assert sb.toString().matches(EBNFLexeme._rightbracket.getRegex());
+						return EBNFLexeme._rightbracket.getDefaultToken();
+					case '{':
+						assert sb.toString().matches(EBNFLexeme._leftbrace.getRegex());
+						return EBNFLexeme._leftbrace.getDefaultToken();
+					case '}':
+						assert sb.toString().matches(EBNFLexeme._rightbrace.getRegex());
+						return EBNFLexeme._rightbrace.getDefaultToken();
+				}
+				
+				boolean enclosed = isEnclosableCharacter(i);
+				int match = i;
+				while (true) {
+					r.mark(1);
+					i = r.read();
+					sb.append(i);
+					if (!isIdentifierCharacter(i)) {
+						break;
+					}						
 				}
 
+				if (enclosed && isEnclosableTerminatorCharacter(i)) {
+					if (isQuoteCharacter(i) && match == i) {
+						assert sb.toString().matches(EBNFLexeme._terminalSymbol.getRegex());
+						return new Token(BNFLexeme._terminalSymbol, sb.substring(1, sb.length()-1));
+					} else {
+						if (match == '<' && i == '>') {
+							assert sb.toString().matches(EBNFLexeme._terminalSymbol.getRegex());
+							return new Token(BNFLexeme._nonterminalSymbol, sb.substring(1, sb.length()-1));
+						} else {
+							switch (match) {
+								case '\"': throw new LexemeFormatException(BNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination character did not match \"\"\"");
+								case '\'': throw new LexemeFormatException(BNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination character did not match \"\'\"");
+								case '<': throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol termination character did not match \">\"");
+							}
+							
+							assert false;
+						}
+					}
+				} else if (isEnclosableTerminatorCharacter(i)) {
+					switch (i) {
+						case '\"': throw new LexemeFormatException(BNFLexeme._terminalSymbol, sb.toString(), "Found terminal symbol termination character, but no initialization character \"\"\"");
+						case '\'': throw new LexemeFormatException(BNFLexeme._terminalSymbol, sb.toString(), "Found terminal symbol termination character, but no initialization character \"\'\"");
+						case '>': throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Found nonterminal symbol termination character, but no initialization character  \"<\"");
+					}
+					
+					assert false;
+				} else {
+					r.reset();
+					sb.deleteCharAt(sb.length()-1);
+					assert sb.toString().matches(EBNFLexeme._nonterminalSymbol.getRegex());
+					return new Token(BNFLexeme._nonterminalSymbol, sb.toString());
+				}
 			}
 		} catch (IOException e) {
 		}
