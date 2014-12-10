@@ -6,18 +6,18 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 public enum EBNFLexeme implements Lexeme {
-	_terminalSymbol		("(\"[^'\"]+\"|'[^'\"]+')"),
-	_nonterminalSymbol	("(\\w+('|`)*)|(\\<(\\w+('|`)*)*\\>)"),
-	_assignop			("="),
-	_alternation		("\\|"),
-	_terminator			("(\\.|;)"),
-	_leftparen			("\\("),
-	_rightparen			("\\)"),
-	_leftbracket		("\\["),
-	_rightbracket		("\\]"),
-	_leftbrace			("\\{"),
-	_rightbrace			("\\}"),
-	_comment			("\\Q(*\\E.*\\Q*)\\E"),
+	_terminalSymbol("(\"[^'\"]+\"|'[^'\"]+')"),
+	_nonterminalSymbol("(\\w+('|`)*)|(\\<(\\w+('|`)*)*\\>)"),
+	_assignop("="),
+	_alternation("\\|"),
+	_terminator("(\\.|;)"),
+	_leftparen("\\("),
+	_rightparen("\\)"),
+	_leftbracket("\\["),
+	_rightbracket("\\]"),
+	_leftbrace("\\{"),
+	_rightbrace("\\}"),
+	_comment("\\Q(*\\E.*\\Q*)\\E"),
 	;
 
 	private final Pattern PATTERN;

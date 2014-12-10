@@ -6,10 +6,10 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 public enum BNFLexeme implements Lexeme {
-	_terminalSymbol		("[^<>]+"),
-	_nonterminalSymbol	("\\<\\w+('|`)*\\>"),
-	_assignop			("::="),
-	_alternation		("\\|"),
+	_terminalSymbol("[^<>]+"),
+	_nonterminalSymbol("\\<\\w+('|`)*\\>"),
+	_assignop("::="),
+	_alternation("\\|"),
 	;
 
 	private final Pattern PATTERN;
