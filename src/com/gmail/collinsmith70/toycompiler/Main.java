@@ -1,28 +1,19 @@
 package com.gmail.collinsmith70.toycompiler;
 
+import com.gmail.collinsmith70.toycompiler.cfg.ebnf.EBNFScanner;
 import com.gmail.collinsmith70.toycompiler.lexer.Scanner;
 import com.gmail.collinsmith70.toycompiler.lexer.TokenStream;
 import com.gmail.collinsmith70.toycompiler.lexer.ToyScanner;
-import com.gmail.collinsmith70.toycompiler.parser.Grammar;
-import com.gmail.collinsmith70.toycompiler.parser.LALRParserTables;
-import com.gmail.collinsmith70.toycompiler.parser.LAProductionRuleInstance;
 import com.gmail.collinsmith70.toycompiler.parser.Parser;
-import com.gmail.collinsmith70.toycompiler.parser.ProductionRuleInstance;
-import com.gmail.collinsmith70.toycompiler.parser.State;
-import com.gmail.collinsmith70.toycompiler.parser.lalr.LALRParser;
-import com.gmail.collinsmith70.toycompiler.parser.lalr.LALRParserStatesGenerator;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.charset.Charset;
-import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
 
 public class Main {
 	private static final Path OUTPUT_PATH = Paths.get(".", "output");
@@ -32,6 +23,20 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
+			for (int i = 1; i <= 2; i++) {
+			Path p = Paths.get(".", "input", "ebnf", "test" + i + ".txt");
+			System.out.println("opening: " + p);
+			Reader r = Files.newBufferedReader(p, Charset.forName("UTF-8"));
+			com.gmail.collinsmith70.toycompiler.cfg.TokenStream stream = new com.gmail.collinsmith70.toycompiler.cfg.TokenStream(new EBNFScanner(), r);
+			while (stream.hasNext()) {
+				System.out.println(stream.next());
+			}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		/*try {
 			//Grammar g = Grammar.generate(Paths.get(".", "res", "test1.grammar"), Charset.forName("UTF-8"));
 			//Grammar g = Grammar.generate(Paths.get(".", "res", "test2.grammar"), Charset.forName("UTF-8"));
 			Grammar g = Grammar.generate(Paths.get(".", "res", "toy.grammar"), Charset.forName("UTF-8"));
@@ -67,7 +72,7 @@ public class Main {
 				} catch (IOException e) {
 					System.out.format("Unreadable source: \"%s\"", arg);
 				}
-			});
+			});*/
 	}
 
 	private static void compile(Path p) {

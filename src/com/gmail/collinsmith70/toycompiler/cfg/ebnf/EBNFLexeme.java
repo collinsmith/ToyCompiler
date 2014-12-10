@@ -1,13 +1,15 @@
-package com.gmail.collinsmith70.toycompiler.ebnf;
+package com.gmail.collinsmith70.toycompiler.cfg.ebnf;
 
-import com.gmail.collinsmith70.toycompiler.bnf.Lexeme;
-import com.gmail.collinsmith70.toycompiler.bnf.Token;
+import com.gmail.collinsmith70.toycompiler.cfg.Lexeme;
+import com.gmail.collinsmith70.toycompiler.cfg.Token;
+import java.util.Objects;
+import java.util.regex.Pattern;
 
 public enum EBNFLexeme implements Lexeme {
-	_terminalSymbol		("(\".+\"|'.+')"),
-	_nonterminalSymbol		("((\\p{L}\\p{M}*)+'?|\\<(\\p{L}\\p{M}*)+'?\\>)"),
+	_terminalSymbol		("(\"[^'\"]+\"|'[^'\"]+')"),
+	_nonterminalSymbol	("(\\w+('|`)*)|(\\<(\\w+('|`)*)*\\>)"),
 	_assignop			("="),
-	_alternation		("|"),
+	_alternation		("\\|"),
 	_terminator			("(\\.|;)"),
 	_leftparen			("\\("),
 	_rightparen			("\\)"),
@@ -18,11 +20,11 @@ public enum EBNFLexeme implements Lexeme {
 	_comment			("\\Q(*\\E.*\\Q*)\\E"),
 	;
 
-	private final String REGEX;
+	private final Pattern PATTERN;
 	private final Token DEFAULT_TOKEN;
-	
+
 	private EBNFLexeme(String regex) {
-		this.REGEX = regex;
+		this.PATTERN = Pattern.compile(Objects.requireNonNull(regex), Pattern.UNICODE_CHARACTER_CLASS);
 		this.DEFAULT_TOKEN = new Token(this);
 	}
 
@@ -33,12 +35,12 @@ public enum EBNFLexeme implements Lexeme {
 
 	@Override
 	public int getId() {
-		return ordinal();
+		return ordinal()+1;
 	}
 
 	@Override
-	public String getRegex() {
-		return REGEX;
+	public Pattern getPattern() {
+		return PATTERN;
 	}
 
 	@Override

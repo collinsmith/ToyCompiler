@@ -1,22 +1,25 @@
-package com.gmail.collinsmith70.toycompiler.bnf;
+package com.gmail.collinsmith70.toycompiler.cfg;
+
+import java.util.regex.Pattern;
 
 public interface Lexeme {
 	String getName();
-	String getRegex();
+	Pattern getPattern();
 	int getId();
 	Token getDefaultToken();
-	
+
 	Lexeme _eof = new Lexeme() {
 		private final Token DEFAULT_TOKEN = new Token(this);
-		
+		private final Pattern PATTERN = Pattern.compile("$", 0);
+
 		@Override
 		public String getName() {
 			return "_eof";
 		}
 
 		@Override
-		public String getRegex() {
-			return "$";
+		public Pattern getPattern() {
+			return PATTERN;
 		}
 
 		@Override
