@@ -67,7 +67,8 @@ public class EBNFScanner implements Scanner<Token> {
 									} else if (i == ')') {
 										sb.appendCodePoint(i);
 										assert EBNFLexeme._comment.getPattern().matcher(sb).matches();
-										return EBNFLexeme._comment.getDefaultToken();
+										//return EBNFLexeme._comment.getDefaultToken();
+										continue reader;
 									}
 
 									sb.deleteCharAt(sb.length()-1);
@@ -94,19 +95,52 @@ public class EBNFScanner implements Scanner<Token> {
 					case '}':
 						assert EBNFLexeme._rightbrace.getPattern().matcher(sb).matches();
 						return EBNFLexeme._rightbrace.getDefaultToken();
-				}
-
-				boolean nonterminal = !isQuoteCharacter(i);
-				if (nonterminal) {
-					if (i == '<') {
+					case '\"':
+					case '\'':
+						int quoteChar = i;
 						int length = 0;
 						while (true) {
 							i = r.read();
 							if (i == -1) {
 								if (length == 0) {
-									throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol length = 0");
+									throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol length = 0");
 								} else {
+									throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination character did not match \"" + quoteChar + "\"");
+								}
+							}
+
+							sb.appendCodePoint(i);
+							if (isQuoteCharacter(i)) {
+								break;
+							}
+
+							length++;
+						}
+
+						if (length == 0) {
+							throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol length = 0");
+						} else if (quoteChar == i) {
+							assert EBNFLexeme._terminalSymbol.getPattern().matcher(sb).matches();
+							return new Token(EBNFLexeme._terminalSymbol, sb.substring(1, sb.length()-1));
+						} else if (isQuoteCharacter(i)) {
+							throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination characters do not match");
+						}
+
+						throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Invalid terminal symbol character \"" + (char)i + "\"");
+					case '<':
+					default:
+						boolean enclosed = i == '<';
+						length = enclosed ? 0 : 1;
+						while (true) {
+							r.mark(1);
+							i = r.read();
+							if (i == -1) {
+								if (length == 0) {
+									throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol length = 0");
+								} else if (enclosed) {
 									throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol termination character did not match \">\"");
+								} else {
+									break;
 								}
 							}
 
@@ -123,100 +157,36 @@ public class EBNFScanner implements Scanner<Token> {
 						}
 
 						while (true) {
-							if (!BNFScanner.isIdentifierPrimeCharacter(i)) {
-								break;
-							}
-
-							i = r.read();
-							if (i == -1) {
+							if (!isIdentifierPrimeCharacter(i)) {
 								break;
 							}
 
 							length++;
 							sb.appendCodePoint(i);
+
+							r.mark(1);
+							i = r.read();
+							if (i == -1) {
+								if (enclosed) {
+									throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "End of input. No matching nonterminal termination character \">\"");
+								} else {
+									break;
+								}
+							}
 						}
 
 						if (i == '>') {
 							assert EBNFLexeme._nonterminalSymbol.getPattern().matcher(sb).matches();
 							return new Token(EBNFLexeme._nonterminalSymbol, sb.substring(1, sb.length()-1));
-						} else {
-							throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol termination character did not match \">\"");
-						}
-					} else if (isIdentifierCharacter(i)) {
-						// nonterminal symbol length is already 1
-						while (true) {
-							r.mark(1);
-							i = r.read();
-							if (i == -1) {
-								break;
-							}
-
-							sb.appendCodePoint(i);
-							if (!isIdentifierCharacter(i)) {
-								break;
-							}
-						}
-
-						while (true) {
-							if (!BNFScanner.isIdentifierPrimeCharacter(i)) {
-								break;
-							}
-
-							r.mark(1);
-							i = r.read();
-							if (i == -1) {
-								break;
-							}
-
-							sb.appendCodePoint(i);
-						}
-
-						if (Character.isWhitespace(i)) {
-							assert EBNFLexeme._nonterminalSymbol.getPattern().matcher(sb.substring(0, sb.length()-1)).matches();
-							return new Token(EBNFLexeme._nonterminalSymbol, sb.substring(0, sb.length()-1));
-						} else if (i == -1) {
-							assert EBNFLexeme._nonterminalSymbol.getPattern().matcher(sb).matches();
-							return new Token(EBNFLexeme._nonterminalSymbol, sb.toString());
-						} else if (isEnclosableCharacter(i)) {
+						} else if (enclosed) {
+							throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol termination character missing");
+						} else if (isLexemeFirstSymbol(i) || Character.isWhitespace(i)) {
 							r.reset();
-							sb.deleteCharAt(sb.length()-1);
 							assert EBNFLexeme._nonterminalSymbol.getPattern().matcher(sb).matches();
 							return new Token(EBNFLexeme._nonterminalSymbol, sb.toString());
-						} else {
-							throw new UndefinedLexemeException(sb.toString());
-						}
-					} else {
-						throw new UndefinedLexemeException(sb.toString());
-					}
-				} else { // if it is a terminal symbol
-					int quoteChar = i;
-					int length = 0;
-					while (true) {
-						i = r.read();
-						if (i == -1) {
-							if (length == 0) {
-								throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol length = 0");
-							} else {
-								throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination character did not match \"" + quoteChar + "\"");
-							}
 						}
 
-						sb.appendCodePoint(i);
-						if (isQuoteCharacter(i)) {
-							break;
-						}
-
-						length++;
-					}
-
-					if (quoteChar == i) {
-						assert EBNFLexeme._terminalSymbol.getPattern().matcher(sb).matches();
-						return new Token(EBNFLexeme._terminalSymbol, sb.substring(1, sb.length()-1));
-					} else if (isQuoteCharacter(i)) {
-						throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination characters do not match");
-					} else {
-						throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination character " + (char)i + " did not match \"" + (char)quoteChar + "\"");
-					}
+						throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Invalid nonterminal symbol character \"" + (char)i + "\"");
 				}
 			}
 		} catch (IOException e) {
@@ -248,5 +218,30 @@ public class EBNFScanner implements Scanner<Token> {
 
 	private static boolean isIgnorableCharacter(int codePoint) {
 		return BNFScanner.isIgnorableCharacter(codePoint);
+	}
+
+	private static boolean isIdentifierPrimeCharacter(int codePoint) {
+		return BNFScanner.isIdentifierPrimeCharacter(codePoint);
+	}
+
+	private static boolean isLexemeFirstSymbol(int codePoint) {
+		switch (codePoint) {
+			case '=':
+			case '|':
+			case '.':
+			case ';':
+			case '(':
+			case ')':
+			case '[':
+			case ']':
+			case '{':
+			case '}':
+			case '\"':
+			case '\'':
+			case '<':
+				return true;
+			default:
+				return false;
+		}
 	}
 }
