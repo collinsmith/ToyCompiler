@@ -6,13 +6,32 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 public enum EBNFLexeme implements Lexeme {
-	_terminalSymbol("(\"[^'\"]+\"|'[^'\"]+')"),
+	_terminalSymbol("(\"[^\"]+\"|'[^\"]+')"),
 	_nonterminalSymbol("(\\w+('|`)*)|(\\<(\\w+('|`)*)*\\>)"),
-	_assignop("="),
-	_alternation("\\|"),
+	//_comment("\\Q(*\\E.*\\Q*)\\E"),
 
-	/*_comment("\\Q(*\\E.*\\Q*)\\E"),
-	_concatenation("\\,"),
+	//comment = startCommentSymbol, {terminalCharacter}, endCommentSymbol
+	//firstQuote = firstQuoteSymbol, {firstQuoteTerminal}, firstQuoteSymbol
+	//secondQuote = secondQuoteSymbol, {secondQuoteTerminal}, firstQuote
+	//group = startGroupSymbol, {...}, endGroupSymbol
+	//repeat = startRepeatSymbol, {...}, endRepeatSymbol
+	//specialSequence = specialSequenceSymbol, {...}, specialSequenceSymbol
+	// {...} = definitions list = one or more single-definitions separated by |
+	// single-definition = one or more syntactic-terms separated by ,
+	// syntactic term = syntactic-factor or syntactic-factor followed by a syntactic-exception
+	// syntactic-factor = integer followed by a repetition symbol followed by a syntactic-primary
+	//			    or, a syntactic-primary
+	// integer = one or more decimal degits
+	// syntactic-primary = one of the following:
+	//	an optional-sequence
+	//	a repreated-requence
+	//	a grouped-sequence
+	//	a meta-identifier
+	//	a terminal-string
+	//	a special-sequence
+	//	an empty-sequence
+
+	/*_concatenation("\\,"),
 	_exception("\\-"),
 	_leftbrace("\\{"),
 	_leftbracket("\\["),
@@ -23,39 +42,29 @@ public enum EBNFLexeme implements Lexeme {
 	_rightparen("\\)"),
 	_terminator("(\\.|;)"),*/
 
-	_comma(","),
-	_equalsSign("="),
-	_verticalLine("|"),
-	_asterisk("*"),
-	_rightCurlyBracket("}"),
-	_rightParen(")"),
-	_rightSquareBracket("]"),
-	_hyphenMinus("-"),
-	_apostrophe("'"),
-	_quotationMark("\""),
-	_questionMark("?"),
-	_leftCurlyBracket("{"),
-	_leftParen("("),
-	_leftSquareBracket("["),
-	_semicolon(";"),
+	// EBNF Terminal Symbols
+	//letter("[a-zA-Z]"),
+	//decimalDigit("[0-9]"),
+	terminalCharacter("\\w"),
+	otherCharacter("\\s|[+_%@&#$<>\\^`~]"),
 
-	concatenateSymbol(_comma),
-	definingSymbol(_equalsSign),
-	definitionSeparatorSymbol(_verticalLine),
-	endCommentSymbol(_asterisk, _rightParen),
-	endGroupSymbol(_rightParen),
-	endOptionSymbol(_rightSquareBracket),
-	endRepeatSymbol(_rightCurlyBracket),
-	exceptSymbol(_hyphenMinus),
-	firstQuoteSymbol(_apostrophe),
-	repetitionSymbol(_asterisk),
-	secondQuoteSymbol(_quotationMark),
-	specialSequenceSymbol(_questionMark),
-	startCommentSymbol(_leftParen, _asterisk),
-	startGroupSymbol(_leftParen),
-	startOptionSymbol(_leftSquareBracket),
-	startRepeatSymbol(_leftCurlyBracket),
-	terminatorSymbol(_semicolon),
+	concatenateSymbol("\\,"),
+	definingSymbol("\\="),
+	definitionSeparatorSymbol("(\\|)|(\\/)|(\\!)"),
+	endCommentSymbol("\\Q*)\\E"),
+	endGroupSymbol("\\)"),
+	endOptionSymbol("(\\])|(\\Q/)\\E)"),
+	endRepeatSymbol("(\\})|(\\Q:)\\E)"),
+	exceptSymbol("\\-"),
+	firstQuoteSymbol("\\'"),
+	repetitionSymbol("\\*"),
+	secondQuoteSymbol("\\\""),
+	specialSequenceSymbol("\\?"),
+	startCommentSymbol("\\Q(*\\E"),
+	startGroupSymbol("\\("),
+	startOptionSymbol("(\\[)|(\\Q(/\\E)"),
+	startRepeatSymbol("(\\{)|(\\Q(:\\E)"),
+	terminatorSymbol("\\;|\\."),
 	;
 
 	private final Pattern PATTERN;
@@ -64,15 +73,6 @@ public enum EBNFLexeme implements Lexeme {
 	private EBNFLexeme(String regex) {
 		this.PATTERN = Pattern.compile(Objects.requireNonNull(regex), Pattern.UNICODE_CHARACTER_CLASS);
 		this.DEFAULT_TOKEN = new Token(this);
-	}
-
-	private EBNFLexeme(Lexeme l1) {
-	}
-
-	private EBNFLexeme(Lexeme l1, Lexeme l2) {
-	}
-
-	private EBNFLexeme(Lexeme l1, Lexeme l3, Lexeme... lexemes) {
 	}
 
 	@Override
