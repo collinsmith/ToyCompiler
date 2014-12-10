@@ -7,7 +7,6 @@ public class LexemeFormatException extends RuntimeException {
 	private final Lexeme LEXEME;
 	private final String FOUND;
 	private final String INFO;
-	private final int LINE;
 
 	public LexemeFormatException(Lexeme lexeme, String found) {
 		this(lexeme, found, "");
@@ -18,7 +17,6 @@ public class LexemeFormatException extends RuntimeException {
 		this.LEXEME = Objects.requireNonNull(lexeme);
 		this.FOUND = Objects.requireNonNull(found);
 		this.INFO = "";
-		this.LINE = line;
 	}
 
 	public LexemeFormatException(Lexeme lexeme, String found, String info) {
@@ -26,7 +24,6 @@ public class LexemeFormatException extends RuntimeException {
 		this.LEXEME = Objects.requireNonNull(lexeme);
 		this.FOUND = Objects.requireNonNull(found);
 		this.INFO = Strings.nullToEmpty(info);
-		this.LINE = Integer.MIN_VALUE;
 	}
 
 	public LexemeFormatException(Lexeme lexeme, String found, String info, int line) {
@@ -34,7 +31,6 @@ public class LexemeFormatException extends RuntimeException {
 		this.LEXEME = Objects.requireNonNull(lexeme);
 		this.FOUND = Objects.requireNonNull(found);
 		this.INFO = Strings.nullToEmpty(info);
-		this.LINE = line;
 	}
 
 	public Lexeme getLexeme() {
@@ -47,9 +43,5 @@ public class LexemeFormatException extends RuntimeException {
 
 	public String getInfo() {
 		return INFO;
-	}
-
-	public int getLineNumber() {
-		return LINE;
 	}
 }

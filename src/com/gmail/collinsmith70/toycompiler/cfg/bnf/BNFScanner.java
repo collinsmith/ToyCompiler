@@ -20,122 +20,111 @@ public class BNFScanner implements Scanner<Token> {
 	}
 
 	@Override
-	public Token next(Reader r) {
+	public Token next(Reader r) throws IOException {
 		Preconditions.checkNotNull(r);
-		int i = -1;
-		try {
-			reader: while (true) {
-				i = r.read();
-				if (i == -1) {
-					break reader;
-				} else if (Character.isWhitespace(i)) {
-					continue reader;
-				} else if (isIgnorableCharacter(i)) {
-					continue reader;
-				}
+		reader: while (true) {
+			int i = r.read();
+			if (i == -1) {
+				return Lexeme._eof.getDefaultToken();
+			} else if (Character.isWhitespace(i)) {
+				continue reader;
+			} else if (isIgnorableCharacter(i)) {
+				continue reader;
+			}
 
-				StringBuilder sb = new StringBuilder()
-					.appendCodePoint(i);
+			StringBuilder sb = new StringBuilder()
+				.appendCodePoint(i);
 
-				switch (i) {
-					case '|':
-						assert BNFLexeme._alternation.getPattern().matcher(sb).matches();
-						return BNFLexeme._alternation.getDefaultToken();
-					case ':':
+			switch (i) {
+				case '|':
+					assert BNFLexeme._alternation.getPattern().matcher(sb).matches();
+					return BNFLexeme._alternation.getDefaultToken();
+				case ':':
+					i = r.read();
+					if (i == -1) {
+						throw new UndefinedLexemeException(sb.toString());
+					} else if (i == ':') {
+						sb.appendCodePoint(i);
 						i = r.read();
 						if (i == -1) {
 							throw new UndefinedLexemeException(sb.toString());
-						} else if (i == ':') {
+						} else if (i == '=') {
 							sb.appendCodePoint(i);
-							i = r.read();
-							if (i == -1) {
-								throw new UndefinedLexemeException(sb.toString());
-							} else if (i == '=') {
-								sb.appendCodePoint(i);
-								assert BNFLexeme._assignop.getPattern().matcher(sb).matches();
-								return BNFLexeme._assignop.getDefaultToken();
-							}
+							assert BNFLexeme._assignop.getPattern().matcher(sb).matches();
+							return BNFLexeme._assignop.getDefaultToken();
 						}
+					}
 
-						throw new UndefinedLexemeException(sb.toString());
-					case '<':
-						int length = 0;
-						while (true) {
-							i = r.read();
-							if (i == -1) {
-								if (length == 0) {
-									throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol length = 0");
-								} else {
-									throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "End of input. No matching nonterminal termination character \">\"");
-								}
-							}
-
-							sb.appendCodePoint(i);
-							if (!isIdentifierCharacter(i)) {
-								break;
-							}
-
-							length++;
-						}
-
-						if (length == 0) {
-							throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol length = 0");
-						}
-
-						while (true) {
-							if (!isIdentifierPrimeCharacter(i)) {
-								break;
-							}
-
-							length++;
-							sb.appendCodePoint(i);
-							i = r.read();
-							if (i == -1) {
+					throw new UndefinedLexemeException(sb.toString());
+				case '<':
+					int length = 0;
+					while (true) {
+						i = r.read();
+						if (i == -1) {
+							if (length == 0) {
+								throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol length = 0");
+							} else {
 								throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "End of input. No matching nonterminal termination character \">\"");
 							}
 						}
 
-						if (i == '>') {
-							assert BNFLexeme._nonterminalSymbol.getPattern().matcher(sb).matches();
-							return new Token(BNFLexeme._nonterminalSymbol, sb.substring(1, sb.length()-1));
+						sb.appendCodePoint(i);
+						if (!isIdentifierCharacter(i)) {
+							break;
 						}
 
-						throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Invalid nonterminal symbol character \"" + (char)i + "\"");
-					default:
-						length = 0;
-						while (true) {
-							i = r.read();
-							if (i == -1) {
-								break;
-							}
+						length++;
+					}
 
-							length++;
-							sb.appendCodePoint(i);
-							if (!isIdentifierCharacter(i)) {
-								break;
-							}
+					if (length == 0) {
+						throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol length = 0");
+					}
+
+					while (true) {
+						if (!isIdentifierPrimeCharacter(i)) {
+							break;
 						}
 
-						if (Character.isWhitespace(i)) {
-							assert BNFLexeme._terminalSymbol.getPattern().matcher(sb.substring(0, sb.length()-1)).matches();
-							return new Token(BNFLexeme._terminalSymbol, sb.substring(0, sb.length()-1));
-						} else if (i == -1) {
-							assert BNFLexeme._terminalSymbol.getPattern().matcher(sb).matches();
-							return new Token(BNFLexeme._terminalSymbol, sb.toString());
+						length++;
+						sb.appendCodePoint(i);
+						i = r.read();
+						if (i == -1) {
+							throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "End of input. No matching nonterminal termination character \">\"");
+						}
+					}
+
+					if (i == '>') {
+						assert BNFLexeme._nonterminalSymbol.getPattern().matcher(sb).matches();
+						return new Token(BNFLexeme._nonterminalSymbol, sb.substring(1, sb.length()-1));
+					}
+
+					throw new LexemeFormatException(BNFLexeme._nonterminalSymbol, sb.toString(), "Invalid nonterminal symbol character \"" + (char)i + "\"");
+				default:
+					length = 0;
+					while (true) {
+						i = r.read();
+						if (i == -1) {
+							break;
 						}
 
-						throw new LexemeFormatException(BNFLexeme._terminalSymbol, sb.toString(), "Invalid terminal symbol character \"" + (char)i + "\"");
-				}
+						length++;
+						sb.appendCodePoint(i);
+						if (!isIdentifierCharacter(i)) {
+							break;
+						}
+					}
+
+					if (Character.isWhitespace(i)) {
+						assert BNFLexeme._terminalSymbol.getPattern().matcher(sb.substring(0, sb.length()-1)).matches();
+						return new Token(BNFLexeme._terminalSymbol, sb.substring(0, sb.length()-1));
+					} else if (i == -1) {
+						assert BNFLexeme._terminalSymbol.getPattern().matcher(sb).matches();
+						return new Token(BNFLexeme._terminalSymbol, sb.toString());
+					}
+
+					throw new LexemeFormatException(BNFLexeme._terminalSymbol, sb.toString(), "Invalid terminal symbol character \"" + (char)i + "\"");
 			}
-		} catch (IOException e) {
 		}
-
-		if (i == -1) {
-			return Lexeme._eof.getDefaultToken();
-		}
-
-		assert false : "There is a scanned case which is not accounted for!";
-		throw new UndefinedLexemeException();
 	}
 
 	public static boolean isIdentifierCharacter(int codePoint) {
