@@ -10,10 +10,10 @@ public enum EBNFLexeme implements Lexeme {
 	_nonterminalSymbol("(\\w+('|`)*)|(\\<(\\w+('|`)*)*\\>)"),
 	//_comment("\\Q(*\\E.*\\Q*)\\E"),
 
-	//comment = startCommentSymbol, {terminalCharacter}, endCommentSymbol
+	//commentSequence = startCommentSymbol, {terminalCharacter}, endCommentSymbol
 	//firstQuote = firstQuoteSymbol, {firstQuoteTerminal}, firstQuoteSymbol
 	//secondQuote = secondQuoteSymbol, {secondQuoteTerminal}, firstQuote
-	//group = startGroupSymbol, {...}, endGroupSymbol
+	//groupSequence = startGroupSymbol, {...}, endGroupSymbol
 	//repeat = startRepeatSymbol, {...}, endRepeatSymbol
 	//specialSequence = specialSequenceSymbol, {...}, specialSequenceSymbol
 	// {...} = definitions list = one or more single-definitions separated by |
@@ -24,7 +24,7 @@ public enum EBNFLexeme implements Lexeme {
 	// integer = one or more decimal degits
 	// syntactic-primary = one of the following:
 	//	an optional-sequence
-	//	a repreated-requence
+	//	a repreated-sequence
 	//	a grouped-sequence
 	//	a meta-identifier
 	//	a terminal-string
