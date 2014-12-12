@@ -6,8 +6,10 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 public enum EBNFLexeme implements Lexeme {
-	//_terminalSymbol("(\"[^\"]+\"|'[^\"]+')"),
-	//_nonterminalSymbol("(\\w+('|`)*)|(\\<(\\w+('|`)*)*\\>)"),
+	//terminalSymbol("(\"[^\"]+\"|'[^\"]+')"),
+	terminalString("(\"[^\"]+\")|('[^']+')"),
+	metaIdentifier("[a-zA-Z][a-zA-Z0-9]*"),
+	integer("[0-9]+"),
 
 	// EBNF Terminal Symbols
 	letter("[a-zA-Z]"),

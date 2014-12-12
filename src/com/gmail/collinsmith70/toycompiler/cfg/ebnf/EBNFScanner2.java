@@ -23,13 +23,45 @@ public class EBNFScanner2 implements Scanner<Token> {
 			//StringBuilder sb = new StringBuilder(1)
 			//	.appendCodePoint(i);
 			switch (i) {
+				//case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+				//case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+				//	//assert EBNFLexeme.letter.getPattern().matcher(sb).matches();
+				//	return new Token(EBNFLexeme.letter, (char)i);
 				case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
 				case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
-					//assert EBNFLexeme.letter.getPattern().matcher(sb).matches();
-					return new Token(EBNFLexeme.letter, (char)i);
+					StringBuilder metaIdentifierBuilder = new StringBuilder(32)
+						.appendCodePoint(i);
+					while (true) {
+						r.mark(1);
+						switch (i = r.read()) {
+							case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+							case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+							case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+								metaIdentifierBuilder.appendCodePoint(i);
+							case -1:
+							default:
+								r.reset();
+								assert EBNFLexeme.metaIdentifier.getPattern().matcher(metaIdentifierBuilder).matches();
+								return new Token(EBNFLexeme.metaIdentifier, metaIdentifierBuilder.toString());
+						}
+					}
+				//case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+				//	//assert EBNFLexeme.decimalDigit.getPattern().matcher(sb).matches();
+				//	return new Token(EBNFLexeme.decimalDigit, (char)i);
 				case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
-					//assert EBNFLexeme.decimalDigit.getPattern().matcher(sb).matches();
-					return new Token(EBNFLexeme.decimalDigit, (char)i);
+					int integerBuilder = (i-'0');
+					while (true) {
+						r.mark(1);
+						switch (i = r.read()) {
+							case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+								integerBuilder <<= 1;
+								integerBuilder += (i-'0');
+							case -1:
+							default:
+								r.reset();
+								return new Token(EBNFLexeme.integer, integerBuilder);
+						}
+					}
 				case '+':
 				case '_':
 				case '%':
@@ -103,12 +135,31 @@ public class EBNFScanner2 implements Scanner<Token> {
 				case '-':
 					//assert EBNFLexeme.exceptSymbol.getPattern().matcher(sb).matches();
 					return EBNFLexeme.exceptSymbol.getDefaultToken();
+				//case '\'':
+				//	//assert EBNFLexeme.firstQuoteSymbol.getPattern().matcher(sb).matches();
+				//	return EBNFLexeme.firstQuoteSymbol.getDefaultToken();
+				//case '\"':
+				//	//assert EBNFLexeme.secondQuoteSymbol.getPattern().matcher(sb).matches();
+				//	return EBNFLexeme.secondQuoteSymbol.getDefaultToken();
 				case '\'':
-					//assert EBNFLexeme.firstQuoteSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexeme.firstQuoteSymbol.getDefaultToken();
 				case '\"':
-					//assert EBNFLexeme.secondQuoteSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexeme.secondQuoteSymbol.getDefaultToken();
+					int quote = i;
+					StringBuilder terminalStringBuilder = new StringBuilder(16);
+					while (true) {
+						switch (i = r.read()) {
+							case -1:
+								// TODO: Lexeme exception
+								throw new RuntimeException();
+							case '\'':
+							case '\"':
+								if (quote == i) {
+									//assert EBNFLexeme.terminalString.getPattern().matcher((char)quote + terminalString.toString() + (char)i).matches();
+									return new Token(EBNFLexeme.terminalString, terminalStringBuilder.toString());
+								}
+							default:
+								terminalStringBuilder.appendCodePoint(i);
+						}
+					}
 				case '?':
 					//assert EBNFLexeme.specialSequenceSymbol.getPattern().matcher(sb).matches();
 					return EBNFLexeme.specialSequenceSymbol.getDefaultToken();
