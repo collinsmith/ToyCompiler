@@ -6,21 +6,11 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 public enum EBNFLexeme implements Lexeme {
-	//terminalSymbol("(\"[^\"]+\"|'[^\"]+')"),
-	terminalString("(\"[^\"]+\")|('[^']+')"),
-	metaIdentifier("[a-zA-Z][a-zA-Z0-9]*"),
-	integer("[0-9]+"),
-
-	// EBNF Terminal Symbols
-	letter("[a-zA-Z]"),
-	decimalDigit("[0-9]"),
-	terminalCharacter("\\w"),
-	otherCharacter("\\s|[+_%@&#$<>\\^`~]"),
-
+	// Terminal Symbols
 	concatenateSymbol("\\,"),
 	definingSymbol("\\="),
 	definitionSeparatorSymbol("(\\|)|(\\/)|(\\!)"),
-	endCommentSymbol("\\Q*)\\E"),
+	//endCommentSymbol("\\Q*)\\E"), // Ignored by scanner, never returned
 	endGroupSymbol("\\)"),
 	endOptionSymbol("(\\])|(\\Q/)\\E)"),
 	endRepeatSymbol("(\\})|(\\Q:)\\E)"),
@@ -29,11 +19,18 @@ public enum EBNFLexeme implements Lexeme {
 	repetitionSymbol("\\*"),
 	secondQuoteSymbol("\\\""),
 	specialSequenceSymbol("\\?"),
-	startCommentSymbol("\\Q(*\\E"),
+	//startCommentSymbol("\\Q(*\\E"), // Ignored by scanner, never returned
 	startGroupSymbol("\\("),
 	startOptionSymbol("(\\[)|(\\Q(/\\E)"),
 	startRepeatSymbol("(\\{)|(\\Q(:\\E)"),
 	terminatorSymbol("\\;|\\."),
+
+	// Optimized Productions
+	terminalString("(\"[^\"]+\")|('[^']+')"),
+	metaIdentifier("[a-zA-Z][a-zA-Z0-9]*"),
+	//bracketedTextualComment("\\Q(*\\E.*\\Q*)\\E"), // Ignored by scanner, never returned
+	specialSequence("\\?.*\\?"),
+	integer("[0-9]+"),
 	;
 
 	private final Pattern PATTERN;
