@@ -68,6 +68,7 @@ public class EBNFScanner implements Scanner<Token> {
 								EBNFLexicon.integer.createChild(integerBuilder);
 						}
 					}
+				//case ':'
 				//case '+':
 				//case '_':
 				//case '%':
@@ -133,6 +134,10 @@ public class EBNFScanner implements Scanner<Token> {
 							return EBNFLexicon.endRepeatSymbol;
 						case -1:
 						default:
+							r.reset();
+							//	//assert EBNFLexicon.otherCharacter.getPattern().matcher(sb).matches();
+							//	return new Token(EBNFLexicon.otherCharacter, ':');
+							
 							// TODO: Lexeme exception
 							throw new RuntimeException();
 					}
