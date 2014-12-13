@@ -1,11 +1,9 @@
 package com.gmail.collinsmith70.toycompiler.cfg.ebnf;
 
 import com.gmail.collinsmith70.toycompiler.cfg.Lexeme;
-import com.gmail.collinsmith70.toycompiler.cfg.LexemeFormatException;
 import com.gmail.collinsmith70.toycompiler.cfg.Scanner;
 import com.gmail.collinsmith70.toycompiler.cfg.Token;
-import com.gmail.collinsmith70.toycompiler.cfg.UndefinedLexemeException;
-import com.gmail.collinsmith70.toycompiler.cfg.bnf.BNFScanner;
+import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.Reader;
 
@@ -21,216 +19,228 @@ public class EBNFScanner implements Scanner<Token> {
 
 	@Override
 	public Token next(Reader r) throws IOException {
-		reader: while (true) {
+		Preconditions.checkNotNull(r);
+		while (true) {
 			int i = r.read();
-			if (i == -1) {
-				return Lexeme._eof.getDefaultToken();
-			} else if (Character.isWhitespace(i)) {
-				continue reader;
-			} else if (isIgnorableCharacter(i)) {
-				continue reader;
-			}
-
-			StringBuilder sb = new StringBuilder()
-				.appendCodePoint(i);
-
+			//StringBuilder sb = new StringBuilder(1)
+			//	.appendCodePoint(i);
 			switch (i) {
+				case -1:
+					return Lexeme._eof;
+				//case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+				//case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+				//	//assert EBNFLexicon.letter.getPattern().matcher(sb).matches();
+				//	return new Token(EBNFLexicon.letter, (char)i);
+				case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+				case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+					StringBuilder metaIdentifierBuilder = new StringBuilder(32)
+						.appendCodePoint(i);
+					while (true) {
+						r.mark(1);
+						switch (i = r.read()) {
+							case 'a': case 'b': case 'c': case 'd': case 'e': case 'f': case 'g': case 'h': case 'i': case 'j': case 'k': case 'l': case 'm': case 'n': case 'o': case 'p': case 'q': case 'r': case 's': case 't': case 'u': case 'v': case 'w': case 'x': case 'y': case 'z':
+							case 'A': case 'B': case 'C': case 'D': case 'E': case 'F': case 'G': case 'H': case 'I': case 'J': case 'K': case 'L': case 'M': case 'N': case 'O': case 'P': case 'Q': case 'R': case 'S': case 'T': case 'U': case 'V': case 'W': case 'X': case 'Y': case 'Z':
+							case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+								metaIdentifierBuilder.appendCodePoint(i);
+								break;
+							case -1:
+							default:
+								r.reset();
+								//assert EBNFLexicon.metaIdentifier.getPattern().matcher(metaIdentifierBuilder).matches();
+								return EBNFLexicon.metaIdentifier.createChild(metaIdentifierBuilder.toString());
+						}
+					}
+				//case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+				//	//assert EBNFLexicon.decimalDigit.getPattern().matcher(sb).matches();
+				//	return new Token(EBNFLexicon.decimalDigit, (char)i);
+				case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+					int integerBuilder = (i-'0');
+					while (true) {
+						r.mark(1);
+						switch (i = r.read()) {
+							case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
+								integerBuilder <<= 1;
+								integerBuilder += (i-'0');
+								break;
+							case -1:
+							default:
+								r.reset();
+								EBNFLexicon.integer.createChild(integerBuilder);
+						}
+					}
+				//case '+':
+				//case '_':
+				//case '%':
+				//case '@':
+				//case '&':
+				//case '#':
+				//case '$':
+				//case '<':
+				//case '>':
+				//case '\\':
+				//case '^':
+				//case '`':
+				//case '~':
+				//	//assert EBNFLexicon.otherCharacter.getPattern().matcher(sb).matches();
+				//	return new Token(EBNFLexicon.otherCharacter, (char)i);
+				case ',':
+					//assert EBNFLexicon.concatenateSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon.concatenateSymbol;
 				case '=':
-					assert EBNFLexeme._assignop.getPattern().matcher(sb).matches();
-					return EBNFLexeme._assignop.getDefaultToken();
+					//assert EBNFLexicon.definingSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon.definingSymbol;
 				case '|':
-					assert EBNFLexeme._alternation.getPattern().matcher(sb).matches();
-					return EBNFLexeme._alternation.getDefaultToken();
-				case '.':
-				case ';':
-					assert EBNFLexeme._terminator.getPattern().matcher(sb).matches();
-					return EBNFLexeme._terminator.getDefaultToken();
+				case '!':
+					//assert EBNFLexicon.definitionSeparatorSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon.definitionSeparatorSymbol;
+				case '/':
+					r.mark(i);
+					switch (i = r.read()) {
+						case ')':
+							//sb.appendCodePoint(i);
+							//assert EBNFLexicon.endOptionSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon.endOptionSymbol;
+						case -1:
+						default:
+							//assert EBNFLexicon.definitionSeparatorSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon.definitionSeparatorSymbol;
+					}
+				case '*':
+					r.mark(1);
+					switch (i = r.read()) {
+						//case ')':
+						//	//sb.appendCodePoint(i);
+						//	//assert EBNFLexicon.endCommentSymbol.getPattern().matcher(sb).matches();
+						//	return EBNFLexicon.endCommentSymbol;
+						case -1:
+						default:
+							r.reset();
+							//assert EBNFLexicon.repetitionSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon.repetitionSymbol;
+					}
+				case ']':
+					//assert EBNFLexicon.endOptionSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon.endOptionSymbol;
+				case '}':
+					//assert EBNFLexicon.endRepeatSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon.endRepeatSymbol;
+				case ':':
+					r.mark(1);
+					switch (i = r.read()) {
+						case ')':
+							//sb.appendCodePoint(i);
+							//assert EBNFLexicon.endRepeatSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon.endRepeatSymbol;
+						case -1:
+						default:
+							// TODO: Lexeme exception
+							throw new RuntimeException();
+					}
+				case '-':
+					//assert EBNFLexicon.exceptSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon.exceptSymbol;
+				//case '\'':
+				//	//assert EBNFLexicon.firstQuoteSymbol.getPattern().matcher(sb).matches();
+				//	return EBNFLexicon.firstQuoteSymbol;
+				//case '\"':
+				//	//assert EBNFLexicon.secondQuoteSymbol.getPattern().matcher(sb).matches();
+				//	return EBNFLexicon.secondQuoteSymbol;
+				case '\'':
+				case '\"':
+					int quote = i;
+					StringBuilder terminalStringBuilder = new StringBuilder(16);
+					while (true) {
+						switch (i = r.read()) {
+							case -1:
+								// TODO: Lexeme exception
+								throw new RuntimeException();
+							case '\'':
+							case '\"':
+								if (quote == i) {
+									//assert EBNFLexicon.terminalString.getPattern().matcher((char)quote + terminalStringBuilder.toString() + (char)i).matches();
+									return EBNFLexicon.terminalString.createChild(terminalStringBuilder.toString());
+								}
+							default:
+								terminalStringBuilder.appendCodePoint(i);
+						}
+					}
+				//case '?':
+				//	//assert EBNFLexicon.specialSequenceSymbol.getPattern().matcher(sb).matches();
+				//	return EBNFLexicon.specialSequenceSymbol;
+				case '?':
+					StringBuilder specialSequenceBuilder = new StringBuilder(16);
+					while (true) {
+						switch (i = r.read()) {
+							case -1:
+								// TODO: special sequence syntax exception
+								throw new RuntimeException();
+							case '?':
+								//assert EBNFLexicon.terminalString.getPattern().matcher('?' + specialSequenceBuilder.toString() + '?').matches();
+								return EBNFLexicon.specialSequence.createChild(specialSequenceBuilder.toString());
+							default:
+								specialSequenceBuilder.appendCodePoint(i);
+						}
+					}
 				case '(':
 					r.mark(1);
-					i = r.read();
-					if (i == -1) {
-						// is left paren only, still a valid lexeme
-					} else if (i == '*') {
-						sb.appendCodePoint(i);
-						while (true) {
-							i = r.read();
-							if (i == -1) {
-								throw new UndefinedLexemeException(sb.toString());
-							} else if (i == '*') {
-								sb.appendCodePoint(i);
-								r.mark(1);
-								i = r.read();
-								if (i == -1) {
-									throw new UndefinedLexemeException(sb.toString());
-								} else if (i == ')') {
-									sb.appendCodePoint(i);
-									assert EBNFLexeme._comment.getPattern().matcher(sb).matches();
-									//return EBNFLexeme._comment.getDefaultToken();
-									continue reader;
+					switch (i = r.read()) {
+						case '*':
+							//sb.appendCodePoint(i);
+							//assert EBNFLexicon.startCommentSymbol.getPattern().matcher(sb).matches();
+							//return EBNFLexicon.startCommentSymbol;
+							while (true) {
+								switch (i = r.read()) {
+									case -1:
+										return next(r);
+									case '*':
+										r.mark(1);
+										switch (i = r.read()) {
+											case ')':
+												return next(r);
+											case -1:
+												// TODO: comment syntax error
+												throw new RuntimeException();
+											case '*':
+											default:
+												// unread and add symbol to comment
+												r.reset();
+										}
+									default:
+										// add symbol to comment
 								}
-
-								sb.deleteCharAt(sb.length()-1);
-								r.reset();
 							}
-						}
+						case '/':
+							//sb.appendCodePoint(i);
+							//assert EBNFLexicon.startOptionSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon.startOptionSymbol;
+						case ':':
+							//sb.appendCodePoint(i);
+							//assert EBNFLexicon.startRepeatSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon.startRepeatSymbol;
+						case -1:
+						default:
+							r.reset();
+							//assert EBNFLexicon.startGroupSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon.startGroupSymbol;
 					}
-
-					r.reset();
-					assert EBNFLexeme._leftparen.getPattern().matcher(sb).matches();
-					return EBNFLexeme._leftparen.getDefaultToken();
-				case ')':
-					assert EBNFLexeme._rightparen.getPattern().matcher(sb).matches();
-					return EBNFLexeme._rightparen.getDefaultToken();
 				case '[':
-					assert EBNFLexeme._leftbracket.getPattern().matcher(sb).matches();
-					return EBNFLexeme._leftbracket.getDefaultToken();
-				case ']':
-					assert EBNFLexeme._rightbracket.getPattern().matcher(sb).matches();
-					return EBNFLexeme._rightbracket.getDefaultToken();
+					//assert EBNFLexicon.startOptionSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon.startOptionSymbol;
 				case '{':
-					assert EBNFLexeme._leftbrace.getPattern().matcher(sb).matches();
-					return EBNFLexeme._leftbrace.getDefaultToken();
-				case '}':
-					assert EBNFLexeme._rightbrace.getPattern().matcher(sb).matches();
-					return EBNFLexeme._rightbrace.getDefaultToken();
-				case '\"':
-				case '\'':
-					int quoteChar = i;
-					int length = 0;
-					while (true) {
-						i = r.read();
-						if (i == -1) {
-							if (length == 0) {
-								throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol length = 0");
-							} else {
-								throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination character did not match \"" + quoteChar + "\"");
-							}
-						}
-
-						sb.appendCodePoint(i);
-						if (isQuoteCharacter(i)) {
-							break;
-						}
-
-						length++;
-					}
-
-					if (length == 0) {
-						throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol length = 0");
-					} else if (quoteChar == i) {
-						assert EBNFLexeme._terminalSymbol.getPattern().matcher(sb).matches();
-						return new Token(EBNFLexeme._terminalSymbol, sb.substring(1, sb.length()-1));
-					} else if (isQuoteCharacter(i)) {
-						throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Terminal symbol termination characters do not match");
-					}
-
-					throw new LexemeFormatException(EBNFLexeme._terminalSymbol, sb.toString(), "Invalid terminal symbol character \"" + (char)i + "\"");
-				case '<':
+					//assert EBNFLexicon.startRepeatSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon.startRepeatSymbol;
+				case ';':
+				case '.':
+					//assert EBNFLexicon.terminatorSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon.terminatorSymbol;
 				default:
-					boolean enclosed = i == '<';
-					length = enclosed ? 0 : 1;
-					while (true) {
-						r.mark(1);
-						i = r.read();
-						if (i == -1) {
-							if (length == 0) {
-								throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol length = 0");
-							} else if (enclosed) {
-								throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol termination character did not match \">\"");
-							} else {
-								break;
-							}
-						}
-
-						sb.appendCodePoint(i);
-						if (!isIdentifierCharacter(i)) {
-							break;
-						}
-
-						length++;
+					if (Character.isWhitespace(i)) {
+						continue;
 					}
 
-					if (length == 0) {
-						throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol length = 0");
-					}
-
-					while (true) {
-						if (!isIdentifierPrimeCharacter(i)) {
-							break;
-						}
-
-						length++;
-						sb.appendCodePoint(i);
-
-						r.mark(1);
-						i = r.read();
-						if (i == -1) {
-							if (enclosed) {
-								throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "End of input. No matching nonterminal termination character \">\"");
-							} else {
-								break;
-							}
-						}
-					}
-
-					if (i == '>') {
-						assert EBNFLexeme._nonterminalSymbol.getPattern().matcher(sb).matches();
-						return new Token(EBNFLexeme._nonterminalSymbol, sb.substring(1, sb.length()-1));
-					} else if (enclosed) {
-						throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Nonterminal symbol termination character missing");
-					} else if (isLexemeFirstSymbol(i) || Character.isWhitespace(i)) {
-						r.reset();
-						assert EBNFLexeme._nonterminalSymbol.getPattern().matcher(sb).matches();
-						return new Token(EBNFLexeme._nonterminalSymbol, sb.toString());
-					}
-
-					throw new LexemeFormatException(EBNFLexeme._nonterminalSymbol, sb.toString(), "Invalid nonterminal symbol character \"" + (char)i + "\"");
+					// TODO: Lexeme exception
+					throw new RuntimeException();
 			}
-		}
-	}
-
-	private static boolean isEnclosableCharacter(int codePoint) {
-		return isQuoteCharacter(codePoint) || codePoint == '<';
-	}
-
-	private static boolean isEnclosableTerminatorCharacter(int codePoint) {
-		return isQuoteCharacter(codePoint) || codePoint == '>';
-	}
-
-	private static boolean isQuoteCharacter(int codePoint) {
-		return codePoint == '\"' || codePoint == '\'';
-	}
-
-	private static boolean isIdentifierCharacter(int codePoint) {
-		return BNFScanner.isIdentifierCharacter(codePoint);
-	}
-
-	private static boolean isIgnorableCharacter(int codePoint) {
-		return BNFScanner.isIgnorableCharacter(codePoint);
-	}
-
-	private static boolean isIdentifierPrimeCharacter(int codePoint) {
-		return BNFScanner.isIdentifierPrimeCharacter(codePoint);
-	}
-
-	private static boolean isLexemeFirstSymbol(int codePoint) {
-		switch (codePoint) {
-			case '=':
-			case '|':
-			case '.':
-			case ';':
-			case '(':
-			case ')':
-			case '[':
-			case ']':
-			case '{':
-			case '}':
-			case '\"':
-			case '\'':
-			case '<':
-				return true;
-			default:
-				return false;
 		}
 	}
 }

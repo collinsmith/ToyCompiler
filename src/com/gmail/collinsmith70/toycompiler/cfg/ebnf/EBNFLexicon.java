@@ -5,7 +5,7 @@ import com.gmail.collinsmith70.toycompiler.cfg.Token;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public enum EBNFLexeme implements Lexeme {
+public enum EBNFLexicon implements Lexeme, Token {
 	// Terminal Symbols
 	concatenateSymbol("\\,"),
 	definingSymbol("\\="),
@@ -25,7 +25,7 @@ public enum EBNFLexeme implements Lexeme {
 	startRepeatSymbol("(\\{)|(\\Q(:\\E)"),
 	terminatorSymbol("\\;|\\."),
 
-	// Optimized Productions
+	// Tokens
 	terminalString("(\"[^\"]+\")|('[^']+')"),
 	metaIdentifier("[a-zA-Z][a-zA-Z0-9]*"),
 	//bracketedTextualComment("\\Q(*\\E.*\\Q*)\\E"), // Ignored by scanner, never returned
@@ -34,11 +34,11 @@ public enum EBNFLexeme implements Lexeme {
 	;
 
 	private final Pattern PATTERN;
-	private final Token DEFAULT_TOKEN;
+	//private final Token DEFAULT_TOKEN;
 
-	private EBNFLexeme(String regex) {
+	private EBNFLexicon(String regex) {
 		this.PATTERN = Pattern.compile(Objects.requireNonNull(regex), Pattern.UNICODE_CHARACTER_CLASS);
-		this.DEFAULT_TOKEN = new Token(this);
+		//this.DEFAULT_TOKEN = new Token(this);
 	}
 
 	@Override
@@ -56,8 +56,47 @@ public enum EBNFLexeme implements Lexeme {
 		return PATTERN;
 	}
 
-	@Override
+	/*@Override
 	public Token getDefaultToken() {
 		return DEFAULT_TOKEN;
+	}*/
+
+	@Override
+	public Lexeme getLexeme() {
+		return this;
+	}
+
+	@Override
+	public Object getValue() {
+		return null;
+	}
+
+	@Override
+	public Token createChild(Object value) {
+		return new Token() {
+			@Override
+			public Lexeme getLexeme() {
+				return EBNFLexicon.this;
+			}
+
+			@Override
+			public Object getValue() {
+				return value;
+			}
+
+			@Override
+			public String toString() {
+				if (value == null) {
+					return EBNFLexicon.this.toString();
+				}
+
+				return EBNFLexicon.this.toString() + "[" + value.toString() + "]";
+			}
+		};
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 }
