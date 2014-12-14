@@ -7,38 +7,36 @@ import java.util.regex.Pattern;
 
 public enum EBNFLexicon implements Lexeme, Token {
 	// Terminal Symbols
-	concatenateSymbol("\\,"),
-	definingSymbol("\\="),
-	definitionSeparatorSymbol("(\\|)|(\\/)|(\\!)"),
-	//endCommentSymbol("\\Q*)\\E"), // Ignored by scanner, never returned
-	endGroupSymbol("\\)"),
-	endOptionSymbol("(\\])|(\\Q/)\\E)"),
-	endRepeatSymbol("(\\})|(\\Q:)\\E)"),
-	exceptSymbol("\\-"),
-	firstQuoteSymbol("\\'"),
-	repetitionSymbol("\\*"),
-	secondQuoteSymbol("\\\""),
-	specialSequenceSymbol("\\?"),
-	//startCommentSymbol("\\Q(*\\E"), // Ignored by scanner, never returned
-	startGroupSymbol("\\("),
-	startOptionSymbol("(\\[)|(\\Q(/\\E)"),
-	startRepeatSymbol("(\\{)|(\\Q(:\\E)"),
-	terminatorSymbol("\\;|\\."),
+	_concatenateSymbol("\\,"),
+	_definingSymbol("\\="),
+	_definitionSeparatorSymbol("(\\|)|(\\/)|(\\!)"),
+	//_endCommentSymbol("\\Q*)\\E"), // Ignored by scanner, never returned
+	_endGroupSymbol("\\)"),
+	_endOptionSymbol("(\\])|(\\Q/)\\E)"),
+	_endRepeatSymbol("(\\})|(\\Q:)\\E)"),
+	_exceptSymbol("\\-"),
+	//_firstQuoteSymbol("\\'"),
+	_repetitionSymbol("\\*"),
+	//_secondQuoteSymbol("\\\""),
+	//_specialSequenceSymbol("\\?"),
+	//_startCommentSymbol("\\Q(*\\E"), // Ignored by scanner, never returned
+	_startGroupSymbol("\\("),
+	_startOptionSymbol("(\\[)|(\\Q(/\\E)"),
+	_startRepeatSymbol("(\\{)|(\\Q(:\\E)"),
+	_terminatorSymbol("\\;|\\."),
 
 	// Tokens
-	terminalString("(\"[^\"]+\")|('[^']+')"),
-	metaIdentifier("[a-zA-Z][a-zA-Z0-9]*"),
-	//bracketedTextualComment("\\Q(*\\E.*\\Q*)\\E"), // Ignored by scanner, never returned
-	specialSequence("\\?.*\\?"),
-	integer("[0-9]+"),
+	_terminalString("(\"[^\"]+\")|('[^']+')"),
+	_metaIdentifier("[a-zA-Z][a-zA-Z0-9]*"),
+	//_bracketedTextualComment("\\Q(*\\E.*\\Q*)\\E"), // Ignored by scanner, never returned
+	_specialSequence("\\?.*\\?"),
+	_integer("[0-9]+"),
 	;
 
 	private final Pattern PATTERN;
-	//private final Token DEFAULT_TOKEN;
 
 	private EBNFLexicon(String regex) {
 		this.PATTERN = Pattern.compile(Objects.requireNonNull(regex), Pattern.UNICODE_CHARACTER_CLASS);
-		//this.DEFAULT_TOKEN = new Token(this);
 	}
 
 	@Override
@@ -55,11 +53,6 @@ public enum EBNFLexicon implements Lexeme, Token {
 	public Pattern getPattern() {
 		return PATTERN;
 	}
-
-	/*@Override
-	public Token getDefaultToken() {
-		return DEFAULT_TOKEN;
-	}*/
 
 	@Override
 	public Lexeme getLexeme() {

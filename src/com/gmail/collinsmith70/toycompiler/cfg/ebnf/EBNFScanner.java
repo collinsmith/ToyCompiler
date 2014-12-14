@@ -46,8 +46,8 @@ public class EBNFScanner implements Scanner<Token> {
 							case -1:
 							default:
 								r.reset();
-								//assert EBNFLexicon.metaIdentifier.getPattern().matcher(metaIdentifierBuilder).matches();
-								return EBNFLexicon.metaIdentifier.createChild(metaIdentifierBuilder.toString());
+								//assert EBNFLexicon._metaIdentifier.getPattern().matcher(metaIdentifierBuilder).matches();
+								return EBNFLexicon._metaIdentifier.createChild(metaIdentifierBuilder.toString());
 						}
 					}
 				//case '0': case '1': case '2': case '3': case '4': case '5': case '6': case '7': case '8': case '9':
@@ -65,7 +65,7 @@ public class EBNFScanner implements Scanner<Token> {
 							case -1:
 							default:
 								r.reset();
-								EBNFLexicon.integer.createChild(integerBuilder);
+								return EBNFLexicon._integer.createChild(integerBuilder);
 						}
 					}
 				//case ':'
@@ -85,26 +85,26 @@ public class EBNFScanner implements Scanner<Token> {
 				//	//assert EBNFLexicon.otherCharacter.getPattern().matcher(sb).matches();
 				//	return new Token(EBNFLexicon.otherCharacter, (char)i);
 				case ',':
-					//assert EBNFLexicon.concatenateSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexicon.concatenateSymbol;
+					//assert EBNFLexicon._concatenateSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon._concatenateSymbol;
 				case '=':
-					//assert EBNFLexicon.definingSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexicon.definingSymbol;
+					//assert EBNFLexicon._definingSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon._definingSymbol;
 				case '|':
 				case '!':
-					//assert EBNFLexicon.definitionSeparatorSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexicon.definitionSeparatorSymbol;
+					//assert EBNFLexicon._definitionSeparatorSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon._definitionSeparatorSymbol;
 				case '/':
 					r.mark(i);
 					switch (i = r.read()) {
 						case ')':
 							//sb.appendCodePoint(i);
-							//assert EBNFLexicon.endOptionSymbol.getPattern().matcher(sb).matches();
-							return EBNFLexicon.endOptionSymbol;
+							//assert EBNFLexicon._endOptionSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon._endOptionSymbol;
 						case -1:
 						default:
-							//assert EBNFLexicon.definitionSeparatorSymbol.getPattern().matcher(sb).matches();
-							return EBNFLexicon.definitionSeparatorSymbol;
+							//assert EBNFLexicon._definitionSeparatorSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon._definitionSeparatorSymbol;
 					}
 				case '*':
 					r.mark(1);
@@ -116,40 +116,40 @@ public class EBNFScanner implements Scanner<Token> {
 						case -1:
 						default:
 							r.reset();
-							//assert EBNFLexicon.repetitionSymbol.getPattern().matcher(sb).matches();
-							return EBNFLexicon.repetitionSymbol;
+							//assert EBNFLexicon._repetitionSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon._repetitionSymbol;
 					}
 				case ']':
-					//assert EBNFLexicon.endOptionSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexicon.endOptionSymbol;
+					//assert EBNFLexicon._endOptionSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon._endOptionSymbol;
 				case '}':
-					//assert EBNFLexicon.endRepeatSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexicon.endRepeatSymbol;
+					//assert EBNFLexicon._endRepeatSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon._endRepeatSymbol;
 				case ':':
 					r.mark(1);
 					switch (i = r.read()) {
 						case ')':
 							//sb.appendCodePoint(i);
-							//assert EBNFLexicon.endRepeatSymbol.getPattern().matcher(sb).matches();
-							return EBNFLexicon.endRepeatSymbol;
+							//assert EBNFLexicon._endRepeatSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon._endRepeatSymbol;
 						case -1:
 						default:
 							r.reset();
 							//	//assert EBNFLexicon.otherCharacter.getPattern().matcher(sb).matches();
 							//	return new Token(EBNFLexicon.otherCharacter, ':');
-							
+
 							// TODO: Lexeme exception
 							throw new RuntimeException();
 					}
 				case '-':
-					//assert EBNFLexicon.exceptSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexicon.exceptSymbol;
+					//assert EBNFLexicon._exceptSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon._exceptSymbol;
 				//case '\'':
-				//	//assert EBNFLexicon.firstQuoteSymbol.getPattern().matcher(sb).matches();
-				//	return EBNFLexicon.firstQuoteSymbol;
+				//	//assert EBNFLexicon._firstQuoteSymbol.getPattern().matcher(sb).matches();
+				//	return EBNFLexicon._firstQuoteSymbol;
 				//case '\"':
-				//	//assert EBNFLexicon.secondQuoteSymbol.getPattern().matcher(sb).matches();
-				//	return EBNFLexicon.secondQuoteSymbol;
+				//	//assert EBNFLexicon._secondQuoteSymbol.getPattern().matcher(sb).matches();
+				//	return EBNFLexicon._secondQuoteSymbol;
 				case '\'':
 				case '\"':
 					int quote = i;
@@ -162,16 +162,16 @@ public class EBNFScanner implements Scanner<Token> {
 							case '\'':
 							case '\"':
 								if (quote == i) {
-									//assert EBNFLexicon.terminalString.getPattern().matcher((char)quote + terminalStringBuilder.toString() + (char)i).matches();
-									return EBNFLexicon.terminalString.createChild(terminalStringBuilder.toString());
+									//assert EBNFLexicon._terminalString.getPattern().matcher((char)quote + terminalStringBuilder.toString() + (char)i).matches();
+									return EBNFLexicon._terminalString.createChild(terminalStringBuilder.toString());
 								}
 							default:
 								terminalStringBuilder.appendCodePoint(i);
 						}
 					}
 				//case '?':
-				//	//assert EBNFLexicon.specialSequenceSymbol.getPattern().matcher(sb).matches();
-				//	return EBNFLexicon.specialSequenceSymbol;
+				//	//assert EBNFLexicon._specialSequenceSymbol.getPattern().matcher(sb).matches();
+				//	return EBNFLexicon._specialSequenceSymbol;
 				case '?':
 					StringBuilder specialSequenceBuilder = new StringBuilder(16);
 					while (true) {
@@ -180,8 +180,8 @@ public class EBNFScanner implements Scanner<Token> {
 								// TODO: special sequence syntax exception
 								throw new RuntimeException();
 							case '?':
-								//assert EBNFLexicon.terminalString.getPattern().matcher('?' + specialSequenceBuilder.toString() + '?').matches();
-								return EBNFLexicon.specialSequence.createChild(specialSequenceBuilder.toString());
+								//assert EBNFLexicon._terminalString.getPattern().matcher('?' + specialSequenceBuilder.toString() + '?').matches();
+								return EBNFLexicon._specialSequence.createChild(specialSequenceBuilder.toString());
 							default:
 								specialSequenceBuilder.appendCodePoint(i);
 						}
@@ -216,28 +216,28 @@ public class EBNFScanner implements Scanner<Token> {
 							}
 						case '/':
 							//sb.appendCodePoint(i);
-							//assert EBNFLexicon.startOptionSymbol.getPattern().matcher(sb).matches();
-							return EBNFLexicon.startOptionSymbol;
+							//assert EBNFLexicon._startOptionSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon._startOptionSymbol;
 						case ':':
 							//sb.appendCodePoint(i);
-							//assert EBNFLexicon.startRepeatSymbol.getPattern().matcher(sb).matches();
-							return EBNFLexicon.startRepeatSymbol;
+							//assert EBNFLexicon._startRepeatSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon._startRepeatSymbol;
 						case -1:
 						default:
 							r.reset();
-							//assert EBNFLexicon.startGroupSymbol.getPattern().matcher(sb).matches();
-							return EBNFLexicon.startGroupSymbol;
+							//assert EBNFLexicon._startGroupSymbol.getPattern().matcher(sb).matches();
+							return EBNFLexicon._startGroupSymbol;
 					}
 				case '[':
-					//assert EBNFLexicon.startOptionSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexicon.startOptionSymbol;
+					//assert EBNFLexicon._startOptionSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon._startOptionSymbol;
 				case '{':
-					//assert EBNFLexicon.startRepeatSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexicon.startRepeatSymbol;
+					//assert EBNFLexicon._startRepeatSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon._startRepeatSymbol;
 				case ';':
 				case '.':
-					//assert EBNFLexicon.terminatorSymbol.getPattern().matcher(sb).matches();
-					return EBNFLexicon.terminatorSymbol;
+					//assert EBNFLexicon._terminatorSymbol.getPattern().matcher(sb).matches();
+					return EBNFLexicon._terminatorSymbol;
 				default:
 					if (Character.isWhitespace(i)) {
 						continue;

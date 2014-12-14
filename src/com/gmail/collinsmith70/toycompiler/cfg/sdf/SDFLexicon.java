@@ -1,23 +1,22 @@
-package com.gmail.collinsmith70.toycompiler.cfg.bnf;
+package com.gmail.collinsmith70.toycompiler.cfg.sdf;
 
 import com.gmail.collinsmith70.toycompiler.cfg.Lexeme;
 import com.gmail.collinsmith70.toycompiler.cfg.Token;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public enum BNFLexicon implements Lexeme {
+public enum SDFLexicon implements Lexeme, Token {
 	// Terminal Symbols
-	_definitionSeparatorSymbol("\\|"),
-	_definingSymbol("::="),
+	_definingSymbol("\\:"),
 
 	// Tokens
-	_terminalString("(\"[^\"]+\")|('[^']+')"),
-	_metaIdentifier("\\<\\w+('|`)*\\>"),
+	_metaIdentifier("[a-zA-Z][a-zA-Z0-9]*"),
+	_terminalString("\\_[a-zA-Z0-9]+"),
 	;
 
 	private final Pattern PATTERN;
 
-	private BNFLexicon(String regex) {
+	private SDFLexicon(String regex) {
 		this.PATTERN = Pattern.compile(Objects.requireNonNull(regex), Pattern.UNICODE_CHARACTER_CLASS);
 	}
 
@@ -37,11 +36,21 @@ public enum BNFLexicon implements Lexeme {
 	}
 
 	@Override
+	public Lexeme getLexeme() {
+		return this;
+	}
+
+	@Override
+	public Object getValue() {
+		return null;
+	}
+
+	@Override
 	public Token createChild(Object value) {
 		return new Token() {
 			@Override
 			public Lexeme getLexeme() {
-				return BNFLexicon.this;
+				return SDFLexicon.this;
 			}
 
 			@Override
@@ -52,21 +61,16 @@ public enum BNFLexicon implements Lexeme {
 			@Override
 			public String toString() {
 				if (value == null) {
-					return BNFLexicon.this.toString();
+					return SDFLexicon.this.toString();
 				}
 
-				return BNFLexicon.this.toString() + "[" + value.toString() + "]";
+				return SDFLexicon.this.toString() + "[" + value.toString() + "]";
 			}
 		};
 	}
 
 	@Override
-	public Lexeme getLexeme() {
-		return this;
-	}
-
-	@Override
-	public Object getValue() {
-		return null;
+	public String toString() {
+		return getName();
 	}
 }

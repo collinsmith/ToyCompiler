@@ -28,8 +28,8 @@ public class BNFScanner implements Scanner<Token> {
 				case -1:
 					return Lexeme._eof;
 				case '|':
-					//assert BNFLexicon.definitionSeparatorSymbol.getPattern().matcher(sb).matches();
-					return BNFLexicon.definitionSeparatorSymbol;
+					//assert BNFLexicon._definitionSeparatorSymbol.getPattern().matcher(sb).matches();
+					return BNFLexicon._definitionSeparatorSymbol;
 				case ':':
 					switch (i = r.read()) {
 						case ':':
@@ -37,8 +37,8 @@ public class BNFScanner implements Scanner<Token> {
 							switch (i = r.read()) {
 								case '=':
 									//sb.appendCodePoint(i);
-									//assert BNFLexicon.definingSymbol.getPattern().matcher(sb).matches();
-									return BNFLexicon.definingSymbol;
+									//assert BNFLexicon._definingSymbol.getPattern().matcher(sb).matches();
+									return BNFLexicon._definingSymbol;
 								default:
 									// propagate lexeme exception
 							}
@@ -61,8 +61,8 @@ public class BNFScanner implements Scanner<Token> {
 										metaIdentifierBuilder.appendCodePoint(i);
 										break;
 									case '>':
-										//assert BNFLexicon.metaIdentifier.getPattern().matcher('<' + metaIdentifierBuilder.toString() + '>').matches();
-										return BNFLexicon.metaIdentifier.createChild(metaIdentifierBuilder.toString());
+										//assert BNFLexicon._metaIdentifier.getPattern().matcher('<' + metaIdentifierBuilder.toString() + '>').matches();
+										return BNFLexicon._metaIdentifier.createChild(metaIdentifierBuilder.toString());
 									case -1:
 									default:
 										break remainder;
@@ -85,8 +85,8 @@ public class BNFScanner implements Scanner<Token> {
 							case '\'':
 							case '\"':
 								if (quote == i) {
-									//assert BNFLexicon.terminalString.getPattern().matcher((char)quote + terminalStringBuilder.toString() + (char)i).matches();
-									return BNFLexicon.terminalString.createChild(terminalStringBuilder.toString());
+									//assert BNFLexicon._terminalString.getPattern().matcher((char)quote + terminalStringBuilder.toString() + (char)i).matches();
+									return BNFLexicon._terminalString.createChild(terminalStringBuilder.toString());
 								}
 							default:
 								terminalStringBuilder.appendCodePoint(i);

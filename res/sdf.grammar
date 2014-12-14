@@ -1,0 +1,19 @@
+SDFGrammar:
+	Syntax
+
+Syntax:
+	Syntax SyntaxRule
+	SyntaxRule
+
+SyntaxRule:
+	_metaIdentifier _definingSymbol _eol DefinitionsList
+
+DefinitionsList:
+	DefinitionsList Definition _eol
+	Definition _eol
+
+Definition:
+	DefinitionsList _metaIdentifier
+	DefinitionsList _terminalString
+	_metaIdentifier
+	_terminalString

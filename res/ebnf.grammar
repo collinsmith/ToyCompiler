@@ -1,0 +1,45 @@
+EBNFGrammar:
+	Syntax
+
+Syntax:
+	Syntax SyntaxRule
+	SyntaxRule
+
+SyntaxRule:
+	_metaIdentifier _definingSymbol DefinitonsList _terminatorSymbol
+
+DefinitionsList:
+	DefinitionsList _definitionSeparatorSymbol SingleDefinition
+	SingleDefinition
+
+SingleDefiniton:
+	SingleDefinition _concatenateSymbol SyntacticTerm
+	SyntacticTerm
+
+SyntacticTerm:
+	SyntacticFactor _exceptSymbol SyntacticException
+	SyntacticFactor
+
+SyntacticException:
+	SyntacticFactor
+
+SyntacticFactor:
+	_integer _repetitionSymbol SyntacticPrimary
+	SyntacticPrimary
+
+SyntacticPrimary:
+	OptionalSequence
+	RepeatedSequence
+	GroupedSequence
+	_metaIdentifier
+	_terminalString
+	_specialSequence
+
+OptionalSequence:
+	_startOptionSymbol DefinitionsList _endOptionSymbol
+
+RepeatedSequence:
+	_startRepeatSymbol DefinitionsList _endRepeatSymbol
+
+GroupedSequence:
+	_startGroupSymbol DefinitionsList _endGroupSymbol

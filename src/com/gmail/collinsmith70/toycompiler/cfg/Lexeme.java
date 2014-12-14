@@ -9,7 +9,7 @@ public interface Lexeme extends Token {
 	Token createChild(Object value);
 
 	Lexeme _eof = new Lexeme() {
-		private final Pattern PATTERN = Pattern.compile("$", 0);
+		private final Pattern PATTERN = Pattern.compile("\\z", Pattern.UNICODE_CHARACTER_CLASS);
 
 		@Override
 		public String getName() {
@@ -43,26 +43,46 @@ public interface Lexeme extends Token {
 
 		@Override
 		public Token createChild(Object value) {
-			return new Token() {
-				@Override
-				public Lexeme getLexeme() {
-					return Lexeme._eof;
-				}
+			throw new UnsupportedOperationException();
+		}
+	};
 
-				@Override
-				public Object getValue() {
-					return value;
-				}
+	Lexeme _eol = new Lexeme() {
+		private final Pattern PATTERN = Pattern.compile("$", Pattern.UNICODE_CHARACTER_CLASS);
 
-				@Override
-				public String toString() {
-					if (value == null) {
-						return Lexeme._eof.toString();
-					}
+		@Override
+		public String getName() {
+			return "_eol";
+		}
 
-					return Lexeme._eof.toString() + "[" + value.toString() + "]";
-				}
-			};
+		@Override
+		public Pattern getPattern() {
+			return PATTERN;
+		}
+
+		@Override
+		public int getId() {
+			return 0;
+		}
+
+		@Override
+		public Lexeme getLexeme() {
+			return this;
+		}
+
+		@Override
+		public Object getValue() {
+			return null;
+		}
+
+		@Override
+		public String toString() {
+			return getName();
+		}
+
+		@Override
+		public Token createChild(Object value) {
+			throw new UnsupportedOperationException();
 		}
 	};
 }
