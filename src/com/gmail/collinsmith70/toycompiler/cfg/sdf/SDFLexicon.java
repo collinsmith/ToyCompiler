@@ -5,7 +5,7 @@ import com.gmail.collinsmith70.toycompiler.cfg.Token;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public enum SDFLexicon implements Lexeme, Token {
+public enum SDFLexicon implements Lexeme {
 	// Terminal Symbols
 	_definingSymbol("\\:"),
 
