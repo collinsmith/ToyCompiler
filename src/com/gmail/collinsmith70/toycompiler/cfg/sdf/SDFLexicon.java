@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 public enum SDFLexicon implements Lexeme {
 	// Terminal Symbols
 	_definingSymbol("\\:"),
+	//_definitionSeparatorSymbol("$"),
 
 	// Tokens
 	_metaIdentifier("[a-zA-Z][a-zA-Z0-9]*"),

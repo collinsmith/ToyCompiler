@@ -104,9 +104,9 @@ public class SDFScanner implements Scanner<Token> {
 			case '\u2028':	return true;
 			case '\u2029':	return true;
 			default:
-				if (Character.getType(codePoint) == Character.LINE_SEPARATOR) {
+				/*if (Character.getType(codePoint) == Character.LINE_SEPARATOR) {
 					return true;
-				}
+				}*/
 
 				return false;
 		}
