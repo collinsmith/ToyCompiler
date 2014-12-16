@@ -8,12 +8,16 @@ Syntax:
 SyntaxRule:
 	_metaIdentifier _definingSymbol _eol DefinitionsList
 
+EolLoop:
+	EolLoop _eol
+	_eol
+
 DefinitionsList:
-	DefinitionsList Definition _eol
-	Definition _eol
+	DefinitionsList Definition EolLoop
+	Definition EolLoop
 
 Definition:
-	DefinitionsList _metaIdentifier
-	DefinitionsList _terminalString
+	Definition _metaIdentifier
+	Definition _terminalString
 	_metaIdentifier
 	_terminalString
